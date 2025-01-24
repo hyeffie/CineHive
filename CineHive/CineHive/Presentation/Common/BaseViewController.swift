@@ -20,4 +20,8 @@ class BaseViewController: UIViewController {
     func push(_ viewController: UIViewController) {
         self.navigationController?.pushViewController(viewController, animated: true)
     }
+    
+    func pop() {
+        self.navigationController?.popViewController(animated: true)
+    }
 }
