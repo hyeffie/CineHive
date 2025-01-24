@@ -8,6 +8,8 @@
 import UIKit
 
 final class NavigationController: UINavigationController {
+    private lazy var priorViewControllerTitle: String? = self.topViewController?.title
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         configureView()
@@ -28,7 +30,18 @@ final class NavigationController: UINavigationController {
     }
     
     override func pushViewController(_ viewController: UIViewController, animated: Bool) {
+        self.priorViewControllerTitle = self.topViewController?.title
         self.topViewController?.title = ""
         super.pushViewController(viewController, animated: animated)
+    }
+    
+    override func popViewController(animated: Bool) -> UIViewController? {
+        let poppedViewController = super.popViewController(animated: animated)
+        self.topViewController?.title = self.priorViewControllerTitle
+        return poppedViewController
+    }
+    
+    func pop() {
+        let _ = self.popViewController(animated: true)
     }
 }
