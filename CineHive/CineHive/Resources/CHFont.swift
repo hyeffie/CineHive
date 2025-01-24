@@ -7,12 +7,18 @@
 
 import UIKit
 
-enum CHFont {
-    static let small = UIFont.systemFont(ofSize: 12, weight: .regular)
-    static let medium = UIFont.systemFont(ofSize: 14, weight: .regular)
-    static let large = UIFont.systemFont(ofSize: 16, weight: .regular)
+struct CHFont {
+    static let small = CHFont(ofSize: 12, weight: .regular)
+    static let medium = CHFont(ofSize: 14, weight: .regular)
+    static let large = CHFont(ofSize: 16, weight: .regular)
     
-    static let smallBold = UIFont.systemFont(ofSize: 12, weight: .bold)
-    static let mediumBold = UIFont.systemFont(ofSize: 14, weight: .bold)
-    static let largeBold = UIFont.systemFont(ofSize: 16, weight: .bold)
+    static let smallBold = CHFont(ofSize: 12, weight: .bold)
+    static let mediumBold = CHFont(ofSize: 14, weight: .bold)
+    static let largeBold = CHFont(ofSize: 16, weight: .bold)
+    
+    let value: UIFont
+    
+    private init(ofSize size: CGFloat, weight: UIFont.Weight) {
+        self.value = UIFont.systemFont(ofSize: size, weight: weight)
+    }
 }
