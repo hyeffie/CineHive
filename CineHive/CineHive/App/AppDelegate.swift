@@ -23,7 +23,6 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
     
     private func viewController() -> UIViewController {
         let viewController = UIViewController()
-        viewController.view.backgroundColor = .green
-        return viewController
+        return NavigationViewController(rootViewController: viewController)
     }
 }
