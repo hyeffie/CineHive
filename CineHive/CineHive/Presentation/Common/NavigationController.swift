@@ -40,8 +40,4 @@ final class NavigationController: UINavigationController {
         self.topViewController?.title = self.priorViewControllerTitle
         return poppedViewController
     }
-    
-    func pop() {
-        let _ = self.popViewController(animated: true)
-    }
 }
