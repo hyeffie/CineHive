@@ -12,8 +12,8 @@ final class SelectedProfileImageView: UIView {
     
     private let cameraView = CameraView(frame: .zero)
     
-    init(profileImageName: String) {
-        self.profileImageView = ProfileImageView(imageName: profileImageName)
+    init(imageName: String?) {
+        self.profileImageView = ProfileImageView(imageName: imageName)
         super.init(frame: .zero)
         configureViews()
     }
@@ -37,9 +37,13 @@ final class SelectedProfileImageView: UIView {
             make.height.equalTo(self.profileImageView).multipliedBy(0.3)
         }
     }
+    
+    func configureImage(name: String) {
+        self.profileImageView.configureImage(name: name)
+    }
 }
 
 #Preview {
-    let view = SelectedProfileImageView(profileImageName: CHImageName.profilePrefix + "1")
+    let view = SelectedProfileImageView(imageName: CHImageName.profilePrefix + "1")
     return view
 }

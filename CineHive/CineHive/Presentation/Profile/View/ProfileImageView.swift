@@ -8,9 +8,9 @@
 import UIKit
 
 final class ProfileImageView: UIImageView {
-    init(imageName: String) {
+    init(imageName: String?) {
         super.init(frame: .zero)
-        self.image = UIImage(named: imageName)
+        if let imageName { self.image = UIImage(named: imageName) }
         configureView()
         setState(isSelected: false)
     }
@@ -43,6 +43,10 @@ final class ProfileImageView: UIImageView {
             self.layer.borderWidth = 1
             self.alpha = 0.5
         }
+    }
+    
+    func configureImage(name: String) {
+        self.image = UIImage(named: name)
     }
 }
 
