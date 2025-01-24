@@ -22,7 +22,7 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
     }
     
     private func viewController() -> UIViewController {
-        let viewController = UIViewController()
+        let viewController = OnboardingViewController()
         return NavigationController(rootViewController: viewController)
     }
 }
