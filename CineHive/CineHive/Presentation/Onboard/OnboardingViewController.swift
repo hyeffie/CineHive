@@ -17,7 +17,9 @@ final class OnboardingViewController: BaseViewController {
     
     private let titleLabel = BaseLabel(font: .largeBold, alignment: .center)
     
-    private let subtitleLabel = BaseLabel(font: .medium, alignment: .center)
+    private let subtitleLabel = BaseLabel(font: .large, alignment: .center)
+    
+    private let startButton = ThemePillShapeButton(title: "시작하기")
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -29,7 +31,7 @@ final class OnboardingViewController: BaseViewController {
         self.imageView.snp.makeConstraints { make in
             make.horizontalEdges.equalTo(self.view)
             make.centerY.equalTo(self.view.safeAreaLayoutGuide).offset(-100)
-            make.height.equalTo(self.view.safeAreaLayoutGuide).multipliedBy(0.7)
+            make.height.equalTo(self.view.safeAreaLayoutGuide).multipliedBy(0.6)
         }
         
         self.view.addSubview(self.titleLabel)
@@ -40,12 +42,24 @@ final class OnboardingViewController: BaseViewController {
         
         self.view.addSubview(self.subtitleLabel)
         self.subtitleLabel.snp.makeConstraints { make in
-            make.top.equalTo(self.titleLabel.snp.bottom).offset(20)
+            make.top.equalTo(self.titleLabel.snp.bottom).offset(24)
             make.centerX.equalToSuperview()
+        }
+        
+        self.view.addSubview(self.startButton)
+        self.startButton.snp.makeConstraints { make in
+            make.top.equalTo(self.subtitleLabel.snp.bottom).offset(30)
+            make.horizontalEdges.equalTo(self.view.safeAreaLayoutGuide).inset(20)
         }
         
         self.imageView.image = UIImage(named: CHImageName.onboarding)
         self.titleLabel.text = "Onboarding"
         self.subtitleLabel.text = "당신만의 영화 세상,\nCineHive를 시작해보세요."
+        
+        self.startButton.addTarget(self, action: #selector(startButtonTapped), for: .touchUpInside)
+    }
+    
+    @objc private func startButtonTapped() {
+        print(#function)
     }
 }
