@@ -23,6 +23,6 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
     
     private func viewController() -> UIViewController {
         let viewController = UIViewController()
-        return NavigationViewController(rootViewController: viewController)
+        return NavigationController(rootViewController: viewController)
     }
 }
