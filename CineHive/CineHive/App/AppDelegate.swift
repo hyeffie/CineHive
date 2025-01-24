@@ -17,13 +17,11 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
     ) -> Bool {
         self.window = UIWindow(frame: UIScreen.main.bounds)
         self.window?.rootViewController = viewController()
-        self.window?.makeKeyAndVisible()
+        self.window?.makeKeyAndVisible()
         return true
     }
     
     private func viewController() -> UIViewController {
-    
-
         return NavigationController(rootViewController: viewController)
     }
 }
