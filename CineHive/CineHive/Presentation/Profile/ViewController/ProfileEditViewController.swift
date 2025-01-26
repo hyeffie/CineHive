@@ -14,8 +14,8 @@ final class ProfileEditViewController: UIViewController {
     
     private let validationResultLabel = {
         let label = UILabel()
-        label.textColor = CHColor.theme.value
-        label.font = CHFont.small.value
+        label.textColor = CHColor.theme
+        label.font = CHFont.small
         return label
     }()
     
@@ -40,13 +40,13 @@ extension ProfileEditViewController {
         self.selectedProfileImageView.snp.makeConstraints { make in
             make.top.equalTo(self.view.safeAreaLayoutGuide).offset(30)
             make.centerX.equalTo(self.view.safeAreaLayoutGuide)
-            make.width.equalTo(self.view.safeAreaLayoutGuide).multipliedBy(0.2)
+            make.width.equalTo(self.view.safeAreaLayoutGuide).multipliedBy(0.25)
         }
         
         self.nicknameTextField.snp.makeConstraints { make in
             make.top.equalTo(self.selectedProfileImageView.snp.bottom).offset(20)
             make.horizontalEdges.equalTo(self.view.safeAreaLayoutGuide).inset(16)
-            make.height.equalTo(self.view.safeAreaInsets).multipliedBy(0.05)
+            make.height.equalTo(self.view.safeAreaInsets).multipliedBy(0.3)
         }
         
         self.validationResultLabel.snp.makeConstraints { make in

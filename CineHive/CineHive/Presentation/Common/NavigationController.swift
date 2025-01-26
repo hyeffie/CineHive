@@ -16,7 +16,7 @@ final class NavigationController: UINavigationController {
     }
     
     private func configureView() {
-        self.view.backgroundColor = CHColor.mainBackground.value
+        self.view.backgroundColor = CHColor.mainBackground
         configureBar()
     }
     
@@ -25,7 +25,7 @@ final class NavigationController: UINavigationController {
             .foregroundColor: CHColor.primaryText,
             .font: CHFont.largeBold
         ]
-        self.navigationBar.tintColor = CHColor.theme.value
+        self.navigationBar.tintColor = CHColor.theme
         self.navigationItem.backButtonTitle = ""
     }
     

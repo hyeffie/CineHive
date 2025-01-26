@@ -26,8 +26,7 @@ final class SelectedProfileImageView: UIView {
     private func configureViews() {
         self.addSubview(self.profileImageView)
         self.profileImageView.snp.makeConstraints { make in
-            make.verticalEdges.equalToSuperview()
-            make.leading.equalToSuperview()
+            make.edges.equalToSuperview()
         }
         
         self.addSubview(self.cameraView)
@@ -36,6 +35,8 @@ final class SelectedProfileImageView: UIView {
             make.bottom.trailing.equalTo(self.profileImageView)
             make.height.equalTo(self.profileImageView).multipliedBy(0.3)
         }
+        
+        self.profileImageView.setState(isSelected: true)
     }
     
     func configureImage(name: String) {

@@ -11,7 +11,7 @@ final class CameraView: UIView {
     private let cameraImageView = {
         let imageView = UIImageView()
         imageView.image = CHSymbol.camera.value
-        imageView.tintColor = CHColor.primaryText.value
+        imageView.tintColor = CHColor.primaryText
         return imageView
     }()
     
@@ -33,7 +33,7 @@ final class CameraView: UIView {
             make.width.equalToSuperview().multipliedBy(0.6)
             make.height.equalToSuperview().multipliedBy(0.5)
         }
-        self.backgroundColor = CHColor.theme.value
+        self.backgroundColor = CHColor.theme
     }
     
     override func layoutSubviews() {

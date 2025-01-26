@@ -22,6 +22,7 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
     }
     
     private func viewController() -> UIViewController {
+        let viewController = ProfileEditViewController()
         return NavigationController(rootViewController: viewController)
     }
 }

@@ -10,7 +10,7 @@ import UIKit
 final class NicknameTextField: UITextField {
     private let underline = {
         let view = UIView()
-        view.backgroundColor = CHColor.primaryText.value
+        view.backgroundColor = CHColor.primaryText
         return view
     }()
     
@@ -32,7 +32,7 @@ final class NicknameTextField: UITextField {
         }
         
         self.borderStyle = .none
-        self.textColor = CHColor.primaryText.value
+        self.textColor = CHColor.primaryText
         self.backgroundColor = .clear
     }
 }

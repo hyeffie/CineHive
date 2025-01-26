@@ -24,10 +24,10 @@ final class ThemePillShapeButton: UIButton {
             make.height.equalTo(44)
         }
         
-        self.setTitleColor(CHColor.theme.value, for: .normal)
-        self.layer.borderColor = CHColor.theme.value.cgColor
+        self.setTitleColor(CHColor.theme, for: .normal)
+        self.layer.borderColor = CHColor.theme?.cgColor
         self.layer.borderWidth = 2
-        self.titleLabel?.font = CHFont.largeBold.value
+        self.titleLabel?.font = CHFont.largeBold
     }
     
     override func layoutSubviews() {

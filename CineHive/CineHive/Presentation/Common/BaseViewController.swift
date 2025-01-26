@@ -14,7 +14,7 @@ class BaseViewController: UIViewController {
     }
     
     private func configureView() {
-        self.view.backgroundColor = CHColor.mainBackground.value
+        self.view.backgroundColor = CHColor.mainBackground
     }
     
     func push(_ viewController: UIViewController) {
