@@ -19,6 +19,8 @@ final class ProfileEditViewController: UIViewController {
         self.title = "프로필 설정"
         
         configureView()
+        
+        randomizeProfileImage()
     }
 }
 
@@ -46,6 +48,14 @@ extension ProfileEditViewController {
             make.top.equalTo(self.nicknameTextField.snp.bottom).offset(vOffset)
             make.horizontalEdges.equalTo(self.view.safeAreaLayoutGuide).inset(hInset)
         }
+    }
+}
+
+extension ProfileEditViewController {
+    private func randomizeProfileImage() {
+        let randomNumber = (0..<12).randomElement() ?? 0
+        let imageName = CHImageName.profilePrefix + String(randomNumber)
+        self.selectedProfileImageView.configureImage(name: imageName)
     }
 }
  
