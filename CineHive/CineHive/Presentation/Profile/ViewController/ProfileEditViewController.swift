@@ -12,13 +12,6 @@ final class ProfileEditViewController: UIViewController {
     
     private let nicknameTextField = NicknameTextField()
     
-    private let validationResultLabel = {
-        let label = UILabel()
-        label.textColor = CHColor.theme
-        label.font = CHFont.small
-        return label
-    }()
-    
     private let completeButton = ThemePillShapeButton(title: "완료")
     
     override func viewDidLoad() {
@@ -32,35 +25,30 @@ final class ProfileEditViewController: UIViewController {
 // MARK: - Configuring Views
 extension ProfileEditViewController {
     private func configureView() {
-        self.view.addSubview(self.selectedProfileImageView)
-        self.view.addSubview(self.nicknameTextField)
-        self.view.addSubview(self.validationResultLabel)
-        self.view.addSubview(self.completeButton)
+        let vOffset = 30
+        let hInset = 16
         
+        self.view.addSubview(self.selectedProfileImageView)
         self.selectedProfileImageView.snp.makeConstraints { make in
-            make.top.equalTo(self.view.safeAreaLayoutGuide).offset(30)
+            make.top.equalTo(self.view.safeAreaLayoutGuide).offset(vOffset)
             make.centerX.equalTo(self.view.safeAreaLayoutGuide)
             make.width.equalTo(self.view.safeAreaLayoutGuide).multipliedBy(0.25)
         }
         
+        self.view.addSubview(self.nicknameTextField)
         self.nicknameTextField.snp.makeConstraints { make in
-            make.top.equalTo(self.selectedProfileImageView.snp.bottom).offset(20)
-            make.horizontalEdges.equalTo(self.view.safeAreaLayoutGuide).inset(16)
-            make.height.equalTo(self.view.safeAreaInsets).multipliedBy(0.3)
+            make.top.equalTo(self.selectedProfileImageView.snp.bottom).offset(vOffset)
+            make.horizontalEdges.equalTo(self.view.safeAreaLayoutGuide).inset(hInset)
         }
         
-        self.validationResultLabel.snp.makeConstraints { make in
-            make.top.equalTo(self.nicknameTextField.snp.bottom).offset(20)
-            make.leading.equalTo(self.nicknameTextField).offset(16)
-        }
-        
+        self.view.addSubview(self.completeButton)
         self.completeButton.snp.makeConstraints { make in
-            make.top.equalTo(self.validationResultLabel.snp.bottom).offset(30)
-            make.horizontalEdges.equalTo(self.view.safeAreaLayoutGuide).inset(20)
+            make.top.equalTo(self.nicknameTextField.snp.bottom).offset(vOffset)
+            make.horizontalEdges.equalTo(self.view.safeAreaLayoutGuide).inset(hInset)
         }
     }
 }
-
+ 
 #Preview {
     let vc = ProfileEditViewController()
     return NavigationController(rootViewController: vc)
