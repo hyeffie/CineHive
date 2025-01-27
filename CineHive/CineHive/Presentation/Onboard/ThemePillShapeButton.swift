@@ -25,7 +25,7 @@ final class ThemePillShapeButton: UIButton {
         }
         
         self.setTitleColor(CHColor.theme, for: .normal)
-        self.layer.borderColor = CHColor.theme?.cgColor
+        self.layer.borderColor = CHColor.theme.cgColor
         self.layer.borderWidth = 2
         self.titleLabel?.font = CHFont.largeBold
     }

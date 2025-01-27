@@ -9,7 +9,7 @@ import UIKit
 
 class BaseLabel: UILabel {
     init(
-        color: UIColor = .primaryText,
+        color: UIColor = CHColor.primaryText,
         font: UIFont,
         alignment: NSTextAlignment = .left,
         numberOfLines: Int = 0

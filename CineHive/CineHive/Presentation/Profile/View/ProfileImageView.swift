@@ -35,11 +35,11 @@ final class ProfileImageView: UIImageView {
     
     func setState(isSelected: Bool) {
         if isSelected {
-            self.layer.borderColor = CHColor.theme?.cgColor
+            self.layer.borderColor = CHColor.theme.cgColor
             self.layer.borderWidth = 3
             self.alpha = 1.0
         } else {
-            self.layer.borderColor = CHColor.darkLabelBackground?.cgColor
+            self.layer.borderColor = CHColor.darkLabelBackground.cgColor
             self.layer.borderWidth = 1
             self.alpha = 0.5
         }
