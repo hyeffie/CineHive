@@ -8,15 +8,9 @@
 import UIKit
 
 struct CHColor {
-    static let darkLabelBackground = CHColor(name: "dark-label-background")
-    static let lightLabelBackground = CHColor(name: "light-label-background")
-    static let mainBackground = CHColor(name: "main-background")
-    static let theme = CHColor(name: "hive-theme")
-    static let primaryText = CHColor(name: "primary-text")
-    
-    let value: UIColor
-    
-    private init(name: String) {
-        self.value = UIColor(named: name) ?? UIColor.clear
-    }
+    static let darkLabelBackground = UIColor.darkLabelBackground
+    static let lightLabelBackground = UIColor.lightLabelBackground
+    static let mainBackground = UIColor.mainBackground
+    static let theme = UIColor.hiveTheme
+    static let primaryText = UIColor.primaryText
 }

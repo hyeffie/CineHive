@@ -15,9 +15,9 @@ final class OnboardingViewController: BaseViewController {
         return imageView
     }()
     
-    private let titleLabel = BaseLabel(font: .largeBold, alignment: .center)
+    private let titleLabel = BaseLabel(font: CHFont.largeBold, alignment: .center)
     
-    private let subtitleLabel = BaseLabel(font: .large, alignment: .center)
+    private let subtitleLabel = BaseLabel(font: CHFont.large, alignment: .center)
     
     private let startButton = ThemePillShapeButton(title: "시작하기")
     
@@ -60,6 +60,7 @@ final class OnboardingViewController: BaseViewController {
     }
     
     @objc private func startButtonTapped() {
-        print(#function)
+        let profileViewController = ProfileEditViewController()
+        self.push(profileViewController)
     }
 }

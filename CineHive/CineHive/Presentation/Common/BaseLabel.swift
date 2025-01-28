@@ -9,8 +9,8 @@ import UIKit
 
 class BaseLabel: UILabel {
     init(
-        color: CHColor = .primaryText,
-        font: CHFont,
+        color: UIColor = CHColor.primaryText,
+        font: UIFont,
         alignment: NSTextAlignment = .left,
         numberOfLines: Int = 0
     ) {
@@ -29,13 +29,13 @@ class BaseLabel: UILabel {
     }
     
     private func configureView(
-        color: CHColor,
-        font: CHFont,
+        color: UIColor,
+        font: UIFont,
         alignment: NSTextAlignment = .left,
         numberOfLines: Int = 0
     ) {
-        self.textColor = color.value
-        self.font = font.value
+        self.textColor = color
+        self.font = font
         self.textAlignment = alignment
         self.numberOfLines = numberOfLines
     }
