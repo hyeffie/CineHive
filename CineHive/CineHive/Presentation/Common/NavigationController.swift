@@ -36,8 +36,10 @@ final class NavigationController: UINavigationController {
     }
     
     override func popViewController(animated: Bool) -> UIViewController? {
+        let targetTitle = self.priorViewControllerTitle
+        self.priorViewControllerTitle = nil
         let poppedViewController = super.popViewController(animated: animated)
-        self.topViewController?.title = self.priorViewControllerTitle
+        self.topViewController?.title = targetTitle
         return poppedViewController
     }
 }
