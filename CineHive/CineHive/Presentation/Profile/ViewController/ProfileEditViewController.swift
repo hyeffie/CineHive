@@ -8,7 +8,12 @@
 import UIKit
 
 final class ProfileEditViewController: BaseViewController {
-    private let selectedProfileImageView = SelectedProfileImageView(imageName: nil)
+    private lazy var selectedImageNumber: Int = self.randomizeProfileImageNumber()
+    
+    private lazy var selectedProfileImageView = SelectedProfileImageView(
+        imageName: nil,
+        tapHandler: { [weak self] in self?.goToProfileImageSelectScene() }
+    )
     
     private let nicknameTextField = NicknameTextField()
     
@@ -21,9 +26,16 @@ final class ProfileEditViewController: BaseViewController {
         
         configureView()
         
-        randomizeProfileImage()
-        
+        setProfileImage()
         setNickname("")
+    }
+    
+    private func goToProfileImageSelectScene() {
+        let viewController = ProfileImageViewController(
+            selectedImageNumber: self.selectedImageNumber,
+            imageSelectionHandler: { [weak self] number in self?.setImage(number: number) }
+        )
+        self.push(viewController)
     }
 }
 
@@ -57,10 +69,12 @@ extension ProfileEditViewController {
 }
 
 extension ProfileEditViewController {
-    private func randomizeProfileImage() {
-        let randomNumber = (0..<12).randomElement() ?? 0
-        let imageName = CHImageName.profilePrefix + String(randomNumber)
-        self.selectedProfileImageView.configureImage(name: imageName)
+    private func randomizeProfileImageNumber() -> Int {
+        return (0..<12).randomElement() ?? 0
+    }
+    
+    private func setProfileImage() {
+        self.selectedProfileImageView.configureImage(number: self.selectedImageNumber)
     }
     
     private func validateNickname(_ input: String) {
@@ -92,49 +106,14 @@ extension ProfileEditViewController {
         self.nicknameTextField.setNickname(nickname)
         validateNickname(nickname)
     }
+    
+    private func setImage(number: Int) {
+        self.selectedImageNumber = number
+        self.selectedProfileImageView.configureImage(number: number)
+    }
 }
  
 #Preview {
     let vc = ProfileEditViewController()
     return NavigationController(rootViewController: vc)
-}
-
-enum NicknameValidityState {
-    enum InvalidState {
-        case invalidLength
-        case invalidCharacter
-        case numberContained
-        
-        var message: String {
-            switch self {
-            case .invalidLength:
-                return "2글자 이상 10글자 미만으로 설정해주세요"
-            case .invalidCharacter:
-                return "닉네임에 @, #, $, % 는 포함할 수 없어요"
-            case .numberContained:
-                return "닉네임에 숫자는 포함할 수 없어요"
-            }
-        }
-    }
-    
-    case valid
-    case invalid(_ state: InvalidState)
-    
-    var message: String {
-        switch self {
-        case .valid:
-            return ""
-        case .invalid(let state):
-            return state.message
-        }
-    }
-    
-    var isEnabled: Bool {
-        switch self {
-        case .valid:
-            return true
-        case .invalid:
-            return false
-        }
-    }
 }

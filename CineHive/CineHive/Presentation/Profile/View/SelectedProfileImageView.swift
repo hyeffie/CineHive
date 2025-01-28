@@ -12,8 +12,14 @@ final class SelectedProfileImageView: UIView {
     
     private let cameraView = CameraView(frame: .zero)
     
-    init(imageName: String?) {
+    private let tapHandler: (() -> Void)?
+    
+    init(
+        imageName: String?,
+        tapHandler: (() -> Void)? = nil
+    ) {
         self.profileImageView = ProfileImageView(imageName: imageName)
+        self.tapHandler = tapHandler
         super.init(frame: .zero)
         configureViews()
     }
@@ -21,6 +27,11 @@ final class SelectedProfileImageView: UIView {
     @available(*, unavailable)
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+    
+    override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
+        super.touchesEnded(touches, with: event)
+        tapHandler?()
     }
     
     private func configureViews() {
@@ -39,8 +50,9 @@ final class SelectedProfileImageView: UIView {
         self.profileImageView.setState(isSelected: true)
     }
     
-    func configureImage(name: String) {
-        self.profileImageView.configureImage(name: name)
+    func configureImage(number: Int) {
+        let imageName = CHImageName.profileImage(number: number)
+        self.profileImageView.configureImage(name: imageName)
     }
 }
 
