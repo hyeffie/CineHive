@@ -59,8 +59,7 @@ extension ProfileEditViewController {
 extension ProfileEditViewController {
     private func randomizeProfileImage() {
         let randomNumber = (0..<12).randomElement() ?? 0
-        let imageName = CHImageName.profilePrefix + String(randomNumber)
-        self.selectedProfileImageView.configureImage(name: imageName)
+        self.selectedProfileImageView.configureImage(number: randomNumber)
     }
     
     private func validateNickname(_ input: String) {

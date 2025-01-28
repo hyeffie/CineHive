@@ -39,8 +39,9 @@ final class SelectedProfileImageView: UIView {
         self.profileImageView.setState(isSelected: true)
     }
     
-    func configureImage(name: String) {
-        self.profileImageView.configureImage(name: name)
+    func configureImage(number: Int) {
+        let imageName = CHImageName.profileImage(number: number)
+        self.profileImageView.configureImage(name: imageName)
     }
 }
 
