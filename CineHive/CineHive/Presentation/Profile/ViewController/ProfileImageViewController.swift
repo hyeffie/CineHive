@@ -11,16 +11,25 @@ final class ProfileImageViewController: BaseViewController {
     private var selectedImageNumber: Int
     
     private let imageNumberRange = (0..<12)
+    
+    private let imageSelectionHandler: (Int) -> Void
 
-    private lazy var selectedProfileImageView = SelectedProfileImageView(imageName: CHImageName.profileImage(number: self.selectedImageNumber))
+    private let selectedProfileImageView: SelectedProfileImageView
     
     private lazy var collectionView = UICollectionView(
         frame: .zero,
         collectionViewLayout: self.collectionViewLayout()
     )
     
-    init(selectedImageNumber: Int) {
+    init(
+        selectedImageNumber: Int,
+        imageSelectionHandler: @escaping (Int) -> Void
+    ) {
         self.selectedImageNumber = selectedImageNumber
+        self.imageSelectionHandler = imageSelectionHandler
+        self.selectedProfileImageView = SelectedProfileImageView(
+            imageName: CHImageName.profileImage(number: selectedImageNumber)
+        )
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -115,10 +124,11 @@ extension ProfileImageViewController: UICollectionViewDelegate, UICollectionView
     private func selectImage(number: Int) {
         self.selectedImageNumber = number
         self.selectedProfileImageView.configureImage(number: number)
+        self.imageSelectionHandler(number)
     }
 }
 
 #Preview {
-    let vc = ProfileImageViewController(selectedImageNumber: 1)
+    let vc = ProfileImageViewController(selectedImageNumber: 1, imageSelectionHandler: { print($0) })
     return NavigationController(rootViewController: vc)
 }
