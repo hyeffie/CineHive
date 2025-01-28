@@ -76,6 +76,26 @@ final class NicknameTextField: UIView {
     }
 }
 
+extension NicknameTextField {
+    func configureValidationResult(message: String) {
+        self.validationResultLabel.text = message
+    }
+    
+    func setActionToTextField(
+        valueChangeHandler: @escaping (String) -> Void
+    ) {
+        let action = UIAction { [weak self] _ in
+            let input = self?.field.text ?? ""
+            valueChangeHandler(input)
+        }
+        self.field.addAction(action, for: .editingChanged)
+    }
+    
+    func setNickname(_ nickname: String) {
+        self.field.text = nickname
+    }
+}
+
 #Preview {
     let vc = ProfileEditViewController()
     return NavigationController(rootViewController: vc)
