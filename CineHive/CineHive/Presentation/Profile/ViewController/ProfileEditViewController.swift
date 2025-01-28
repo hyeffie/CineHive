@@ -7,7 +7,7 @@
 
 import UIKit
 
-final class ProfileEditViewController: UIViewController {
+final class ProfileEditViewController: BaseViewController {
     private let selectedProfileImageView = SelectedProfileImageView(imageName: nil)
     
     private let nicknameTextField = NicknameTextField()
@@ -16,6 +16,7 @@ final class ProfileEditViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
         self.title = "프로필 설정"
         
         configureView()

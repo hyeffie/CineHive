@@ -60,6 +60,7 @@ final class OnboardingViewController: BaseViewController {
     }
     
     @objc private func startButtonTapped() {
-        print(#function)
+        let profileViewController = ProfileEditViewController()
+        self.push(profileViewController)
     }
 }
