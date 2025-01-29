@@ -118,6 +118,7 @@ extension ProfileEditViewController {
     private func presentValidationResult(_ state: NicknameValidityState) {
         self.nicknameTextField.configureValidationResult(message: state.message)
         self.completeButton.isEnabled = state.isEnabled
+        self.navigationItem.rightBarButtonItem?.isEnabled = state.isEnabled
         if case .valid(let nickname) = state { self.form.nickname = nickname }
     }
 }

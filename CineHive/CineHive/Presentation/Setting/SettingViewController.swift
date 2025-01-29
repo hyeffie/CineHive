@@ -107,7 +107,7 @@ extension SettingViewController: UITableViewDelegate, UITableViewDataSource {
         _ tableView: UITableView,
         didSelectRowAt indexPath: IndexPath
     ) {
-        tableView.deselectRow(at: indexPath, animated: true)
+        tableView.deselectRow(at: indexPath, animated: false)
         switch indexPath.row {
         case 3:
             askForWithdraw()
