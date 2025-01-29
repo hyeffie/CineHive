@@ -32,6 +32,6 @@ class BaseViewController: UIViewController {
         else {
             return
         }
-        window.rootViewController = UINavigationController(rootViewController: newViewController)
+        window.rootViewController = newViewController
     }
 }
