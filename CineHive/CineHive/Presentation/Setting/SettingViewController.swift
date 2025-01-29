@@ -8,7 +8,8 @@
 import UIKit
 
 final class SettingViewController: BaseViewController {
-    private let profileInfo: ProfileInfo
+    @UserDefault(key: UserDefaultKey.userProfile)
+    private var userProfile: ProfileInfo!
     
     private let menuList = [
         "자주 묻는 질문",
@@ -18,14 +19,13 @@ final class SettingViewController: BaseViewController {
     ]
     
     private lazy var profileInfoView = ProfileInfoView(
-        profileInfo: self.profileInfo,
+        profileInfo: self.userProfile,
         tapHandler: self.goToProfileSetting
     )
     
     private lazy var menuTableView = UITableView(frame: .zero)
     
     init(profileInfo: ProfileInfo) {
-        self.profileInfo = profileInfo
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -70,13 +70,33 @@ final class SettingViewController: BaseViewController {
         self.push(viewController)
     }
     
-    private func withdraw() {
+    private func askForWithdraw() {
+        let alert = UIAlertController(
+            title: "탈퇴하기",
+            message: "탈퇴를 하면 데이터가 모두 초기화됩니다.\n탈퇴 하시겠습니까?",
+            preferredStyle: .alert
+        )
         
+        let okAction = UIAlertAction(title: "확인", style: .destructive) { _ in self.withdraw() }
+        let cancelAction = UIAlertAction(title: "취소", style: .default)
+        
+        alert.addAction(okAction)
+        alert.addAction(cancelAction)
+        
+        self.present(alert, animated: true)
+    }
+    
+    private func withdraw() {
+        self.userProfile = nil
+        replaceWindowRoot(to: OnboardingViewController())
     }
 }
 
 extension SettingViewController: UITableViewDelegate, UITableViewDataSource {
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    func tableView(
+        _ tableView: UITableView,
+        numberOfRowsInSection section: Int
+    ) -> Int {
         return self.menuList.count
     }
     
@@ -88,11 +108,16 @@ extension SettingViewController: UITableViewDelegate, UITableViewDataSource {
         cell.configure(title: self.menuList[indexPath.row])
         return cell
     }
-}
-
-#Preview {
-    let viewController = SettingViewController(profileInfo: .init(
-        imageNumber: 6, nickname: "Effie", createdAt: .now, likedMovieIDs: []
-    ))
-    NavigationController(rootViewController: viewController)
+    
+    func tableView(
+        _ tableView: UITableView,
+        didSelectRowAt indexPath: IndexPath
+    ) {
+        switch indexPath.row {
+        case 3:
+            askForWithdraw()
+        default:
+            return
+        }
+    }
 }
