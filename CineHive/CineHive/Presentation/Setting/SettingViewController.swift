@@ -81,7 +81,8 @@ final class SettingViewController: BaseViewController {
     
     private func withdraw() {
         self.userProfile = nil
-        replaceWindowRoot(to: OnboardingViewController())
+        let destination = NavigationController(rootViewController: OnboardingViewController())
+        replaceWindowRoot(to: destination)
     }
 }
 
