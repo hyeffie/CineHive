@@ -11,7 +11,7 @@ import UIKit
 final class AppDelegate: UIResponder {
     var window: UIWindow?
     
-    @UserDefault(key: UserDefaultKey.userProfile, defaultValue: nil)
+    @UserDefault(key: UserDefaultKey.userProfile)
     private var userProfile: ProfileInfo?
 }
 

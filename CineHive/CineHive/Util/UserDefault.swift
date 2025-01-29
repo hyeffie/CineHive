@@ -10,15 +10,14 @@ import Foundation
 @propertyWrapper
 struct UserDefault<T: Codable> {
   let key: String
-  let defaultValue: T
   
-  var wrappedValue: T {
+  var wrappedValue: T? {
     get {
         guard
             let data = UserDefaults.standard.object(forKey: key) as? Data,
             let object = try? JSONDecoder().decode(T.self, from: data)
         else {
-            return defaultValue
+            return nil
         }
         return object
     }
