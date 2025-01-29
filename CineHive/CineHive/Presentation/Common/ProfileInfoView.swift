@@ -36,7 +36,7 @@ final class ProfileInfoView: UIView {
     
     private let movieBoxLabel = {
         let label = BaseLabel(font: CHFont.largeBold, alignment: .center)
-        label.text = "00개의 무비박스 보관중"
+        label.text = "00 개의 무비박스 보관중"
         label.backgroundColor = CHColor.theme
         label.configureRadius(to: 10)
         return label
@@ -112,6 +112,6 @@ final class ProfileInfoView: UIView {
         let dateEncoder = DateFormatter()
         dateEncoder.dateFormat = "yy.MM.dd"
         self.createdAtLabel.text = "\(dateEncoder.string(from: self.profileInfo.createdAt)) 가입"
-        self.movieBoxLabel.text = "\(self.profileInfo.likedMovieIDs.count)개의 무비박스 보관중"
+        self.movieBoxLabel.text = "\(self.profileInfo.likedMovieIDs.count) 개의 무비박스 보관중"
     }
 }
