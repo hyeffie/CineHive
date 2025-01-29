@@ -8,11 +8,11 @@
 import UIKit
 
 final class ProfileImageView: UIImageView {
-    init(imageName: String?) {
+    init(imageName: String?, isSelected: Bool = false) {
         super.init(frame: .zero)
         if let imageName { self.image = UIImage(named: imageName) }
         configureView()
-        setState(isSelected: false)
+        setState(isSelected: isSelected)
     }
     
     @available(*, unavailable)
@@ -51,7 +51,8 @@ final class ProfileImageView: UIImageView {
 }
 
 #Preview {
-    let view = ProfileImageView(imageName: CHImageName.profilePrefix + "0")
-    view.setState(isSelected: true)
-    return view
+    return ProfileImageView(
+        imageName: CHImageName.profilePrefix + "0",
+        isSelected: true
+    )
 }
