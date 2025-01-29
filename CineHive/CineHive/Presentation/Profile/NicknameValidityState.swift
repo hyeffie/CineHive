@@ -25,7 +25,7 @@ enum NicknameValidityState {
         }
     }
     
-    case valid
+    case valid(nickname: String)
     case invalid(_ state: InvalidState)
     
     var message: String {

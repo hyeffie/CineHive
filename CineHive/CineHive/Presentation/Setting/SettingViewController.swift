@@ -24,15 +24,6 @@ final class SettingViewController: BaseViewController {
     )
     
     private lazy var menuTableView = UITableView(frame: .zero)
-    
-    init(profileInfo: ProfileInfo) {
-        super.init(nibName: nil, bundle: nil)
-    }
-    
-    @available(*, unavailable)
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -40,34 +31,36 @@ final class SettingViewController: BaseViewController {
     }
     
     private func configureViews() {
-        let outerInset: CGFloat = 12
         self.view.addSubview(self.profileInfoView)
         self.profileInfoView.snp.makeConstraints { make in
-            make.top.horizontalEdges.equalTo(self.view.safeAreaLayoutGuide).inset(outerInset)
+            make.top.equalTo(self.view.safeAreaLayoutGuide).inset(10)
+            make.top.horizontalEdges.equalTo(self.view.safeAreaLayoutGuide).inset(16)
             make.height.equalTo(self.view.safeAreaLayoutGuide).multipliedBy(0.2)
         }
         
         self.view.addSubview(self.menuTableView)
         self.menuTableView.snp.makeConstraints { make in
-            make.top.equalTo(self.profileInfoView.snp.bottom).offset(outerInset)
-            make.horizontalEdges.equalTo(self.view.safeAreaLayoutGuide).inset(outerInset)
+            make.top.equalTo(self.profileInfoView.snp.bottom).offset(16)
+            make.horizontalEdges.equalTo(self.view.safeAreaLayoutGuide).inset(20)
             make.bottom.equalTo(self.view.safeAreaLayoutGuide)
         }
+        
+        self.title = "설정"
         
         self.menuTableView.registerCellClass(MenuListTableViewCell.self)
         self.menuTableView.dataSource = self
         self.menuTableView.delegate = self
         
-        self.menuTableView.rowHeight = self.view.frame.height / 15
+        self.menuTableView.rowHeight = self.view.frame.height / 20
         self.menuTableView.backgroundColor = .clear
         self.menuTableView.separatorStyle = .singleLine
-        self.menuTableView.separatorColor = CHColor.primaryText.withAlphaComponent(0.6)
+        self.menuTableView.separatorColor = CHColor.primaryText.withAlphaComponent(0.5)
         self.menuTableView.separatorInset = .zero
     }
     
     private func goToProfileSetting() {
-        let viewController = ProfileEditViewController()
-        self.push(viewController)
+        let viewController = NavigationController(rootViewController: ProfileEditViewController())
+        self.present(viewController, animated: true)
     }
     
     private func askForWithdraw() {

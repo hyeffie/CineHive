@@ -8,6 +8,10 @@
 import UIKit
 
 final class NicknameTextField: UIView {
+    var input: String {
+        return self.field.text ?? ""
+    }
+    
     private let field = {
         let field = UITextField()
         field.borderStyle = .none
@@ -82,11 +86,11 @@ extension NicknameTextField {
     }
     
     func setActionToTextField(
-        valueChangeHandler: @escaping (String) -> Void
+        valueChangeHandler: @escaping (String) -> String?
     ) {
         let action = UIAction { [weak self] _ in
-            let input = self?.field.text ?? ""
-            valueChangeHandler(input)
+            guard let self else { return }
+            let _ = valueChangeHandler(self.input)
         }
         self.field.addAction(action, for: .editingChanged)
     }
@@ -94,9 +98,4 @@ extension NicknameTextField {
     func setNickname(_ nickname: String) {
         self.field.text = nickname
     }
-}
-
-#Preview {
-    let vc = ProfileEditViewController()
-    return NavigationController(rootViewController: vc)
 }

@@ -88,34 +88,37 @@ extension ProfileEditViewController {
     private func setForm() {
         self.selectedProfileImageView.configureImage(number: self.form.imageNumber)
         self.nicknameTextField.setNickname(self.form.nickname)
-        validateNickname(self.form.nickname)
+        let _ = validateNickname(self.form.nickname)
     }
 }
 
 extension ProfileEditViewController {
-    private func validateNickname(_ input: String) {
+    private func validateNickname(_ input: String) -> String? {
         let validNicknameLengthRange = (2..<10)
-        let invalidCharacterSet = CharacterSet(arrayLiteral: "@", "#", "$", "%")
-        
         guard validNicknameLengthRange.contains(input.count) else {
             presentValidationResult(.invalid(.invalidLength))
-            return
-        }
-        guard input.rangeOfCharacter(from: invalidCharacterSet) == nil else {
-            presentValidationResult(.invalid(.invalidCharacter))
-            return
+            return nil
         }
         
-        guard input.rangeOfCharacter(from: CharacterSet.decimalDigits) == nil else {
-            presentValidationResult(.invalid(.numberContained))
-            return
+        let invalidCharacterSet = CharacterSet(arrayLiteral: "@", "#", "$", "%")
+        guard input.rangeOfCharacter(from: invalidCharacterSet) == nil else {
+            presentValidationResult(.invalid(.invalidCharacter))
+            return nil
         }
-        presentValidationResult(.valid)
+        
+        let numberCharacterSet = CharacterSet.decimalDigits
+        guard input.rangeOfCharacter(from: numberCharacterSet) == nil else {
+            presentValidationResult(.invalid(.numberContained))
+            return nil
+        }
+        presentValidationResult(.valid(nickname: input))
+        return input
     }
     
     private func presentValidationResult(_ state: NicknameValidityState) {
         self.nicknameTextField.configureValidationResult(message: state.message)
         self.completeButton.isEnabled = state.isEnabled
+        if case .valid(let nickname) = state { self.form.nickname = nickname }
     }
 }
 
@@ -137,8 +140,6 @@ extension ProfileEditViewController {
 extension ProfileEditViewController {
     private func saveProfile() {
         let isSignUp = self.userProfile == nil
-        
-        validateNickname(self.form.nickname)
         
         let newUserProfile = ProfileInfo(
             imageNumber: self.form.imageNumber,
