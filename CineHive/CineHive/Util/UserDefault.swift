@@ -23,8 +23,12 @@ struct UserDefault<T: Codable> {
     }
     set {
         do {
-            let encoded = try JSONEncoder().encode(newValue)
-            UserDefaults.standard.set(encoded, forKey: key)
+            if let newValue {
+                let encoded = try JSONEncoder().encode(newValue)
+                UserDefaults.standard.set(encoded, forKey: key)
+            } else {
+                UserDefaults.standard.removeObject(forKey: key)
+            }
         } catch {
             print("저장 실패")
         }
