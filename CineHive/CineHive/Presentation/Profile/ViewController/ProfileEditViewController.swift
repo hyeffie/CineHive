@@ -154,7 +154,16 @@ extension ProfileEditViewController {
         if isSignUp {
             self.replaceWindowRoot(to: TabBarController())
         } else {
+            nofifyUserProfileUpdate()
             self.dismiss(animated: true)
         }
     }
+    
+    private func nofifyUserProfileUpdate() {
+        NotificationCenter.default.post(name: CHNotification.userProfileUpdated, object: nil)
+    }
+}
+
+enum CHNotification {
+    static let userProfileUpdated = Notification.Name("userProfileUpdated")
 }
