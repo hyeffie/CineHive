@@ -16,7 +16,7 @@ struct CHSymbol {
     static let search = CHSymbol(name: "magnifyingglass")
     static let calendar = CHSymbol(name: "calendar")
     static let film = CHSymbol(name: "film.fill")
-    static let films = CHSymbol(name: "film.stak.fill")
+    static let films = CHSymbol(name: "film.stack")
     static let popcorn = CHSymbol(name: "popcorn")
     static let profile = CHSymbol(name: "person.crop.circle")
     
