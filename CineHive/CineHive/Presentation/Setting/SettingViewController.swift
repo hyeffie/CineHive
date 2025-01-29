@@ -91,6 +91,8 @@ extension SettingViewController: UITableViewDelegate, UITableViewDataSource {
 }
 
 #Preview {
-    let viewController = SettingViewController(profileInfo: .init(nickname: "Effie"))
+    let viewController = SettingViewController(profileInfo: .init(
+        imageNumber: 6, nickname: "Effie", createdAt: .now, likedMovieIDs: []
+    ))
     NavigationController(rootViewController: viewController)
 }

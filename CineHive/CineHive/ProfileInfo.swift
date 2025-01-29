@@ -24,13 +24,6 @@ struct ProfileInfo {
         self.createdAt = createdAt
         self.likedMovieIDs = likedMovieIDs
     }
-    
-    init(nickname: String) {
-        self.imageNumber = (0..<12).randomElement() ?? 0
-        self.nickname = nickname
-        self.createdAt = Date()
-        self.likedMovieIDs = []
-    }
 }
 
 extension ProfileInfo: Codable { }
