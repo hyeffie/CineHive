@@ -24,4 +24,14 @@ class BaseViewController: UIViewController {
     func pop() {
         self.navigationController?.popViewController(animated: true)
     }
+    
+    func replaceWindowRoot(to newViewController: UIViewController) {
+        guard
+            let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+            let window = windowScene.windows.first
+        else {
+            return
+        }
+        window.rootViewController = newViewController
+    }
 }

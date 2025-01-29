@@ -26,7 +26,7 @@ final class TabBarController: UITabBarController {
             title: "UPCOMING"
         )
         let settingFlow = navigationEmebed(
-            BaseViewController(),
+            SettingViewController(),
             symbol: CHSymbol.profile,
             title: "PROFILE"
         )
@@ -47,7 +47,7 @@ final class TabBarController: UITabBarController {
         symbol: CHSymbol,
         title: String
     ) -> UINavigationController {
-        let navigationController = UINavigationController(rootViewController: viewController)
+        let navigationController = NavigationController(rootViewController: viewController)
         navigationController.tabBarItem.image = createStyledImage(systemImage: symbol.value)
         navigationController.tabBarItem.title = title
         return navigationController
@@ -57,8 +57,4 @@ final class TabBarController: UITabBarController {
         let symbolConfig = UIImage.SymbolConfiguration(scale: .large)
         return systemImage?.applyingSymbolConfiguration(symbolConfig)
     }
-}
-
-#Preview {
-    TabBarController()
 }

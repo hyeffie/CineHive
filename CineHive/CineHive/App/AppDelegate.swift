@@ -8,21 +8,30 @@
 import UIKit
 
 @main
-final class AppDelegate: UIResponder, UIApplicationDelegate {
+final class AppDelegate: UIResponder {
     var window: UIWindow?
     
+    @UserDefault(key: UserDefaultKey.userProfile)
+    private var userProfile: ProfileInfo?
+}
+
+extension AppDelegate: UIApplicationDelegate {
     func application(
         _ application: UIApplication,
         didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
     ) -> Bool {
         self.window = UIWindow(frame: UIScreen.main.bounds)
-        self.window?.rootViewController = TabBarController()
+        self.window?.rootViewController = viewController()
         self.window?.makeKeyAndVisible()
         return true
     }
     
     private func viewController() -> UIViewController {
-        let viewController = TempVC()
-        return NavigationController(rootViewController: viewController)
+        if self.userProfile == nil {
+            let viewController = OnboardingViewController()
+            return NavigationController(rootViewController: viewController)
+        } else {
+            return TabBarController()
+        }
     }
 }

@@ -8,7 +8,8 @@
 import UIKit
 
 final class SettingViewController: BaseViewController {
-    private let profileInfo: ProfileInfo
+    @UserDefault(key: UserDefaultKey.userProfile)
+    private var userProfile: ProfileInfo!
     
     private let menuList = [
         "자주 묻는 질문",
@@ -18,21 +19,11 @@ final class SettingViewController: BaseViewController {
     ]
     
     private lazy var profileInfoView = ProfileInfoView(
-        profileInfo: self.profileInfo,
+        profileInfo: self.userProfile,
         tapHandler: self.goToProfileSetting
     )
     
     private lazy var menuTableView = UITableView(frame: .zero)
-    
-    init(profileInfo: ProfileInfo) {
-        self.profileInfo = profileInfo
-        super.init(nibName: nil, bundle: nil)
-    }
-    
-    @available(*, unavailable)
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -40,43 +31,66 @@ final class SettingViewController: BaseViewController {
     }
     
     private func configureViews() {
-        let outerInset: CGFloat = 12
         self.view.addSubview(self.profileInfoView)
         self.profileInfoView.snp.makeConstraints { make in
-            make.top.horizontalEdges.equalTo(self.view.safeAreaLayoutGuide).inset(outerInset)
+            make.top.equalTo(self.view.safeAreaLayoutGuide).inset(10)
+            make.top.horizontalEdges.equalTo(self.view.safeAreaLayoutGuide).inset(16)
             make.height.equalTo(self.view.safeAreaLayoutGuide).multipliedBy(0.2)
         }
         
         self.view.addSubview(self.menuTableView)
         self.menuTableView.snp.makeConstraints { make in
-            make.top.equalTo(self.profileInfoView.snp.bottom).offset(outerInset)
-            make.horizontalEdges.equalTo(self.view.safeAreaLayoutGuide).inset(outerInset)
+            make.top.equalTo(self.profileInfoView.snp.bottom).offset(16)
+            make.horizontalEdges.equalTo(self.view.safeAreaLayoutGuide).inset(20)
             make.bottom.equalTo(self.view.safeAreaLayoutGuide)
         }
+        
+        self.title = "설정"
         
         self.menuTableView.registerCellClass(MenuListTableViewCell.self)
         self.menuTableView.dataSource = self
         self.menuTableView.delegate = self
         
-        self.menuTableView.rowHeight = self.view.frame.height / 15
+        self.menuTableView.rowHeight = self.view.frame.height / 20
         self.menuTableView.backgroundColor = .clear
         self.menuTableView.separatorStyle = .singleLine
-        self.menuTableView.separatorColor = CHColor.primaryText.withAlphaComponent(0.6)
+        self.menuTableView.separatorColor = CHColor.primaryText.withAlphaComponent(0.5)
         self.menuTableView.separatorInset = .zero
     }
     
     private func goToProfileSetting() {
-        let viewController = ProfileEditViewController()
-        self.push(viewController)
+        let viewController = NavigationController(rootViewController: ProfileEditViewController())
+        self.present(viewController, animated: true)
+    }
+    
+    private func askForWithdraw() {
+        let alert = UIAlertController(
+            title: "탈퇴하기",
+            message: "탈퇴를 하면 데이터가 모두 초기화됩니다.\n탈퇴 하시겠습니까?",
+            preferredStyle: .alert
+        )
+        
+        let okAction = UIAlertAction(title: "확인", style: .destructive) { _ in self.withdraw() }
+        let cancelAction = UIAlertAction(title: "취소", style: .default)
+        
+        alert.addAction(okAction)
+        alert.addAction(cancelAction)
+        
+        self.present(alert, animated: true)
     }
     
     private func withdraw() {
-        
+        self.userProfile = nil
+        let destination = NavigationController(rootViewController: OnboardingViewController())
+        replaceWindowRoot(to: destination)
     }
 }
 
 extension SettingViewController: UITableViewDelegate, UITableViewDataSource {
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    func tableView(
+        _ tableView: UITableView,
+        numberOfRowsInSection section: Int
+    ) -> Int {
         return self.menuList.count
     }
     
@@ -88,9 +102,17 @@ extension SettingViewController: UITableViewDelegate, UITableViewDataSource {
         cell.configure(title: self.menuList[indexPath.row])
         return cell
     }
-}
-
-#Preview {
-    let viewController = SettingViewController(profileInfo: .init(nickname: "Effie"))
-    NavigationController(rootViewController: viewController)
+    
+    func tableView(
+        _ tableView: UITableView,
+        didSelectRowAt indexPath: IndexPath
+    ) {
+        tableView.deselectRow(at: indexPath, animated: false)
+        switch indexPath.row {
+        case 3:
+            askForWithdraw()
+        default:
+            return
+        }
+    }
 }

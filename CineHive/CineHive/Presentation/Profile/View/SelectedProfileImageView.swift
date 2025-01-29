@@ -15,7 +15,7 @@ final class SelectedProfileImageView: UIView {
     private let tapHandler: (() -> Void)?
     
     init(
-        imageName: String?,
+        imageName: String? = nil,
         tapHandler: (() -> Void)? = nil
     ) {
         self.profileImageView = ProfileImageView(imageName: imageName)
