@@ -12,7 +12,7 @@ final class ProfileInfoView: UIView {
     
     private let tapHandler: (() -> ())?
     
-    private let profileImageView = ProfileImageView(imageName: nil, isSelected: true)
+    private let profileImageView = ProfileImageView(isSelected: true)
     
     private let nicknameLabel = {
         let label = BaseLabel(font: CHFont.largeBold)

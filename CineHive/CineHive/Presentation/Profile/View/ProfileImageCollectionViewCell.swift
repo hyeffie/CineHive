@@ -8,7 +8,7 @@
 import UIKit
 
 final class ProfileImageCollectionViewCell: UICollectionViewCell {
-    private let imageView = ProfileImageView(imageName: nil)
+    private let imageView = ProfileImageView()
     
     override var isSelected: Bool {
         didSet { configureState() }

@@ -8,7 +8,10 @@
 import UIKit
 
 final class ProfileImageView: UIImageView {
-    init(imageName: String?, isSelected: Bool = false) {
+    init(
+        imageName: String? = nil,
+        isSelected: Bool = false
+    ) {
         super.init(frame: .zero)
         if let imageName { self.image = UIImage(named: imageName) }
         configureView()
