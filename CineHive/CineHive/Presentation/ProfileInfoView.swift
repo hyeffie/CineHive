@@ -10,6 +10,8 @@ import UIKit
 final class ProfileInfoView: UIView {
     private let profileInfo: ProfileInfo
     
+    private let tapHandler: (() -> ())?
+    
     private let profileImageView = ProfileImageView(imageName: nil, isSelected: true)
     
     private let nicknameLabel = {
@@ -40,8 +42,12 @@ final class ProfileInfoView: UIView {
         return label
     }()
     
-    init(profileInfo: ProfileInfo) {
+    init(
+        profileInfo: ProfileInfo,
+        tapHandler: (() -> ())?
+    ) {
         self.profileInfo = profileInfo
+        self.tapHandler = tapHandler
         super.init(frame: .zero)
         configureViews()
         configureInfo()
@@ -50,6 +56,11 @@ final class ProfileInfoView: UIView {
     @available(*, unavailable)
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+    
+    override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
+        super.touchesEnded(touches, with: event)
+        self.tapHandler?()
     }
     
     private func configureViews() {
@@ -89,6 +100,7 @@ final class ProfileInfoView: UIView {
         
         self.backgroundColor = CHColor.darkLabelBackground.withAlphaComponent(0.5)
         self.layer.cornerRadius = 20
+        self.isUserInteractionEnabled = true
     }
     
     private func configureInfo() {
@@ -137,7 +149,10 @@ final class TempVC: BaseViewController {
         configureViews()
     }
     
-    private let infoView = ProfileInfoView(profileInfo: .init(nickname: "에피"))
+    private let infoView = ProfileInfoView(
+        profileInfo: .init(nickname: "에피"),
+        tapHandler: {  print("프로필 정보 뷰 탭") }
+    )
     
     private func configureViews() {
         self.view.addSubview(self.infoView)
