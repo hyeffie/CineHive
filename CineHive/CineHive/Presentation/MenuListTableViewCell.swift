@@ -1,5 +1,5 @@
 //
-//  MenuListCollectionViewCell.swift
+//  MenuListTableViewCell.swift
 //  CineHive
 //
 //  Created by Effie on 1/29/25.
@@ -7,11 +7,11 @@
 
 import UIKit
 
-final class MenuListCollectionViewCell: UICollectionViewCell {
+final class MenuListTableViewCell: UITableViewCell {
     private let titleLabel = BaseLabel(font: CHFont.medium, alignment: .left)
     
-    override init(frame: CGRect) {
-        super.init(frame: frame)
+    override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
+        super.init(style: style, reuseIdentifier: reuseIdentifier)
         configureViews()
     }
     
@@ -29,7 +29,9 @@ final class MenuListCollectionViewCell: UICollectionViewCell {
         self.titleLabel.snp.makeConstraints { make in
             make.edges.equalToSuperview()
         }
+        
+        self.backgroundColor = .clear
     }
 }
 
-extension MenuListCollectionViewCell: ReusableCell {}
+extension MenuListTableViewCell: ReusableCell { }

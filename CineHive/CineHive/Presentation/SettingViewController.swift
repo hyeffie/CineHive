@@ -22,10 +22,7 @@ final class SettingViewController: BaseViewController {
         tapHandler: self.goToProfileSetting
     )
     
-    private lazy var menuTableView = UICollectionView(
-        frame: .zero,
-        collectionViewLayout: self.collectionViewLayout()
-    )
+    private lazy var menuTableView = UITableView(frame: .zero)
     
     init(profileInfo: ProfileInfo) {
         self.profileInfo = profileInfo
@@ -40,17 +37,6 @@ final class SettingViewController: BaseViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         configureViews()
-    }
-    
-    private func collectionViewLayout() -> UICollectionViewLayout {
-        let outerInset: CGFloat = 12
-        let layout = UICollectionViewFlowLayout()
-        let superViewWidth = self.view.safeAreaLayoutGuide.layoutFrame.width - (outerInset * 2)
-        let superViewHeight = self.view.safeAreaLayoutGuide.layoutFrame.height
-        layout.itemSize = CGSize(width: superViewWidth, height: superViewHeight / 15)
-        layout.minimumLineSpacing = 0
-        layout.minimumInteritemSpacing = 0
-        return layout
     }
     
     private func configureViews() {
@@ -68,10 +54,15 @@ final class SettingViewController: BaseViewController {
             make.bottom.equalTo(self.view.safeAreaLayoutGuide)
         }
         
-        self.menuTableView.registerCellClass(MenuListCollectionViewCell.self)
+        self.menuTableView.registerCellClass(MenuListTableViewCell.self)
         self.menuTableView.dataSource = self
         self.menuTableView.delegate = self
+        
+        self.menuTableView.rowHeight = self.view.frame.height / 15
         self.menuTableView.backgroundColor = .clear
+        self.menuTableView.separatorStyle = .singleLine
+        self.menuTableView.separatorColor = CHColor.primaryText.withAlphaComponent(0.6)
+        self.menuTableView.separatorInset = .zero
     }
     
     private func goToProfileSetting() {
@@ -84,35 +75,18 @@ final class SettingViewController: BaseViewController {
     }
 }
 
-extension SettingViewController: UICollectionViewDelegate, UICollectionViewDataSource {
-    func collectionView(
-        _ collectionView: UICollectionView,
-        numberOfItemsInSection section: Int
-    ) -> Int {
+extension SettingViewController: UITableViewDelegate, UITableViewDataSource {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return self.menuList.count
     }
     
-    func collectionView(
-        _ collectionView: UICollectionView,
-        cellForItemAt indexPath: IndexPath
-    ) -> UICollectionViewCell {
-        guard
-            let cell: MenuListCollectionViewCell = collectionView.dequeueReusableCell(for: indexPath)
-        else { return UICollectionViewCell() }
+    func tableView(
+        _ tableView: UITableView,
+        cellForRowAt indexPath: IndexPath
+    ) -> UITableViewCell {
+        guard let cell: MenuListTableViewCell = tableView.dequeueReusableCell(for: indexPath) else { return UITableViewCell() }
         cell.configure(title: self.menuList[indexPath.row])
         return cell
-    }
-    
-    func collectionView(
-        _ collectionView: UICollectionView,
-        didSelectItemAt indexPath: IndexPath
-    ) {
-        switch indexPath.row {
-        case 3:
-            withdraw()
-        default:
-            return
-        }
     }
 }
 
