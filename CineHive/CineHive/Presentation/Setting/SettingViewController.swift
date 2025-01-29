@@ -18,10 +18,7 @@ final class SettingViewController: BaseViewController {
         "탈퇴하기",
     ]
     
-    private lazy var profileInfoView = ProfileInfoView(
-        profileInfo: self.userProfile,
-        tapHandler: self.goToProfileSetting
-    )
+    private lazy var profileInfoView = ProfileInfoView(tapHandler: self.goToProfileSetting)
     
     private lazy var menuTableView = UITableView(frame: .zero)
 
@@ -34,7 +31,7 @@ final class SettingViewController: BaseViewController {
         self.view.addSubview(self.profileInfoView)
         self.profileInfoView.snp.makeConstraints { make in
             make.top.equalTo(self.view.safeAreaLayoutGuide).inset(10)
-            make.top.horizontalEdges.equalTo(self.view.safeAreaLayoutGuide).inset(16)
+            make.horizontalEdges.equalTo(self.view.safeAreaLayoutGuide).inset(16)
             make.height.equalTo(self.view.safeAreaLayoutGuide).multipliedBy(0.2)
         }
         

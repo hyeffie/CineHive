@@ -8,7 +8,10 @@
 import UIKit
 
 final class ProfileInfoView: UIView {
-    private let profileInfo: ProfileInfo
+    @UserDefault(key: UserDefaultKey.userProfile)
+    private var profileInfo: ProfileInfo!
+    
+//    private let profileInfo: ProfileInfo
     
     private let tapHandler: (() -> ())?
     
@@ -42,13 +45,10 @@ final class ProfileInfoView: UIView {
         return label
     }()
     
-    init(
-        profileInfo: ProfileInfo,
-        tapHandler: (() -> ())?
-    ) {
-        self.profileInfo = profileInfo
+    init(tapHandler: (() -> ())?) {
         self.tapHandler = tapHandler
         super.init(frame: .zero)
+        addNotificationObserver()
         configureViews()
         configureInfo()
     }
@@ -103,7 +103,7 @@ final class ProfileInfoView: UIView {
         self.isUserInteractionEnabled = true
     }
     
-    private func configureInfo() {
+    @objc private func configureInfo() {
         let imageName = CHImageName.profileImage(number: self.profileInfo.imageNumber)
         self.profileImageView.configureImage(name: imageName)
         
@@ -113,5 +113,14 @@ final class ProfileInfoView: UIView {
         dateEncoder.dateFormat = "yy.MM.dd"
         self.createdAtLabel.text = "\(dateEncoder.string(from: self.profileInfo.createdAt)) 가입"
         self.movieBoxLabel.text = "\(self.profileInfo.likedMovieIDs.count) 개의 무비박스 보관중"
+    }
+    
+    private func addNotificationObserver() {
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(self.configureInfo),
+            name: CHNotification.userProfileUpdated,
+            object: nil
+        )
     }
 }
