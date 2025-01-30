@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		F4CD2A202D4B191E00C2B570 /* Kingfisher in Frameworks */ = {isa = PBXBuildFile; productRef = F4CD2A1F2D4B191E00C2B570 /* Kingfisher */; };
 		F4F0ABFB2D43881800C367AE /* SnapKit in Frameworks */ = {isa = PBXBuildFile; productRef = F4F0ABFA2D43881800C367AE /* SnapKit */; };
 /* End PBXBuildFile section */
 
@@ -40,6 +41,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F4CD2A202D4B191E00C2B570 /* Kingfisher in Frameworks */,
 				F4F0ABFB2D43881800C367AE /* SnapKit in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -84,6 +86,7 @@
 			name = CineHive;
 			packageProductDependencies = (
 				F4F0ABFA2D43881800C367AE /* SnapKit */,
+				F4CD2A1F2D4B191E00C2B570 /* Kingfisher */,
 			);
 			productName = CineHive;
 			productReference = F4F0AB4E2D4359B800C367AE /* CineHive.app */;
@@ -115,6 +118,7 @@
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
 				F4F0ABF92D43881800C367AE /* XCRemoteSwiftPackageReference "SnapKit" */,
+				F4CD2A1E2D4B191E00C2B570 /* XCRemoteSwiftPackageReference "Kingfisher" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = F4F0AB4F2D4359B800C367AE /* Products */;
@@ -356,6 +360,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		F4CD2A1E2D4B191E00C2B570 /* XCRemoteSwiftPackageReference "Kingfisher" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/onevcat/Kingfisher.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 8.1.4;
+			};
+		};
 		F4F0ABF92D43881800C367AE /* XCRemoteSwiftPackageReference "SnapKit" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/SnapKit/SnapKit.git";
@@ -367,6 +379,11 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		F4CD2A1F2D4B191E00C2B570 /* Kingfisher */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = F4CD2A1E2D4B191E00C2B570 /* XCRemoteSwiftPackageReference "Kingfisher" */;
+			productName = Kingfisher;
+		};
 		F4F0ABFA2D43881800C367AE /* SnapKit */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = F4F0ABF92D43881800C367AE /* XCRemoteSwiftPackageReference "SnapKit" */;
