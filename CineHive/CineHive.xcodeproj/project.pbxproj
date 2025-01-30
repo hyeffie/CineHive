@@ -8,10 +8,13 @@
 
 /* Begin PBXBuildFile section */
 		F4CD2A202D4B191E00C2B570 /* Kingfisher in Frameworks */ = {isa = PBXBuildFile; productRef = F4CD2A1F2D4B191E00C2B570 /* Kingfisher */; };
+		F4CD2A7B2D4B58D200C2B570 /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = F4CD2A7A2D4B58D200C2B570 /* Alamofire */; };
+		F4CD2A802D4B59BB00C2B570 /* Base.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = F4CD2A7F2D4B59BB00C2B570 /* Base.xcconfig */; };
 		F4F0ABFB2D43881800C367AE /* SnapKit in Frameworks */ = {isa = PBXBuildFile; productRef = F4F0ABFA2D43881800C367AE /* SnapKit */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		F4CD2A7F2D4B59BB00C2B570 /* Base.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Base.xcconfig; sourceTree = "<group>"; };
 		F4F0AB4E2D4359B800C367AE /* CineHive.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CineHive.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -41,6 +44,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F4CD2A7B2D4B58D200C2B570 /* Alamofire in Frameworks */,
 				F4CD2A202D4B191E00C2B570 /* Kingfisher in Frameworks */,
 				F4F0ABFB2D43881800C367AE /* SnapKit in Frameworks */,
 			);
@@ -52,6 +56,7 @@
 		F4F0AB452D4359B800C367AE = {
 			isa = PBXGroup;
 			children = (
+				F4CD2A7F2D4B59BB00C2B570 /* Base.xcconfig */,
 				F4F0AB502D4359B800C367AE /* CineHive */,
 				F4F0AB4F2D4359B800C367AE /* Products */,
 			);
@@ -87,6 +92,7 @@
 			packageProductDependencies = (
 				F4F0ABFA2D43881800C367AE /* SnapKit */,
 				F4CD2A1F2D4B191E00C2B570 /* Kingfisher */,
+				F4CD2A7A2D4B58D200C2B570 /* Alamofire */,
 			);
 			productName = CineHive;
 			productReference = F4F0AB4E2D4359B800C367AE /* CineHive.app */;
@@ -119,6 +125,7 @@
 			packageReferences = (
 				F4F0ABF92D43881800C367AE /* XCRemoteSwiftPackageReference "SnapKit" */,
 				F4CD2A1E2D4B191E00C2B570 /* XCRemoteSwiftPackageReference "Kingfisher" */,
+				F4CD2A792D4B58D200C2B570 /* XCRemoteSwiftPackageReference "Alamofire" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = F4F0AB4F2D4359B800C367AE /* Products */;
@@ -135,6 +142,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F4CD2A802D4B59BB00C2B570 /* Base.xcconfig in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -219,6 +227,7 @@
 		};
 		F4F0AB642D4359BA00C367AE /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = F4CD2A7F2D4B59BB00C2B570 /* Base.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
@@ -282,6 +291,7 @@
 		};
 		F4F0AB652D4359BA00C367AE /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = F4CD2A7F2D4B59BB00C2B570 /* Base.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
@@ -368,6 +378,14 @@
 				minimumVersion = 8.1.4;
 			};
 		};
+		F4CD2A792D4B58D200C2B570 /* XCRemoteSwiftPackageReference "Alamofire" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/Alamofire/Alamofire.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 5.10.2;
+			};
+		};
 		F4F0ABF92D43881800C367AE /* XCRemoteSwiftPackageReference "SnapKit" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/SnapKit/SnapKit.git";
@@ -383,6 +401,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = F4CD2A1E2D4B191E00C2B570 /* XCRemoteSwiftPackageReference "Kingfisher" */;
 			productName = Kingfisher;
+		};
+		F4CD2A7A2D4B58D200C2B570 /* Alamofire */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = F4CD2A792D4B58D200C2B570 /* XCRemoteSwiftPackageReference "Alamofire" */;
+			productName = Alamofire;
 		};
 		F4F0ABFA2D43881800C367AE /* SnapKit */ = {
 			isa = XCSwiftPackageProductDependency;
