@@ -13,6 +13,8 @@ final class MainViewController: BaseViewController {
     
     private let networkRequester = NetworkManager()
     
+    private var trendingMovies: [TrendingMovieResponse.MovieSummary] = []
+    
     private lazy var profileInfoView = ProfileInfoView(tapHandler: self.goToProfileSetting)
     
     private lazy var recentQueryList = SectionedView(
@@ -34,13 +36,18 @@ final class MainViewController: BaseViewController {
         configureViews()
         
         self.networkRequester.getTrendingMovies(
-            successHandler: { response in
-                dump(response)
+            successHandler: { [weak self] response in
+                self?.handleResponse(response: response)
             },
             failureHandler: { error in
                 print(error)
             }
         )
+    }
+    
+    private func handleResponse(response: TrendingMovieResponse) {
+        self.trendingMovies = Array(response.movies.prefix(10))
+        self.todayFeaturedMovieList.content.reloadData()
     }
     
     private func todayMovieCollectionViewLayout() -> UICollectionViewLayout {
@@ -109,7 +116,7 @@ extension MainViewController: UICollectionViewDataSource, UICollectionViewDelega
         _ collectionView: UICollectionView,
         numberOfItemsInSection section: Int
     ) -> Int {
-        return 10
+        return self.trendingMovies.count
     }
     
     func collectionView(
@@ -119,14 +126,15 @@ extension MainViewController: UICollectionViewDataSource, UICollectionViewDelega
         guard let cell: FeaturedMovieCollectionViewCell = collectionView.dequeueReusableCell(for: indexPath) else {
             return UICollectionViewCell()
         }
-        let targetMovie = FeaturedMovieSummary(
-            posterImageURL: URL(string: "https://cdn.sisain.co.kr/news/photo/201906/34919_67998_0853.jpg"),
-            title: "기생충",
-            synopsys: "이 사진은 이른바 만들어진 사진, 메이킹 포토(Making Photo)의 일종이며 분위기는 포스트모던하다. 실제로 연출 사진 혹은 메이킹 포토는 사진계에서는 대세가 된 지 오래다. 이 사진이 여러 장의 사진을 몽타주해서 만들어졌음은 두 말할 필요도 없다. 우선 인물과 사물에 따라 빛의 방향이 다르다.",
+        let target = self.trendingMovies[indexPath.row]
+        let movieSummary = FeaturedMovieSummary(
+            posterImageURL: TMDBImage.w500(target.posterPath ?? "").url,
+            title: target.title,
+            synopsys: target.overview,
             liked: true
         )
         cell.configure(
-            movieSummary: targetMovie,
+            movieSummary: movieSummary,
             likeButtonAction: { liked in print(liked) }
         )
         return cell
