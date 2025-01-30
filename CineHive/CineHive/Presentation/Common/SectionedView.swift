@@ -16,7 +16,7 @@ final class SectionedView<Content: UIView>: UIView {
     
     init(
         title: String,
-        accessoryButtonInfo: (title: String, action: () -> ())?,
+        accessoryButtonInfo: (title: String, action: () -> ())? = nil,
         content: Content
     ) {
         if let accessoryButtonInfo {
@@ -53,7 +53,7 @@ final class SectionedView<Content: UIView>: UIView {
         let titleContainer = UIView()
         titleContainer.addSubview(titleStack)
         titleStack.snp.makeConstraints { make in
-            make.horizontalEdges.equalToSuperview().inset(12)
+            make.horizontalEdges.equalToSuperview().inset(16)
             make.verticalEdges.equalToSuperview()
         }
         
