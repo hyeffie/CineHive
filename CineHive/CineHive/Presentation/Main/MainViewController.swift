@@ -126,6 +126,23 @@ final class MainViewController: BaseViewController {
     private func goToSearch(query: String? = nil) {
         print(#function)
     }
+    
+    private func toggleLike(movieID: Int) {
+        if self.userProfile.likedMovieIDs.contains(movieID) {
+            self.userProfile.likedMovieIDs.removeAll { id in id == movieID }
+        } else {
+            self.userProfile.likedMovieIDs.append(movieID)
+        }
+        notifyLikedMovieMutated()
+    }
+    
+    private func findMovieIfLiked(movieID: Int) -> Bool {
+        return self.userProfile.likedMovieIDs.contains(movieID)
+    }
+    
+    private func notifyLikedMovieMutated() {
+        NotificationCenter.default.post(name: CHNotification.userLikedMovieMutated, object: nil)
+    }
 }
 
 extension MainViewController: UICollectionViewDataSource, UICollectionViewDelegate {
@@ -145,14 +162,15 @@ extension MainViewController: UICollectionViewDataSource, UICollectionViewDelega
         }
         let target = self.trendingMovies[indexPath.row]
         let movieSummary = FeaturedMovieSummary(
+            id: target.id,
             posterImageURL: TMDBImage.w500(target.posterPath ?? "").url,
             title: target.title,
             synopsys: target.overview,
-            liked: true
+            liked: findMovieIfLiked(movieID: target.id)
         )
         cell.configure(
             movieSummary: movieSummary,
-            likeButtonAction: { liked in print(liked) }
+            likeButtonAction: { movieID in self.toggleLike(movieID: movieID) }
         )
         return cell
     }

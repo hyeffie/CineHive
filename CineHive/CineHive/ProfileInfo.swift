@@ -8,16 +8,16 @@
 import Foundation
 
 struct ProfileInfo {
-    let imageNumber: Int
-    let nickname: String
-    let createdAt: Date
-    let likedMovieIDs: [String]
+    var imageNumber: Int
+    var nickname: String
+    var createdAt: Date
+    var likedMovieIDs: [Int]
     
     init(
         imageNumber: Int,
         nickname: String,
         createdAt: Date,
-        likedMovieIDs: [String]
+        likedMovieIDs: [Int]
     ) {
         self.imageNumber = imageNumber
         self.nickname = nickname

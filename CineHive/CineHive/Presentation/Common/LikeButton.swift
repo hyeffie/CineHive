@@ -8,6 +8,8 @@
 import UIKit
 
 final class LikeButton: UIButton {
+    private var tapAction: (() -> Void)? = nil
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
         configureView()
@@ -23,34 +25,28 @@ final class LikeButton: UIButton {
         self.setImage(CHSymbol.emptyHeart.value, for: .normal)
         self.setImage(CHSymbol.heart.value, for: .selected)
         
-//        self.configurationUpdateHandler = { button in
-//            button.configuration?.baseForegroundColor = CHColor.theme
-//            switch button.state {
-//            case .selected:
-//                button.configuration?.image = CHSymbol.heart.value
-//            case .normal:
-//                button.configuration?.image = CHSymbol.emptyHeart.value
-//            default:
-//                return
-//            }
-//        }
-        
         self.snp.makeConstraints { make in
             make.width.equalTo(self.snp.height)
         }
+        
+        self.isSelected = false
+        self.addTarget(self, action: #selector(doAction), for: .touchUpInside)
     }
     
     func configure(
+        id: Int,
         liked: Bool,
-        action: @escaping (Bool) -> Void
+        action: @escaping (Int) -> Void
     ) {
         self.isSelected = liked
-        
-        let action = UIAction { [weak self] _ in
+        self.tapAction = { [weak self] in
             guard let self else { return }
             self.isSelected.toggle()
-            action(self.isSelected)
+            action(id)
         }
-        self.addAction(action, for: .touchUpInside)
+    }
+    
+    @objc func doAction() {
+        self.tapAction?()
     }
 }
