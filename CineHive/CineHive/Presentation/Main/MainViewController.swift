@@ -34,13 +34,16 @@ final class MainViewController: BaseViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         configureViews()
-        
+        getTrendingMovies()
+    }
+    
+    private func getTrendingMovies() {
         self.networkRequester.getTrendingMovies(
             successHandler: { [weak self] response in
                 self?.handleResponse(response: response)
             },
-            failureHandler: { error in
-                print(error)
+            failureHandler: { [weak self] networkError in
+                self?.handleError(networkError)
             }
         )
     }
@@ -48,6 +51,12 @@ final class MainViewController: BaseViewController {
     private func handleResponse(response: TrendingMovieResponse) {
         self.trendingMovies = Array(response.movies.prefix(10))
         self.todayFeaturedMovieList.content.reloadData()
+    }
+    
+    private func handleError(_ error: Error) {
+        if let presentableError = error as? PresentableError {
+            presentErrorAlert(message: presentableError.message)
+        }
     }
     
     private func todayMovieCollectionViewLayout() -> UICollectionViewLayout {
