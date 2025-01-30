@@ -63,18 +63,23 @@ final class FeaturedMovieCollectionViewCell: UICollectionViewCell {
     
     func configure(
         movieSummary: FeaturedMovieSummary,
-        likeButtonAction: @escaping (Bool) -> Void
+        likeButtonAction: @escaping (Int) -> Void
     ) {
         self.posterImageView.kf.setImage(with: movieSummary.posterImageURL)
         self.movieTitleLabel.text = movieSummary.title
         self.movieSynopsysLabel.text = movieSummary.synopsys
-        self.likeButton.configure(liked: movieSummary.liked, action: { liked in likeButtonAction(liked) })
+        self.likeButton.configure(
+            id: movieSummary.id,
+            liked: movieSummary.liked,
+            action: { movieID in likeButtonAction(movieID) }
+        )
     }
 }
 
 extension FeaturedMovieCollectionViewCell: ReusableCell {}
 
 struct FeaturedMovieSummary {
+    let id: Int
     let posterImageURL: URL?
     let title: String
     let synopsys: String
