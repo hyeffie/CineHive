@@ -6,24 +6,33 @@
 //
 
 import UIKit
+import Kingfisher
 
 final class FeaturedMovieCollectionViewCell: UICollectionViewCell {
     private let posterImageView = {
         let imageView = UIImageView()
         imageView.contentMode = .scaleAspectFill
-        imageView.configureRadius(to: 10)
+        imageView.configureRadius(to: 12)
         return imageView
     }()
     
-    private let movieTitleLabel = BaseLabel(font: CHFont.mediumBold)
+    private let movieTitleLabel = BaseLabel(font: CHFont.largeBold)
     
     private let movieSynopsysLabel = BaseLabel(font: CHFont.small, numberOfLines: 2)
     
-    private let likeButton: LikeButton
+    private let likeButton = LikeButton(frame: .zero)
     
-    init(likeButtonAction: @escaping (Bool) -> Void) {
-        self.likeButton = LikeButton(action: likeButtonAction)
-        super.init(frame: .zero)
+    private lazy var hStack = {
+        let stack = UIStackView(arrangedSubviews: [self.movieTitleLabel, self.likeButton])
+        stack.axis = .horizontal
+        stack.alignment = .fill
+        stack.distribution = .fill
+        stack.spacing = 4
+        return stack
+    }()
+    
+    override init(frame: CGRect) {
+        super.init(frame: frame)
         configureViews()
     }
     
@@ -36,31 +45,30 @@ final class FeaturedMovieCollectionViewCell: UICollectionViewCell {
         self.contentView.addSubview(self.posterImageView)
         self.posterImageView.snp.makeConstraints { make in
             make.top.horizontalEdges.equalToSuperview()
-            make.height.equalTo(self.posterImageView.snp.width).multipliedBy(40 / 27)
+            make.height.equalToSuperview().multipliedBy(0.8)
         }
         
-        self.contentView.addSubview(self.movieTitleLabel)
-        self.movieTitleLabel.snp.makeConstraints { make in
+        self.contentView.addSubview(self.hStack)
+        self.hStack.snp.makeConstraints { make in
             make.top.equalTo(self.posterImageView.snp.bottom).offset(8)
-            make.leading.equalTo(self.posterImageView)
-        }
-        
-        self.contentView.addSubview(self.likeButton)
-        self.likeButton.snp.makeConstraints { make in
-            make.verticalEdges.equalTo(self.movieTitleLabel)
-            make.leading.equalTo(self.movieTitleLabel.snp.trailing).offset(4)
-            make.trailing.equalToSuperview()
+            make.horizontalEdges.equalToSuperview()
         }
         
         self.contentView.addSubview(self.movieSynopsysLabel)
         self.movieSynopsysLabel.snp.makeConstraints { make in
-            make.top.equalTo(self.movieTitleLabel.snp.bottom).offset(4)
+            make.top.equalTo(self.hStack.snp.bottom).offset(4)
             make.horizontalEdges.bottom.equalToSuperview()
         }
     }
     
-    func configure(with movieSummary: FeaturedMovieSummary) {
-        
+    func configure(
+        movieSummary: FeaturedMovieSummary,
+        likeButtonAction: @escaping (Bool) -> Void
+    ) {
+        self.posterImageView.kf.setImage(with: movieSummary.posterImageURL)
+        self.movieTitleLabel.text = movieSummary.title
+        self.movieSynopsysLabel.text = movieSummary.synopsys
+        self.likeButton.configure(liked: movieSummary.liked, action: { liked in likeButtonAction(liked) })
     }
 }
 
@@ -68,4 +76,7 @@ extension FeaturedMovieCollectionViewCell: ReusableCell {}
 
 struct FeaturedMovieSummary {
     let posterImageURL: URL?
+    let title: String
+    let synopsys: String
+    var liked: Bool
 }

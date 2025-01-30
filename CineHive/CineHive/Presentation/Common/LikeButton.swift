@@ -8,17 +8,8 @@
 import UIKit
 
 final class LikeButton: UIButton {
-    init(
-        action: @escaping (Bool) -> Void
-    ) {
-        super.init(frame: .zero)
-        let action = UIAction { [weak self] _ in
-            guard let self else { return }
-            let liked = self.isSelected
-            action(liked)
-        }
-        self.addAction(action, for: .touchUpInside)
-        
+    override init(frame: CGRect) {
+        super.init(frame: frame)
         configureView()
     }
     
@@ -28,18 +19,38 @@ final class LikeButton: UIButton {
     }
     
     private func configureView() {
-        self.configurationUpdateHandler = { button in
-            button.configuration?.title = ""
-            button.configuration?.baseForegroundColor = CHColor.theme
-            
-            switch button.state {
-            case .normal:
-                button.configuration?.image = CHSymbol.heart.value
-            case .disabled:
-                button.configuration?.image = CHSymbol.emptyHeart.value
-            default:
-                return
-            }
+        self.tintColor = CHColor.theme
+        self.setImage(CHSymbol.emptyHeart.value, for: .normal)
+        self.setImage(CHSymbol.heart.value, for: .selected)
+        
+//        self.configurationUpdateHandler = { button in
+//            button.configuration?.baseForegroundColor = CHColor.theme
+//            switch button.state {
+//            case .selected:
+//                button.configuration?.image = CHSymbol.heart.value
+//            case .normal:
+//                button.configuration?.image = CHSymbol.emptyHeart.value
+//            default:
+//                return
+//            }
+//        }
+        
+        self.snp.makeConstraints { make in
+            make.width.equalTo(self.snp.height)
         }
+    }
+    
+    func configure(
+        liked: Bool,
+        action: @escaping (Bool) -> Void
+    ) {
+        self.isSelected = liked
+        
+        let action = UIAction { [weak self] _ in
+            guard let self else { return }
+            self.isSelected.toggle()
+            action(self.isSelected)
+        }
+        self.addAction(action, for: .touchUpInside)
     }
 }

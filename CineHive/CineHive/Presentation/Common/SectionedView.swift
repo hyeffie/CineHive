@@ -60,7 +60,7 @@ final class SectionedView<Content: UIView>: UIView {
         let containerStack = UIStackView(arrangedSubviews: [titleContainer])
         containerStack.axis = .vertical
         containerStack.alignment = .fill
-        containerStack.spacing = 4
+        containerStack.spacing = 12
         
         containerStack.addArrangedSubview(self.content)
         
