@@ -11,6 +11,8 @@ final class MainViewController: BaseViewController {
     @UserDefault(key: UserDefaultKey.userProfile)
     private var userProfile: ProfileInfo!
     
+    private let networkRequester = NetworkManager()
+    
     private lazy var profileInfoView = ProfileInfoView(tapHandler: self.goToProfileSetting)
     
     private lazy var recentQueryList = SectionedView(
@@ -30,6 +32,15 @@ final class MainViewController: BaseViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         configureViews()
+        
+        self.networkRequester.getTrendingMovies(
+            successHandler: { response in
+                dump(response)
+            },
+            failureHandler: { error in
+                print(error)
+            }
+        )
     }
     
     private func todayMovieCollectionViewLayout() -> UICollectionViewLayout {

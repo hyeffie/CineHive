@@ -11,7 +11,7 @@ import Alamofire
 final class NetworkManager {
     func getTrendingMovies(
         timeWindow: TimeWindow = .day,
-        trendingMovieParameter: TrendingMovieRequestParameter = .init(),
+        trendingMovieParameter: TrendingMovieRequestParameter = .init(page: 1, language: "ko-KR"),
         successHandler: @escaping (TrendingMovieResponse) -> (),
         failureHandler: @escaping (NetworkError) -> ()
     ) {

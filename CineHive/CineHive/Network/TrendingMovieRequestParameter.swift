@@ -8,8 +8,8 @@
 import Foundation
 
 struct TrendingMovieRequestParameter: Encodable {
-    let page: Int = 1
-    let language: String = "ko-KR"
+    let page: Int
+    let language: String
 }
 
 enum TimeWindow: String {
