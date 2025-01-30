@@ -11,3 +11,8 @@ struct TrendingMovieRequestParameter: Encodable {
     let page: Int = 1
     let language: String = "ko-KR"
 }
+
+enum TimeWindow: String {
+    case day
+    case week
+}

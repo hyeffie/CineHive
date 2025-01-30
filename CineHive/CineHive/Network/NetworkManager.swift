@@ -9,6 +9,23 @@ import Foundation
 import Alamofire
 
 final class NetworkManager {
+    func getTrendingMovies(
+        timeWindow: TimeWindow = .day,
+        trendingMovieParameter: TrendingMovieRequestParameter = .init(),
+        successHandler: @escaping (TrendingMovieResponse) -> (),
+        failureHandler: @escaping (NetworkError) -> ()
+    ) {
+        let components = TMDBRequestComponents(
+            path: "trending/movie/\(timeWindow)",
+            queryParamerters: trendingMovieParameter
+        )
+        callTMDBGET(
+            requestComponents: components,
+            successHandler: successHandler,
+            failureHandler: failureHandler
+        )
+    }
+    
     private func tmdbAuth() -> HTTPHeader? {
         guard
             let apiKey = KeyLoader.loadKey(scope: .TMDB, item: .apiKey)
