@@ -13,12 +13,12 @@ enum KeyLoader {
     }
     
     private enum ResourceName {
-        static let Credential = "Credential"
+        static let Info = "Info"
     }
     
     private static let confidentialDictionary: NSDictionary?  = {
         guard
-            let confidentialURL = Bundle.main.path(forResource: ResourceName.Credential, ofType: FileExtension.propertyList)
+            let confidentialURL = Bundle.main.path(forResource: ResourceName.Info, ofType: FileExtension.propertyList)
         else {
             return nil
         }
