@@ -100,6 +100,10 @@ final class MainViewController: BaseViewController {
         
         self.title = "CineHive"
         configureTodayMovieCollectionView()
+        
+        let searchButton = UIBarButtonItem(systemItem: .search)
+        self.navigationItem.setRightBarButton(searchButton, animated: false)
+        searchButton.primaryAction = UIAction { _ in self.goToSearch() }
     }
     
     private func configureTodayMovieCollectionView() {
@@ -117,6 +121,10 @@ final class MainViewController: BaseViewController {
     private func goToProfileSetting() {
         let viewController = NavigationController(rootViewController: ProfileEditViewController())
         self.present(viewController, animated: true)
+    }
+    
+    private func goToSearch(query: String? = nil) {
+        print(#function)
     }
 }
 
