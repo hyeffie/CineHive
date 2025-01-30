@@ -133,11 +133,15 @@ final class MainViewController: BaseViewController {
         } else {
             self.userProfile.likedMovieIDs.append(movieID)
         }
-        print(self.userProfile.likedMovieIDs)
+        notifyLikedMovieMutated()
     }
     
     private func findMovieIfLiked(movieID: Int) -> Bool {
         return self.userProfile.likedMovieIDs.contains(movieID)
+    }
+    
+    private func notifyLikedMovieMutated() {
+        NotificationCenter.default.post(name: CHNotification.userLikedMovieMutated, object: nil)
     }
 }
 

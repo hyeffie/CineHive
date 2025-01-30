@@ -122,5 +122,12 @@ final class ProfileInfoView: UIView {
             name: CHNotification.userProfileUpdated,
             object: nil
         )
+        
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(self.configureInfo),
+            name: CHNotification.userLikedMovieMutated,
+            object: nil
+        )
     }
 }
