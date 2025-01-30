@@ -19,7 +19,7 @@ enum NetworkError: PresentableError {
             return "네트워크 에러가 발생했어요"
         case .encodingError, .decodingError:
             return "앱에서 데이터를 처리하는 데에 문제가 생겼어요"
-        case .unsplashError(let tmdbError):
+        case .tmdbError(let tmdbError):
             return "TMDB에서 데이터를 가져오는 중에 문제가 생겼어요\n\(tmdbError.messsage)"
         case .accessKeyNotFound:
             return "데이터에 접근할 수 있는 권한이 없어요"

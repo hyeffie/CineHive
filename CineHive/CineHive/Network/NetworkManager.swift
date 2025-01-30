@@ -8,14 +8,6 @@
 import Foundation
 import Alamofire
 
-struct TMDBRequestComponents<Parameters: Encodable> {
-    let path: String
-    let queryParamerters: Parameters?
-}
-
-struct GeneralEncodable: Encodable {}
-
-
 final class NetworkManager {
     private func tmdbAuth() -> HTTPHeader? {
         guard
