@@ -163,7 +163,3 @@ extension ProfileEditViewController {
         NotificationCenter.default.post(name: CHNotification.userProfileUpdated, object: nil)
     }
 }
-
-enum CHNotification {
-    static let userProfileUpdated = Notification.Name("userProfileUpdated")
-}

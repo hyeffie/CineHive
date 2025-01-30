@@ -34,4 +34,19 @@ class BaseViewController: UIViewController {
         }
         window.rootViewController = newViewController
     }
+    
+    func presentErrorAlert(message: String) {
+        let alertController = UIAlertController(
+            title: "오류",
+            message: message,
+            preferredStyle: .alert
+        )
+        let okAction = UIAlertAction(title: "알겠어요", style: .default)
+        alertController.addAction(okAction)
+        Task {
+            await MainActor.run {
+                self.present(alertController, animated: true)
+            }
+        }
+    }
 }
