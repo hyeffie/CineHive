@@ -36,7 +36,8 @@ final class MainViewController: BaseViewController {
         let layout = UICollectionViewFlowLayout()
         let itemWidth = self.view.frame.width / 7 * 4
         layout.itemSize = CGSize.init(width: itemWidth, height: itemWidth * (45 / 27))
-        layout.minimumInteritemSpacing = 10
+        layout.minimumInteritemSpacing = 16
+        layout.minimumLineSpacing = 16
         layout.scrollDirection = .horizontal
         layout.sectionInset = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
         return layout
@@ -57,9 +58,10 @@ final class MainViewController: BaseViewController {
         self.recentQueryList.snp.makeConstraints { make in
             make.top.equalTo(self.profileInfoView.snp.bottom).offset(spacing)
             make.horizontalEdges.equalTo(self.view.safeAreaLayoutGuide)
-            
-            // 임시 코드
-            make.height.equalTo(100)
+        }
+        
+        self.recentQueryList.content.snp.makeConstraints { make in
+            make.height.equalTo(80)
         }
         
         self.view.addSubview(self.todayFeaturedMovieList)
