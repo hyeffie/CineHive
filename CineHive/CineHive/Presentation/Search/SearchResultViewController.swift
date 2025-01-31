@@ -7,7 +7,7 @@
 
 import UIKit
 
-final class SearchResultViewController: UIViewController {
+final class SearchResultViewController: BaseViewController {
     private let tableView = UITableView(frame: .zero)
     
     override func viewDidLoad() {
@@ -27,6 +27,8 @@ final class SearchResultViewController: UIViewController {
         self.tableView.registerCellClass(SearchMovieTableViewCell.self)
         self.tableView.dataSource = self
         self.tableView.delegate = self
+        
+        self.tableView.backgroundColor = .clear
     }
 }
 

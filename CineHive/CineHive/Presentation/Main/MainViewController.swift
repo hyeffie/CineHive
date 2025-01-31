@@ -124,7 +124,8 @@ final class MainViewController: BaseViewController {
     }
     
     private func goToSearch(query: String? = nil) {
-        print(#function)
+        let viewController = SearchResultViewController()
+        self.push(viewController)
     }
     
     private func toggleLike(movieID: Int) {

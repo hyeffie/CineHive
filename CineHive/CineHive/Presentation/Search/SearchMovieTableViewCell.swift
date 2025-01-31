@@ -72,6 +72,8 @@ final class SearchMovieTableViewCell: UITableViewCell {
             make.bottom.trailing.equalToSuperview().inset(outerInset)
             make.height.equalTo(self.posterImageView).dividedBy(5)
         }
+        
+        self.backgroundColor = .clear
     }
 }
 
