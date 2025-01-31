@@ -146,7 +146,8 @@ extension ProfileEditViewController {
             imageNumber: self.form.imageNumber,
             nickname: self.form.nickname,
             createdAt: self.userProfile?.createdAt ?? .now,
-            likedMovieIDs: self.userProfile?.likedMovieIDs ?? []
+            likedMovieIDs: self.userProfile?.likedMovieIDs ?? [],
+            submittedQueries: []
         )
         
         self.userProfile = newUserProfile

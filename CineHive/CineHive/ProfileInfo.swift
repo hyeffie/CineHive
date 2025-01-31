@@ -12,17 +12,20 @@ struct ProfileInfo {
     var nickname: String
     var createdAt: Date
     var likedMovieIDs: [Int]
+    var submittedQueries: Set<SubmittedQuery>
     
     init(
         imageNumber: Int,
         nickname: String,
         createdAt: Date,
-        likedMovieIDs: [Int]
+        likedMovieIDs: [Int],
+        submittedQueries: Set<SubmittedQuery>
     ) {
         self.imageNumber = imageNumber
         self.nickname = nickname
         self.createdAt = createdAt
         self.likedMovieIDs = likedMovieIDs
+        self.submittedQueries = submittedQueries
     }
 }
 
