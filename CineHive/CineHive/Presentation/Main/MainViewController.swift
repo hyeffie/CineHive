@@ -241,6 +241,18 @@ extension MainViewController: UICollectionViewDataSource, UICollectionViewDelega
         _ collectionView: UICollectionView,
         didSelectItemAt indexPath: IndexPath
     ) {
-        print(#function)
+        let target = self.trendingMovies[indexPath.item]
+        let detail = MovieDetail(
+            id: target.id,
+            title: target.title,
+            releaseDate: target.releaseDate,
+            voteAverage: target.voteAverage,
+            genreIDS: target.genreIDS,
+            overview: target.overview,
+            liked: findMovieIfLiked(movieID: target.id)
+        )
+        
+        let viewController = MovieDetailViewController(movieDetail: detail)
+        self.push(viewController)
     }
 }
