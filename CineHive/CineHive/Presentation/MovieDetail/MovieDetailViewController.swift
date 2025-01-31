@@ -21,6 +21,8 @@ final class MovieDetailViewController: BaseViewController {
         return stack
     }()
     
+    private lazy var backdropCollectionView = UICollectionView(frame: .zero, collectionViewLayout: self.backdropCollectionViewLayout())
+    
     private lazy var releaseDateTag = InfoTagView(symbol: .calendar)
     
     private lazy var voteTag = InfoTagView(symbol: .star)
@@ -49,6 +51,17 @@ final class MovieDetailViewController: BaseViewController {
         configureViews()
     }
     
+    private func backdropCollectionViewLayout() -> UICollectionViewLayout {
+        let layout = UICollectionViewFlowLayout()
+        let width = self.view.frame.width
+        let height = width * 0.75
+        layout.itemSize = CGSize(width: width, height: height)
+        layout.minimumLineSpacing = 0
+        layout.minimumInteritemSpacing = 0
+        layout.scrollDirection = .horizontal
+        return layout
+    }
+    
     private func configureViews() {
         self.view.backgroundColor = .mainBackground
         
@@ -61,6 +74,11 @@ final class MovieDetailViewController: BaseViewController {
         self.scrollView.addSubview(self.contentStack)
         self.contentStack.snp.makeConstraints { make in
             make.edges.width.equalTo(self.scrollView)
+        }
+        
+        self.contentStack.addArrangedSubview(self.backdropCollectionView)
+        self.backdropCollectionView.snp.makeConstraints { make in
+            make.height.equalTo(self.view.frame.width * 0.75)
         }
         
         let tagContainer = UIView()
@@ -85,11 +103,50 @@ final class MovieDetailViewController: BaseViewController {
         self.contentStack.addArrangedSubview(SpacingView(color: .blue))
         self.contentStack.addArrangedSubview(tagContainer)
         self.contentStack.addArrangedSubview(SpacingView(color: .red))
+        
+        configureBackdropCollectionView()
     }
     
     private func configureDetail() {
         if let releaseDate = self.movieDetail.releaseDate { self.releaseDateTag.configure(with: releaseDate) }
         if let voteAverage = self.movieDetail.voteAverage { self.voteTag.configure(with: "\(voteAverage)") }
+    }
+    
+    private func configureBackdropCollectionView() {
+        self.backdropCollectionView.registerCellClass(BackdropCollectionViewCell.self)
+        self.backdropCollectionView.dataSource = self
+        self.backdropCollectionView.delegate = self
+        
+        self.backdropCollectionView.isPagingEnabled = true
+    }
+}
+
+extension MovieDetailViewController: UICollectionViewDataSource, UICollectionViewDelegate {
+    static let pool: [URL?] = [
+        .init(string: "https://image.cine21.com/resize/cine21/still/2019/0621/52641_5d0c78937941d[S700,700].jpg"),
+        
+            .init(string: "https://image.cine21.com/resize/cine21/still/2019/0621/52641_5d0c789398ab3[S700,700].jpg"),
+        
+            .init(string: "https://image.cine21.com/resize/cine21/still/2019/0621/52641_5d0c7893ca9ef[S700,700].jpg"),
+        
+            .init(string: "https://image.cine21.com/resize/cine21/still/2019/0523/52641_5ce62e7810d5e[S700,700].jpg"),
+        
+            .init(string: "https://image.cine21.com/resize/cine21/still/2019/0523/52641_5ce62e7885a0d[S700,700].jpg"),
+    ]
+    
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        return Self.pool.count
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        switch collectionView {
+        case self.backdropCollectionView:
+            guard let cell: BackdropCollectionViewCell = collectionView.dequeueReusableCell(for: indexPath) else { return UICollectionViewCell() }
+            cell.configure(with: Self.pool[indexPath.item])
+            return cell
+        default:
+            return UICollectionViewCell()
+        }
     }
 }
 
@@ -119,3 +176,35 @@ final class SpacingView: UIView {
         }
     }
 }
+
+final class BackdropCollectionViewCell: UICollectionViewCell {
+    private let imageView = {
+        let imageView = UIImageView()
+        imageView.contentMode = .scaleAspectFill
+        imageView.backgroundColor = CHColor.darkLabelBackground
+        return imageView
+    }()
+    
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        configureViews()
+    }
+    
+    @available(*, unavailable)
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    private func configureViews() {
+        self.contentView.addSubview(self.imageView)
+        self.imageView.snp.makeConstraints { make in
+            make.edges.equalToSuperview()
+        }
+    }
+    
+    func configure(with imageURL: URL?) {
+        self.imageView.kf.setImage(with: imageURL)
+    }
+}
+
+extension BackdropCollectionViewCell: ReusableCell {}
