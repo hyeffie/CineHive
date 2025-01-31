@@ -23,6 +23,8 @@ final class MovieDetailViewController: BaseViewController {
     
     private lazy var backdropCollectionView = UICollectionView(frame: .zero, collectionViewLayout: self.backdropCollectionViewLayout())
     
+    private let backdropPageControl = UIPageControl(frame: .zero)
+    
     private lazy var releaseDateTag = InfoTagView(symbol: .calendar)
     
     private lazy var voteTag = InfoTagView(symbol: .star)
@@ -76,10 +78,21 @@ final class MovieDetailViewController: BaseViewController {
             make.edges.width.equalTo(self.scrollView)
         }
         
-        self.contentStack.addArrangedSubview(self.backdropCollectionView)
+        let backdropContainer = UIView()
+        
+        backdropContainer.addSubview(self.backdropCollectionView)
         self.backdropCollectionView.snp.makeConstraints { make in
+            make.edges.equalToSuperview()
             make.height.equalTo(self.view.frame.width * 0.75)
         }
+        
+        backdropContainer.addSubview(self.backdropPageControl)
+        self.backdropPageControl.snp.makeConstraints { make in
+            make.centerX.equalToSuperview()
+            make.bottom.equalToSuperview().inset(16)
+        }
+        
+        self.contentStack.addArrangedSubview(backdropContainer)
         
         let tagContainer = UIView()
         
@@ -105,6 +118,7 @@ final class MovieDetailViewController: BaseViewController {
         self.contentStack.addArrangedSubview(SpacingView(color: .red))
         
         configureBackdropCollectionView()
+        configureBackdropPageConntrol()
     }
     
     private func configureDetail() {
@@ -118,6 +132,24 @@ final class MovieDetailViewController: BaseViewController {
         self.backdropCollectionView.delegate = self
         
         self.backdropCollectionView.isPagingEnabled = true
+    }
+    
+    private func configureBackdropPageConntrol() {
+        self.backdropPageControl.numberOfPages = Self.pool.count
+        self.backdropPageControl.allowsContinuousInteraction = true
+        self.backdropPageControl.backgroundStyle = .prominent
+        
+        let valueChangeAction = UIAction { [weak self] action in
+            guard let control = action.sender as? UIPageControl else {
+                return
+            }
+            self?.moveBackdropPage(to: control.currentPage)
+        }
+        self.backdropPageControl.addAction(valueChangeAction, for: .valueChanged)
+    }
+    
+    @objc private func moveBackdropPage(to page: Int) {
+        self.backdropCollectionView.scrollToItem(at: IndexPath(row: page, section: 0), at: .centeredHorizontally, animated: true)
     }
 }
 
@@ -147,6 +179,12 @@ extension MovieDetailViewController: UICollectionViewDataSource, UICollectionVie
         default:
             return UICollectionViewCell()
         }
+    }
+    
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        let pageWidth = backdropCollectionView.bounds.width
+        let currentPage = Int((scrollView.contentOffset.x + (0.5 * pageWidth)) / pageWidth)
+        backdropPageControl.currentPage = currentPage
     }
 }
 
