@@ -11,4 +11,6 @@ enum CHNotification {
     static let userProfileUpdated = Notification.Name("userProfileUpdated")
     
     static let userLikedMovieMutated = Notification.Name("userLikedMovieMutated")
+    
+    static let userSubmittedQueryMutated = Notification.Name("userSubmittedQueryMutated")
 }

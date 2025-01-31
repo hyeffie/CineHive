@@ -12,12 +12,19 @@ final class SectionedView<Content: UIView>: UIView {
     
     private let button: UIButton?
     
-    let content: Content
+    private let contentUnavailableView = BaseLabel(
+        color: CHColor.darkLabelBackground,
+        font: CHFont.mediumBold,
+        alignment: .center
+    )
+    
+    var content: Content
     
     init(
         title: String,
         accessoryButtonInfo: (title: String, action: () -> ())? = nil,
-        content: Content
+        content: Content,
+        contentUnavailableMessage: String? = nil
     ) {
         if let accessoryButtonInfo {
             let action = UIAction(handler: { _ in accessoryButtonInfo.action() })
@@ -30,6 +37,7 @@ final class SectionedView<Content: UIView>: UIView {
         self.content = content
         super.init(frame: .zero)
         self.titleLabel.text = title
+        self.contentUnavailableView.text = contentUnavailableMessage
         configreViews()
     }
     
@@ -54,19 +62,38 @@ final class SectionedView<Content: UIView>: UIView {
         titleContainer.addSubview(titleStack)
         titleStack.snp.makeConstraints { make in
             make.horizontalEdges.equalToSuperview().inset(16)
-            make.verticalEdges.equalToSuperview()
+            make.centerY.equalToSuperview()
         }
         
-        let containerStack = UIStackView(arrangedSubviews: [titleContainer])
+        titleContainer.snp.makeConstraints { make in
+            make.height.equalTo(30)
+        }
+        
+        titleContainer.setContentHuggingPriority(.required, for: .vertical)
+        
+        let containerStack = UIStackView()
         containerStack.axis = .vertical
         containerStack.alignment = .fill
         containerStack.spacing = 8
         
+        containerStack.addArrangedSubview(titleContainer)
         containerStack.addArrangedSubview(self.content)
         
         self.addSubview(containerStack)
         containerStack.snp.makeConstraints { make in
             make.edges.equalToSuperview()
         }
+        
+        self.addSubview(self.contentUnavailableView)
+        self.contentUnavailableView.snp.makeConstraints { make in
+            make.edges.equalTo(self.content)
+        }
+        
+        self.contentUnavailableView.backgroundColor = CHColor.mainBackground
+    }
+    
+    func toggleContentAvailability(isAvailable: Bool) {
+        self.button?.isHidden = !isAvailable
+        self.contentUnavailableView.alpha = isAvailable ? 0 : 1
     }
 }

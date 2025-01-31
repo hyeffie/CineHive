@@ -230,9 +230,23 @@ extension SearchResultViewController: UISearchBarDelegate {
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
         guard let query = searchBar.text else { return }
         guard query != self.latestQuery else { return }
+        addSubmiitedQuery(query)
         self.latestQuery = query
         reset()
         callSearchAPI()
+    }
+    
+    private func addSubmiitedQuery(_ query: String) {
+        guard !query.isEmpty else { return }
+        let newSubmission = SubmittedQuery(submittedDate: .now, query: query)
+        self.userProfile.submittedQueries.update(with: newSubmission)
+        notifyNewSubmission()
+        print(self.userProfile.submittedQueries.count)
+        print(self.userProfile.submittedQueries.sorted(by: { $0.submittedDate < $1.submittedDate }))
+    }
+    
+    private func notifyNewSubmission() {
+        NotificationCenter.default.post(name: CHNotification.userSubmittedQueryMutated, object: nil)
     }
 }
 

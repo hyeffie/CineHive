@@ -19,8 +19,9 @@ final class MainViewController: BaseViewController {
     
     private lazy var recentQueryList = SectionedView(
         title: "최근 검색어",
-        accessoryButtonInfo: ("전체 삭제", {}),
-        content: UIView()
+        accessoryButtonInfo: ("전체 삭제", { [weak self] in self?.deleteAllSubmittedQueries() }),
+        content: ScrollableHStack(spacing: 6, horizontalContentInset: 16),
+        contentUnavailableMessage: "최근 검색어 내역이 없습니다."
     )
     
     private lazy var todayFeaturedMovieList = SectionedView(
@@ -35,7 +36,37 @@ final class MainViewController: BaseViewController {
         super.viewDidLoad()
         configureViews()
         addNotificationObserver()
+        fetchRecentQuery()
         getTrendingMovies()
+    }
+    
+    private func fetchRecentQuery() {
+        let sortedQueries = self.userProfile.submittedQueries.sorted { $0.submittedDate > $1.submittedDate }
+        let contentIsAvailable = !sortedQueries.isEmpty
+        self.recentQueryList.toggleContentAvailability(isAvailable: contentIsAvailable)
+        let queryViews = sortedQueries.map { submittedQuery in
+            SubmittedQueryView(
+                query: submittedQuery.query,
+                tapHandler: { [weak self] query in self?.goToSearch(query: query) },
+                deleteHandler: { [weak self] query in self?.deleteSubmittedQuery(query) }
+            )
+        }
+        self.recentQueryList.content.addViews(queryViews)
+    }
+    
+    private func deleteSubmittedQuery(_ query: String) {
+        let target = SubmittedQuery(submittedDate: .now, query: query)
+        self.userProfile.submittedQueries.remove(target)
+        notifySubmittedQueriesMutated()
+    }
+    
+    private func deleteAllSubmittedQueries() {
+        self.userProfile.submittedQueries.removeAll()
+        notifySubmittedQueriesMutated()
+    }
+    
+    private func notifySubmittedQueriesMutated() {
+        NotificationCenter.default.post(name: CHNotification.userSubmittedQueryMutated, object: nil)
     }
     
     private func getTrendingMovies() {
@@ -51,6 +82,8 @@ final class MainViewController: BaseViewController {
     
     private func handleResponse(response: TrendingMovieResponse) {
         self.trendingMovies = Array(response.movies.prefix(10))
+        let contentIsAvailable = !self.trendingMovies.isEmpty
+        self.todayFeaturedMovieList.toggleContentAvailability(isAvailable: contentIsAvailable)
         self.todayFeaturedMovieList.content.reloadData()
     }
     
@@ -89,7 +122,7 @@ final class MainViewController: BaseViewController {
         }
         
         self.recentQueryList.content.snp.makeConstraints { make in
-            make.height.lessThanOrEqualTo(60)
+            make.height.equalTo(40)
         }
         
         self.view.addSubview(self.todayFeaturedMovieList)
@@ -99,9 +132,7 @@ final class MainViewController: BaseViewController {
             make.horizontalEdges.equalTo(self.view.safeAreaLayoutGuide)
             make.bottom.equalTo(self.view.safeAreaLayoutGuide)
         }
-        
-        self.todayFeaturedMovieList.setContentHuggingPriority(.defaultHigh, for: .vertical)
-        self.todayFeaturedMovieList.setContentCompressionResistancePriority(.defaultHigh, for: .vertical)
+        self.todayFeaturedMovieList.content.setContentHuggingPriority(.defaultLow, for: .vertical)
         
         self.title = "CineHive"
         configureTodayMovieCollectionView()
@@ -129,7 +160,7 @@ final class MainViewController: BaseViewController {
     }
     
     private func goToSearch(query: String? = nil) {
-        let viewController = SearchResultViewController()
+        let viewController = SearchResultViewController(query: query)
         viewController.hidesBottomBarWhenPushed = true
         self.push(viewController)
     }
@@ -158,10 +189,21 @@ final class MainViewController: BaseViewController {
             name: CHNotification.userLikedMovieMutated,
             object: nil
         )
+        
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(self.updateRecentQuerys),
+            name: CHNotification.userSubmittedQueryMutated,
+            object: nil
+        )
     }
     
     @objc private func updateLikes() {
         self.todayFeaturedMovieList.content.reloadData()
+    }
+    
+    @objc private func updateRecentQuerys() {
+        self.fetchRecentQuery()
     }
 }
 
