@@ -13,6 +13,10 @@ struct SubmittedQuery: Codable {
 }
 
 extension SubmittedQuery: Hashable {
+    static func == (lhs: SubmittedQuery, rhs: SubmittedQuery) -> Bool {
+        return lhs.query == rhs.query
+    }
+    
     func hash(into hasher: inout Hasher) {
         hasher.combine(query)
     }
