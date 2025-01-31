@@ -77,11 +77,3 @@ final class FeaturedMovieCollectionViewCell: UICollectionViewCell {
 }
 
 extension FeaturedMovieCollectionViewCell: ReusableCell {}
-
-struct FeaturedMovieSummary {
-    let id: Int
-    let posterImageURL: URL?
-    let title: String
-    let synopsys: String
-    var liked: Bool
-}
