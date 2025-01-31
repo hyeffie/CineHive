@@ -7,4 +7,8 @@
 
 struct MovieCastRequestParameter: Encodable {
     let language: String
+    
+    init(language: String = "ko-KR") {
+        self.language = language
+    }
 }
