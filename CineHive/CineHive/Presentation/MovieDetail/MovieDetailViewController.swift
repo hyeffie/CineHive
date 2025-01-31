@@ -8,8 +8,15 @@
 import UIKit
 
 final class MovieDetailViewController: BaseViewController {
+    private let networkRequester = NetworkManager()
     
     private let movieDetail: MovieDetail
+    
+    private var backdropPaths: [String]
+    
+    private var casts: [MovieCastResponse.Cast]
+    
+    private var posterPaths: [String]
     
     private let scrollView = UIScrollView()
     
@@ -41,6 +48,9 @@ final class MovieDetailViewController: BaseViewController {
     
     init(movieDetail: MovieDetail) {
         self.movieDetail = movieDetail
+        self.backdropPaths = []
+        self.casts = []
+        self.posterPaths = []
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -52,6 +62,8 @@ final class MovieDetailViewController: BaseViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         configureDetail()
+        getImages()
+        getCast()
         configureViews()
     }
     
@@ -150,7 +162,7 @@ final class MovieDetailViewController: BaseViewController {
     }
     
     private func configureBackdropPageConntrol() {
-        self.backdropPageControl.numberOfPages = Self.pool.count
+        self.backdropPageControl.numberOfPages = self.backdropPaths.count
         self.backdropPageControl.allowsContinuousInteraction = true
         self.backdropPageControl.backgroundStyle = .prominent
         
@@ -161,6 +173,11 @@ final class MovieDetailViewController: BaseViewController {
             self?.moveBackdropPage(to: control.currentPage)
         }
         self.backdropPageControl.addAction(valueChangeAction, for: .valueChanged)
+    }
+    
+    private func reconfigureBackdropPageConntrol() {
+        self.backdropPageControl.numberOfPages = self.backdropPaths.count
+        self.backdropPageControl.currentPage = 0
     }
     
     @objc private func moveBackdropPage(to page: Int) {
@@ -178,28 +195,71 @@ final class MovieDetailViewController: BaseViewController {
     }
 }
 
-extension MovieDetailViewController: UICollectionViewDataSource, UICollectionViewDelegate {
-    static let pool: [URL?] = [
-        .init(string: "https://image.cine21.com/resize/cine21/still/2019/0621/52641_5d0c78937941d[S700,700].jpg"),
-        
-            .init(string: "https://image.cine21.com/resize/cine21/still/2019/0621/52641_5d0c789398ab3[S700,700].jpg"),
-        
-            .init(string: "https://image.cine21.com/resize/cine21/still/2019/0621/52641_5d0c7893ca9ef[S700,700].jpg"),
-        
-            .init(string: "https://image.cine21.com/resize/cine21/still/2019/0523/52641_5ce62e7810d5e[S700,700].jpg"),
-        
-            .init(string: "https://image.cine21.com/resize/cine21/still/2019/0523/52641_5ce62e7885a0d[S700,700].jpg"),
-    ]
+extension MovieDetailViewController {
+    private func getCast() {
+        self.networkRequester.getMovieCast(
+            movieID: self.movieDetail.id,
+            movieCastParameter: .init(),
+            successHandler: { [weak self] response in
+                self?.handleCastResponse(response: response)
+            },
+            failureHandler: { [weak self] networkError in
+                self?.handleError(networkError)
+            }
+        )
+    }
     
+    private func handleCastResponse(response: MovieCastResponse) {
+        self.casts = response.cast
+        #warning("collection view 업데이트")
+    }
+    
+    private func handleError(_ error: Error) {
+        if let presentableError = error as? PresentableError {
+            presentErrorAlert(message: presentableError.message)
+        }
+    }
+    
+    private func getImages() {
+        self.networkRequester.getMovieImages(
+            movieID: self.movieDetail.id,
+            movieImageParameter: .init(),
+            successHandler: { [weak self] response in
+                self?.handleImageResponse(response: response)
+            },
+            failureHandler: { [weak self] networkError in
+                self?.handleError(networkError)
+            }
+        )
+    }
+    
+    private func handleImageResponse(response: MovieImageResponse) {
+        self.backdropPaths = Array(response.backdrops.compactMap(\.filePath).prefix(5))
+        self.backdropCollectionView.reloadData()
+        reconfigureBackdropPageConntrol()
+        
+        self.posterPaths = response.posters.compactMap(\.filePath)
+        #warning("collection view 업데이트")
+    }
+}
+
+extension MovieDetailViewController: UICollectionViewDataSource, UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return Self.pool.count
+        switch collectionView {
+        case self.backdropCollectionView:
+            return self.backdropPaths.count
+        default:
+            return 0
+        }
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         switch collectionView {
         case self.backdropCollectionView:
             guard let cell: BackdropCollectionViewCell = collectionView.dequeueReusableCell(for: indexPath) else { return UICollectionViewCell() }
-            cell.configure(with: Self.pool[indexPath.item])
+            let path = self.backdropPaths[indexPath.item]
+            let url = TMDBImage.original(path).url
+            cell.configure(with: url)
             return cell
         default:
             return UICollectionViewCell()
@@ -207,6 +267,7 @@ extension MovieDetailViewController: UICollectionViewDataSource, UICollectionVie
     }
     
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        guard scrollView === self.backdropCollectionView else { return }
         let pageWidth = backdropCollectionView.bounds.width
         let currentPage = Int((scrollView.contentOffset.x + (0.5 * pageWidth)) / pageWidth)
         backdropPageControl.currentPage = currentPage
