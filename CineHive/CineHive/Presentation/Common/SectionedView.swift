@@ -39,6 +39,7 @@ final class SectionedView<Content: UIView>: UIView {
         self.titleLabel.text = title
         self.contentUnavailableView.text = contentUnavailableMessage
         configreViews()
+        toggleContentAvailability(isAvailable: true)
     }
     
     @available(*, unavailable)
