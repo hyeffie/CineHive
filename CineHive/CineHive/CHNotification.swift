@@ -12,5 +12,5 @@ enum CHNotification {
     
     static let userLikedMovieMutated = Notification.Name("userLikedMovieMutated")
     
-    static let userAddQuerySubmission = Notification.Name("userAddQuerySubmission")
+    static let userSubmittedQueryMutated = Notification.Name("userSubmittedQueryMutated")
 }

@@ -246,7 +246,7 @@ extension SearchResultViewController: UISearchBarDelegate {
     }
     
     private func notifyNewSubmission() {
-        NotificationCenter.default.post(name: CHNotification.userAddQuerySubmission, object: nil)
+        NotificationCenter.default.post(name: CHNotification.userSubmittedQueryMutated, object: nil)
     }
 }
 
