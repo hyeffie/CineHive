@@ -13,7 +13,7 @@ final class MainViewController: BaseViewController {
     
     private let networkRequester = NetworkManager()
     
-    private var trendingMovies: [TrendingMovieResponse.MovieSummary] = []
+    private var trendingMovies: [MovieSummary] = []
     
     private lazy var profileInfoView = ProfileInfoView(tapHandler: self.goToProfileSetting)
     
@@ -171,7 +171,7 @@ extension MainViewController: UICollectionViewDataSource, UICollectionViewDelega
             id: target.id,
             posterImageURL: TMDBImage.w500(target.posterPath ?? "").url,
             title: target.title,
-            synopsys: target.overview,
+            synopsys: target.overview ?? "",
             liked: findMovieIfLiked(movieID: target.id)
         )
         cell.configure(
