@@ -1,0 +1,19 @@
+//
+//  SubmittedQuery.swift
+//  CineHive
+//
+//  Created by Effie on 1/31/25.
+//
+
+import Foundation
+
+struct SubmittedQuery: Codable {
+    let submittedDate: Date
+    let query: String
+}
+
+extension SubmittedQuery: Hashable {
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(query)
+    }
+}
