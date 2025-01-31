@@ -8,6 +8,9 @@
 import UIKit
 
 final class SubmittedQueryView: UIView {
+    private let query: String
+    private let tapHandler: (String) -> Void
+    
     private let queryLabel = BaseLabel(color: CHColor.mainBackground, font: CHFont.medium)
     
     private let deleteButton = {
@@ -20,10 +23,17 @@ final class SubmittedQueryView: UIView {
         return button
     }()
     
-    init(query: String) {
+    init(
+        query: String,
+        tapHandler: @escaping (String) -> Void,
+        deleteHandler: @escaping (String) -> Void
+    ) {
+        self.query = query
+        self.tapHandler = tapHandler
         super.init(frame: .zero)
-        self.queryLabel.text = query
+        self.queryLabel.text = self.query
         configureViews()
+        addActionToButton(deletionHandler: deleteHandler)
     }
     
     @available(*, unavailable)
@@ -54,18 +64,28 @@ final class SubmittedQueryView: UIView {
         super.layoutSubviews()
         self.makeCircle()
     }
-}
-
-extension SubmittedQueryView: SelectableView {
-    func select() {
-        
-    }
     
-    func deselect() {
+    override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
+        super.touchesEnded(touches, with: event)
+        self.tapHandler(self.query)
+    }
+
+    private func addActionToButton(
+        deletionHandler: @escaping (String) -> Void
+    ) {
         
+        let deletionAction = UIAction { [weak self] _ in
+            guard let self else { return }
+            deletionHandler(self.query)
+        }
+        self.deleteButton.addAction(deletionAction, for: .touchUpInside)
     }
 }
 
 #Preview {
-    SubmittedQueryView(query: "최근 검색어")
+    SubmittedQueryView(
+        query: "최근 검색어",
+        tapHandler: { print("tap \($0)") },
+        deleteHandler: { print("delete \($0)") }
+    )
 }
