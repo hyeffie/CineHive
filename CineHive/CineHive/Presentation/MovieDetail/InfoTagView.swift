@@ -12,12 +12,10 @@ final class InfoTagView: UIView {
     
     private let label = BaseLabel(color: CHColor.darkLabelBackground, font: CHFont.small)
     
-    init(symbol: UIImage, text: String) {
+    init(symbol: CHSymbol) {
         super.init(frame: .zero)
-        
-        let symbolConfig = UIImage.SymbolConfiguration(scale: .small)
-        self.imageView.image = symbol.applyingSymbolConfiguration(symbolConfig)
-        self.label.text = text
+        let symbolConfig = UIImage.SymbolConfiguration(scale: .medium)
+        self.imageView.image = symbol.value?.applyingSymbolConfiguration(symbolConfig)
     }
     
     @available(*, unavailable)
@@ -30,9 +28,14 @@ final class InfoTagView: UIView {
         stack.axis = .horizontal
         stack.spacing = 4
         stack.alignment = .center
+        stack.distribution = .fillProportionally
         
         stack.addArrangedSubview(self.imageView)
         stack.addArrangedSubview(self.label)
+        
+        self.imageView.snp.makeConstraints { make in
+            make.size.equalTo(12)
+        }
         
         self.addSubview(stack)
         stack.snp.makeConstraints { make in
@@ -42,4 +45,9 @@ final class InfoTagView: UIView {
         
         self.backgroundColor = CHColor.mainBackground
     }
+    
+    func configure(with text: String) {
+        self.label.text = text
+    }
 }
+
