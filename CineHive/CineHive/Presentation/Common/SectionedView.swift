@@ -60,7 +60,7 @@ final class SectionedView<Content: UIView>: UIView {
         let containerStack = UIStackView(arrangedSubviews: [titleContainer])
         containerStack.axis = .vertical
         containerStack.alignment = .fill
-        containerStack.spacing = 12
+        containerStack.spacing = 8
         
         containerStack.addArrangedSubview(self.content)
         
@@ -69,43 +69,4 @@ final class SectionedView<Content: UIView>: UIView {
             make.edges.equalToSuperview()
         }
     }
-}
-
-class TempViewController: UIViewController {
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        self.view.backgroundColor = .black
-        configureView()
-    }
-    
-    func configureView() {
-        let content = UIView()
-        // content size를 조절하거나
-        content.snp.makeConstraints { make in
-            make.height.equalTo(100)
-        }
-        
-        content.backgroundColor = .red
-        
-        let target = SectionedView(
-            title: "오늘의 추천 영화",
-            accessoryButtonInfo: ("펼치기", { print("TAP") }),
-            content: content
-        )
-        
-        self.view.addSubview(target)
-        target.snp.makeConstraints { make in
-            make.horizontalEdges.equalTo(self.view.safeAreaLayoutGuide)
-            make.centerY.equalTo(self.view.safeAreaLayoutGuide)
-        }
-        
-        // container size를 조절
-//        target.snp.makeConstraints { make in
-//            make.height.equalTo(self.view.safeAreaLayoutGuide).multipliedBy(0.5)
-//        }
-    }
-}
-
-#Preview {
-    TempViewController()
 }

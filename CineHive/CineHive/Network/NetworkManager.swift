@@ -26,6 +26,22 @@ final class NetworkManager {
         )
     }
     
+    func getSearchResult(
+        searchMovieParameter: SearchMovieRequestParameter,
+        successHandler: @escaping (SearchMovieResponse) -> (),
+        failureHandler: @escaping (NetworkError) -> ()
+    ) {
+        let components = TMDBRequestComponents(
+            path: "search/movie",
+            queryParamerters: searchMovieParameter
+        )
+        callTMDBGET(
+            requestComponents: components,
+            successHandler: successHandler,
+            failureHandler: failureHandler
+        )
+    }
+    
     private func tmdbAuth() -> HTTPHeader? {
         guard
             let apiKey = KeyLoader.loadKey(scope: .TMDB, item: .apiKey)
@@ -53,7 +69,10 @@ final class NetworkManager {
                 baseURL + components.path,
                 parameters: components.queryParamerters,
                 encoder: URLEncodedFormParameterEncoder(destination: .queryString),
-                headers: [ authorization ]
+                headers: [ authorization ],
+                requestModifier: { request in
+                    dump(request)
+                }
             )
             .responseDecodable(of: TMDBResponse<SuccessResponse>.self) { [weak self] afResponse in
                 guard let self else { return }
