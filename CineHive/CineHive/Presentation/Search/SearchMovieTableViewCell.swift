@@ -1,5 +1,5 @@
 //
-//  SearchMovieCollectionViewCell.swift
+//  SearchMovieTableViewCell.swift
 //  CineHive
 //
 //  Created by Effie on 1/31/25.
@@ -7,7 +7,7 @@
 
 import UIKit
 
-final class SearchMovieCollectionViewCell: UICollectionViewCell {
+final class SearchMovieTableViewCell: UITableViewCell {
     private let posterImageView = {
         let imageView = UIImageView()
         imageView.contentMode = .scaleAspectFill
@@ -29,8 +29,8 @@ final class SearchMovieCollectionViewCell: UICollectionViewCell {
     
     private let likeButton = LikeButton(frame: .zero)
     
-    override init(frame: CGRect) {
-        super.init(frame: frame)
+    override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
+        super.init(style: style, reuseIdentifier: reuseIdentifier)
         configureViews()
     }
     
@@ -74,3 +74,5 @@ final class SearchMovieCollectionViewCell: UICollectionViewCell {
         }
     }
 }
+
+extension SearchMovieTableViewCell: ReusableCell {}
