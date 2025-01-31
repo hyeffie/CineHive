@@ -42,6 +42,23 @@ final class NetworkManager {
         )
     }
     
+    func getSearchResult(
+        movieID: Int,
+        movieCastParameter: MovieCastRequestParameter,
+        successHandler: @escaping (MovieCastResponse) -> (),
+        failureHandler: @escaping (NetworkError) -> ()
+    ) {
+        let components = TMDBRequestComponents(
+            path: "movie/\(movieID)/credits",
+            queryParamerters: movieCastParameter
+        )
+        callTMDBGET(
+            requestComponents: components,
+            successHandler: successHandler,
+            failureHandler: failureHandler
+        )
+    }
+    
     private func tmdbAuth() -> HTTPHeader? {
         guard
             let apiKey = KeyLoader.loadKey(scope: .TMDB, item: .apiKey)
