@@ -20,7 +20,7 @@ final class MainViewController: BaseViewController {
     private lazy var recentQueryList = SectionedView(
         title: "최근 검색어",
         accessoryButtonInfo: ("전체 삭제", {}),
-        content: UIView()
+        content: ScrollableHStack(spacing: 6, horizontalContentInset: 20)
     )
     
     private lazy var todayFeaturedMovieList = SectionedView(
@@ -35,7 +35,25 @@ final class MainViewController: BaseViewController {
         super.viewDidLoad()
         configureViews()
         addNotificationObserver()
+        fetchRecentQuery()
         getTrendingMovies()
+    }
+    
+    private func fetchRecentQuery() {
+        let sortedQueries = self.userProfile.submittedQueries.sorted { $0.submittedDate < $1.submittedDate }
+        let queryViews = sortedQueries.map { submittedQuery in
+            SubmittedQueryView(
+                query: submittedQuery.query,
+                tapHandler: { [weak self] query in self?.goToSearch(query: query) },
+                deleteHandler: { [weak self] query in self?.deleteSubmittedQuery(query) }
+            )
+        }
+        self.recentQueryList.content.addViews(queryViews)
+    }
+    
+    private func deleteSubmittedQuery(_ query: String) {
+        let target = SubmittedQuery(submittedDate: .now, query: query)
+        self.userProfile.submittedQueries.remove(target)
     }
     
     private func getTrendingMovies() {

@@ -77,6 +77,7 @@ final class SubmittedQueryView: UIView {
         let deletionAction = UIAction { [weak self] _ in
             guard let self else { return }
             deletionHandler(self.query)
+            self.removeFromSuperview()
         }
         self.deleteButton.addAction(deletionAction, for: .touchUpInside)
     }
