@@ -51,6 +51,7 @@ final class ScrollableHStack: UIScrollView {
     }
     
     func addViews(_ views: [UIView]) {
+        self.stackView.removeAllArrangedSubviews()
         views.forEach { self.stackView.addArrangedSubview($0)}
     }
     
