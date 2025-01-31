@@ -28,8 +28,3 @@ enum NetworkError: PresentableError {
         }
     }
 }
-
-struct TMDBError: Error {
-    let statusCode: Int
-    let messsage: String
-}
