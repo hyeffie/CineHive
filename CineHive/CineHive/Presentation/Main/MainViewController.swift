@@ -41,7 +41,7 @@ final class MainViewController: BaseViewController {
     }
     
     private func fetchRecentQuery() {
-        let sortedQueries = self.userProfile.submittedQueries.sorted { $0.submittedDate < $1.submittedDate }
+        let sortedQueries = self.userProfile.submittedQueries.sorted { $0.submittedDate > $1.submittedDate }
         let contentIsAvailable = !sortedQueries.isEmpty
         self.recentQueryList.toggleContentAvailability(isAvailable: contentIsAvailable)
         let queryViews = sortedQueries.map { submittedQuery in
