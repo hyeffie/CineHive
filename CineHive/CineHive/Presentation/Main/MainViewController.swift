@@ -34,6 +34,7 @@ final class MainViewController: BaseViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         configureViews()
+        addNotificationObserver()
         getTrendingMovies()
     }
     
@@ -148,6 +149,19 @@ final class MainViewController: BaseViewController {
     
     private func notifyLikedMovieMutated() {
         NotificationCenter.default.post(name: CHNotification.userLikedMovieMutated, object: nil)
+    }
+    
+    private func addNotificationObserver() {
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(self.updateLikes),
+            name: CHNotification.userLikedMovieMutated,
+            object: nil
+        )
+    }
+    
+    @objc private func updateLikes() {
+        self.todayFeaturedMovieList.content.reloadData()
     }
 }
 
