@@ -61,8 +61,8 @@ final class MainViewController: BaseViewController {
     
     private func todayMovieCollectionViewLayout() -> UICollectionViewLayout {
         let layout = UICollectionViewFlowLayout()
-        let itemWidth = self.view.frame.width / 7 * 4
-        layout.itemSize = CGSize.init(width: itemWidth, height: itemWidth * (45 / 27))
+        let itemWidth = self.view.frame.width * 0.55
+        layout.itemSize = CGSize.init(width: itemWidth, height: itemWidth * 1.67)
         layout.minimumInteritemSpacing = 16
         layout.minimumLineSpacing = 16
         layout.scrollDirection = .horizontal
@@ -88,15 +88,19 @@ final class MainViewController: BaseViewController {
         }
         
         self.recentQueryList.content.snp.makeConstraints { make in
-            make.height.equalTo(80)
+            make.height.lessThanOrEqualTo(60)
         }
         
         self.view.addSubview(self.todayFeaturedMovieList)
         // 오늘의 영화 섹션은 남은 영역을 기준으로
         self.todayFeaturedMovieList.snp.makeConstraints { make in
             make.top.equalTo(self.recentQueryList.snp.bottom).offset(spacing)
-            make.horizontalEdges.bottom.equalTo(self.view.safeAreaLayoutGuide)
+            make.horizontalEdges.equalTo(self.view.safeAreaLayoutGuide)
+            make.bottom.equalTo(self.view.safeAreaLayoutGuide)
         }
+        
+        self.todayFeaturedMovieList.setContentHuggingPriority(.defaultHigh, for: .vertical)
+        self.todayFeaturedMovieList.setContentCompressionResistancePriority(.defaultHigh, for: .vertical)
         
         self.title = "CineHive"
         configureTodayMovieCollectionView()
