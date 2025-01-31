@@ -129,6 +129,7 @@ final class MainViewController: BaseViewController {
     
     private func goToSearch(query: String? = nil) {
         let viewController = SearchResultViewController()
+        viewController.hidesBottomBarWhenPushed = true
         self.push(viewController)
     }
     
