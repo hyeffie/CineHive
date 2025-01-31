@@ -8,8 +8,6 @@
 import UIKit
 
 enum SearchUnavailableConfiguration {
-    static let beforeSearch = UIContentUnavailableConfiguration.empty()
-    
     static let noSearchingResults: UIContentUnavailableConfiguration = {
         var config = UIContentUnavailableConfiguration.empty()
         config.image = UIImage(systemName: "exclamationmark.magnifyingglass")

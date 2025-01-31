@@ -11,7 +11,9 @@ final class SearchResultViewController: BaseViewController {
     @UserDefault(key: UserDefaultKey.userProfile)
     private var userProfile: ProfileInfo!
     
-    private var items: [SearchMovieSummary]
+    private let networkRequester = NetworkManager()
+    
+    private var items: [MovieSummary]
     
     private var latestQuery: String?
     
@@ -19,8 +21,19 @@ final class SearchResultViewController: BaseViewController {
     
     private var isLastPage: Bool
     
+    private let dateDecoder = {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd" // 2020-04-09
+        return formatter
+    }()
+    
+    private let dateEncoder = {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy. MM. dd" // 2020. 04. 09
+        return formatter
+    }()
+    
     private enum ContentAvailability {
-        case beforeSearch
         case noResult
         case available
     }
@@ -36,10 +49,12 @@ final class SearchResultViewController: BaseViewController {
     init(query: String? = nil) {
         self.items = []
         self.latestQuery = query
-        self.contentAvailability = .beforeSearch
+        self.contentAvailability = .available
         self.currentPage = 0
         self.isLastPage = false
         super.init(nibName: nil, bundle: nil)
+        
+        callSearchAPI()
     }
     
     @available(*, unavailable)
@@ -56,8 +71,6 @@ final class SearchResultViewController: BaseViewController {
         UIView.animate(withDuration: 0.3) { [weak self] in
             guard let self else { return }
             switch self.contentAvailability {
-            case .beforeSearch:
-                self.contentUnavailableConfiguration = SearchUnavailableConfiguration.beforeSearch
             case .noResult:
                 self.contentUnavailableConfiguration = SearchUnavailableConfiguration.noSearchingResults
             case .available:
@@ -127,31 +140,46 @@ final class SearchResultViewController: BaseViewController {
         Task {
             await MainActor.run {
                 self.tableView.reloadData()
-                if self.latestQuery == nil { self.contentAvailability = .beforeSearch }
+                if self.latestQuery == nil { self.contentAvailability = .available }
             }
         }
     }
     
     private func callSearchAPI() {
-        print(#function)
         self.contentAvailability = .available
-//        guard let latestQuery, !latestQuery.isEmpty else { return }
-//        let searchParams = SearchParameter(
-//            query: latestQuery,
-//            page: self.currentPage + 1,
-//            offset: 20,
-//            order: self.currentSort.rawValue,
-//            color: self.selectedColorFilter?.filterName
-//        )
-//        NetworkManager().getSearchResult(
-//            searchParameter: searchParams,
-//            successHandler: { [weak self] response in
-//                self?.handleResponse(response)
-//            },
-//            failureHandler: { [weak self] error in
-//                self?.handleError(error)
-//            }
-//        )
+        guard let latestQuery, !latestQuery.isEmpty else { return }
+        let searchParams = SearchMovieRequestParameter(
+            query: latestQuery,
+            page: self.currentPage + 1
+        )
+        
+        self.networkRequester.getSearchResult(
+            searchMovieParameter: searchParams,
+            successHandler: { [weak self] response in
+                self?.handleResponse(response)
+            },
+            failureHandler: { [weak self] error in
+                self?.handleError(error)
+            }
+        )
+    }
+    
+    private func handleResponse(_ response: SearchMovieResponse) {
+        if !response.results.isEmpty { self.currentPage += 1 }
+        self.isLastPage = self.currentPage == response.totalPages
+        self.items.append(contentsOf: response.results)
+        Task {
+            await MainActor.run {
+                self.tableView.reloadData()
+                self.contentAvailability = self.items.isEmpty ? .noResult : .available
+            }
+        }
+    }
+    
+    private func handleError(_ error: Error) {
+        if let presentableError = error as? PresentableError {
+            presentErrorAlert(message: presentableError.message)
+        }
     }
 }
 
@@ -171,18 +199,30 @@ extension SearchResultViewController: UITableViewDelegate, UITableViewDataSource
             let cell: SearchMovieTableViewCell = tableView.dequeueReusableCell(for: indexPath)
         else { return UITableViewCell() }
         let targetMovie = self.items[indexPath.row]
-        let movieSummary = SearchMovieSummary(
-            id: targetMovie.id,
-            posterURL: targetMovie.posterURL,
-            title: targetMovie.title,
-            dateString: targetMovie.dateString,
-            genres: targetMovie.genres,
-            liked: findMovieIfLiked(movieID: targetMovie.id)
-        )
-        cell.configure(summary: targetMovie) { movieID in
-            self.toggleLike(movieID: movieID)
-        }
+        let searchSummary = convertMovieSummaryToSearchSummary(targetMovie)
+        cell.configure(summary: searchSummary) { movieID in self.toggleLike(movieID: movieID) }
         return cell
+    }
+    
+    private func convertMovieSummaryToSearchSummary(_ movieSummary: MovieSummary) -> SearchMovieSummary {
+        let dateString: String
+        if let releaseDate = movieSummary.releaseDate,
+            let date = self.dateDecoder.date(from: releaseDate) {
+            dateString = self.dateEncoder.string(from: date)
+        } else {
+            dateString = ""
+        }
+        
+        let genres = Array(movieSummary.genreIDS.compactMap { id in MovieGenre.getName(by: id) }.prefix(2))
+        
+        return SearchMovieSummary(
+            id: movieSummary.id,
+            posterURL: TMDBImage.w500(movieSummary.posterPath ?? "").url,
+            title: movieSummary.title,
+            dateString: dateString,
+            genres: genres,
+            liked: findMovieIfLiked(movieID: movieSummary.id)
+        )
     }
 }
 

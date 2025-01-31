@@ -69,7 +69,10 @@ final class NetworkManager {
                 baseURL + components.path,
                 parameters: components.queryParamerters,
                 encoder: URLEncodedFormParameterEncoder(destination: .queryString),
-                headers: [ authorization ]
+                headers: [ authorization ],
+                requestModifier: { request in
+                    dump(request)
+                }
             )
             .responseDecodable(of: TMDBResponse<SuccessResponse>.self) { [weak self] afResponse in
                 guard let self else { return }
