@@ -31,10 +31,12 @@ final class MovieDetailViewController: BaseViewController {
     
     private lazy var genreTag = InfoTagView(symbol: .film)
     
+    private let synopsisLabel = BaseLabel(font: CHFont.medium, numberOfLines: 3)
+    
     private let synopsisSection = SectionedView(
         title: "Synopsis",
         accessoryButtonInfo: ("More", { }),
-        content: BaseLabel(font: CHFont.medium)
+        content: UIView()
     )
     
     init(movieDetail: MovieDetail) {
@@ -113,8 +115,16 @@ final class MovieDetailViewController: BaseViewController {
             make.height.equalTo(20)
         }
         
-        self.contentStack.addArrangedSubview(SpacingView(color: .blue))
         self.contentStack.addArrangedSubview(tagContainer)
+        
+        self.contentStack.addArrangedSubview(self.synopsisSection)
+        self.synopsisSection.content.addSubview(self.synopsisLabel)
+        self.synopsisLabel.snp.makeConstraints { make in
+            make.horizontalEdges.equalToSuperview().inset(16)
+            make.verticalEdges.equalToSuperview()
+        }
+        
+        self.contentStack.addArrangedSubview(SpacingView(color: .blue))
         self.contentStack.addArrangedSubview(SpacingView(color: .red))
         
         configureBackdropCollectionView()
@@ -124,6 +134,11 @@ final class MovieDetailViewController: BaseViewController {
     private func configureDetail() {
         if let releaseDate = self.movieDetail.releaseDate { self.releaseDateTag.configure(with: releaseDate) }
         if let voteAverage = self.movieDetail.voteAverage { self.voteTag.configure(with: "\(voteAverage)") }
+        let genres = self.movieDetail.genreIDS.compactMap { MovieGenre.getName(by:$0) }.prefix(2)
+        let genreString = Array(genres).joined(separator: ", ")
+        self.genreTag.configure(with: genreString)
+        
+        self.synopsisLabel.text = self.movieDetail.overview
     }
     
     private func configureBackdropCollectionView() {
