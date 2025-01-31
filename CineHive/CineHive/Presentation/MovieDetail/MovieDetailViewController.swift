@@ -33,9 +33,9 @@ final class MovieDetailViewController: BaseViewController {
     
     private let synopsisLabel = BaseLabel(font: CHFont.medium, numberOfLines: 3)
     
-    private let synopsisSection = SectionedView(
+    private lazy var synopsisSection = SectionedView(
         title: "Synopsis",
-        accessoryButtonInfo: ("More", { }),
+        accessoryButtonInfo: ("More", { button in self.toggleFoldingSynopsis(button: button)  }),
         content: UIView()
     )
     
@@ -165,6 +165,16 @@ final class MovieDetailViewController: BaseViewController {
     
     @objc private func moveBackdropPage(to page: Int) {
         self.backdropCollectionView.scrollToItem(at: IndexPath(row: page, section: 0), at: .centeredHorizontally, animated: true)
+    }
+    
+    private func toggleFoldingSynopsis(button: UIButton) {
+        if self.synopsisLabel.numberOfLines == 0 {
+            self.synopsisLabel.numberOfLines = 3
+            button.setTitle("More", for: .normal)
+        } else {
+            self.synopsisLabel.numberOfLines = 0
+            button.setTitle("Hide", for: .normal)
+        }
     }
 }
 

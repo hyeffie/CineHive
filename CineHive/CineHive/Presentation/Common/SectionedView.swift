@@ -22,12 +22,15 @@ final class SectionedView<Content: UIView>: UIView {
     
     init(
         title: String,
-        accessoryButtonInfo: (title: String, action: () -> ())? = nil,
+        accessoryButtonInfo: (title: String, action: (UIButton) -> ())? = nil,
         content: Content,
         contentUnavailableMessage: String? = nil
     ) {
         if let accessoryButtonInfo {
-            let action = UIAction(handler: { _ in accessoryButtonInfo.action() })
+            let action = UIAction(handler: { action in
+                guard let button = action.sender as? UIButton else { return }
+                accessoryButtonInfo.action(button)
+            })
             self.button = UIButton(primaryAction: action)
             self.button?.setTitle(accessoryButtonInfo.title, for: .normal)
         } else {

@@ -19,7 +19,7 @@ final class MainViewController: BaseViewController {
     
     private lazy var recentQueryList = SectionedView(
         title: "최근 검색어",
-        accessoryButtonInfo: ("전체 삭제", { [weak self] in self?.deleteAllSubmittedQueries() }),
+        accessoryButtonInfo: ("전체 삭제", { [weak self] _ in self?.deleteAllSubmittedQueries() }),
         content: ScrollableHStack(spacing: 6, horizontalContentInset: 16),
         contentUnavailableMessage: "최근 검색어 내역이 없습니다."
     )
