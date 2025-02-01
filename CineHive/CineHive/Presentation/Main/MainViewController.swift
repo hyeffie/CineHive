@@ -255,6 +255,7 @@ extension MainViewController: UICollectionViewDataSource, UICollectionViewDelega
         _ collectionView: UICollectionView,
         didSelectItemAt indexPath: IndexPath
     ) {
+        collectionView.deselectItem(at: indexPath, animated: true)
         let targetSummary = self.trendingMovies[indexPath.item]
         goToDetail(summary: targetSummary)
     }

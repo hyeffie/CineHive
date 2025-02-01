@@ -85,6 +85,10 @@ final class SearchMovieTableViewCell: UITableViewCell {
         }
         
         self.backgroundColor = .clear
+        
+        let selectedBackgroundView = UIView(frame: self.bounds)
+        selectedBackgroundView.backgroundColor = .clear
+        self.selectedBackgroundView = selectedBackgroundView
     }
     
     func configure(

@@ -239,6 +239,7 @@ extension SearchResultViewController: UITableViewDelegate, UITableViewDataSource
         _ tableView: UITableView,
         didSelectRowAt indexPath: IndexPath
     ) {
+        tableView.deselectRow(at: indexPath, animated: true)
         let targetSummary = self.items[indexPath.row]
         goToDetail(summary: targetSummary)
     }

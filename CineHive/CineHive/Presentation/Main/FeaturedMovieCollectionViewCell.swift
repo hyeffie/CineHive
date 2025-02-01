@@ -59,6 +59,10 @@ final class FeaturedMovieCollectionViewCell: UICollectionViewCell {
             make.top.equalTo(self.hStack.snp.bottom).offset(4)
             make.horizontalEdges.bottom.equalToSuperview()
         }
+        
+        let selectedBackgroundView = UIView(frame: self.bounds)
+        selectedBackgroundView.backgroundColor = .clear
+        self.selectedBackgroundView = selectedBackgroundView
     }
     
     func configure(
