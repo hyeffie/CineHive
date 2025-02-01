@@ -14,9 +14,8 @@ final class ContentUnavailableView: UIView {
         alignment: .center
     )
     
-    init(message: String) {
-        super.init(frame: .zero)
-        self.messageLabel.text = message
+    override init(frame: CGRect) {
+        super.init(frame: frame)
         configureViews()
     }
     
@@ -31,5 +30,9 @@ final class ContentUnavailableView: UIView {
             make.center.equalToSuperview()
             make.horizontalEdges.equalToSuperview().inset(20)
         }
+    }
+    
+    func configure(message: String) {
+        self.messageLabel.text = message
     }
 }
