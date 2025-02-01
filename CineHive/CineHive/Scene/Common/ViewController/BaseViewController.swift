@@ -32,6 +32,7 @@ class BaseViewController: UIViewController {
     
     private func configureView() {
         self.view.backgroundColor = CHColor.mainBackground
+        self.navigationItem.backButtonTitle = ""
     }
     
     func push(_ viewController: UIViewController) {
