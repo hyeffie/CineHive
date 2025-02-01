@@ -267,8 +267,6 @@ extension SearchResultViewController: UISearchBarDelegate {
         let newSubmission = SubmittedQuery(submittedDate: .now, query: query)
         self.userProfile.submittedQueries.update(with: newSubmission)
         notifyNewSubmission()
-        print(self.userProfile.submittedQueries.count)
-        print(self.userProfile.submittedQueries.sorted(by: { $0.submittedDate < $1.submittedDate }))
     }
     
     private func notifyNewSubmission() {
