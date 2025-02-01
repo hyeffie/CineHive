@@ -22,12 +22,15 @@ final class SectionedView<Content: UIView>: UIView {
     
     init(
         title: String,
-        accessoryButtonInfo: (title: String, action: () -> ())? = nil,
+        accessoryButtonInfo: (title: String, action: (UIButton) -> ())? = nil,
         content: Content,
         contentUnavailableMessage: String? = nil
     ) {
         if let accessoryButtonInfo {
-            let action = UIAction(handler: { _ in accessoryButtonInfo.action() })
+            let action = UIAction(handler: { action in
+                guard let button = action.sender as? UIButton else { return }
+                accessoryButtonInfo.action(button)
+            })
             self.button = UIButton(primaryAction: action)
             self.button?.setTitle(accessoryButtonInfo.title, for: .normal)
         } else {
@@ -38,7 +41,8 @@ final class SectionedView<Content: UIView>: UIView {
         super.init(frame: .zero)
         self.titleLabel.text = title
         self.contentUnavailableView.text = contentUnavailableMessage
-        configreViews()
+        configreViews(shouldDisplayUnavailablility: contentUnavailableMessage != nil)
+        toggleContentAvailability(isAvailable: true)
     }
     
     @available(*, unavailable)
@@ -46,7 +50,7 @@ final class SectionedView<Content: UIView>: UIView {
         fatalError("init(coder:) has not been implemented")
     }
     
-    private func configreViews() {
+    private func configreViews(shouldDisplayUnavailablility: Bool = false) {
         let titleStack = UIStackView(arrangedSubviews: [self.titleLabel])
         titleStack.axis = .horizontal
         titleStack.alignment = .center
@@ -84,9 +88,11 @@ final class SectionedView<Content: UIView>: UIView {
             make.edges.equalToSuperview()
         }
         
-        self.addSubview(self.contentUnavailableView)
-        self.contentUnavailableView.snp.makeConstraints { make in
-            make.edges.equalTo(self.content)
+        if shouldDisplayUnavailablility {
+            self.addSubview(self.contentUnavailableView)
+            self.contentUnavailableView.snp.makeConstraints { make in
+                make.edges.equalTo(self.content)
+            }
         }
         
         self.contentUnavailableView.backgroundColor = CHColor.mainBackground

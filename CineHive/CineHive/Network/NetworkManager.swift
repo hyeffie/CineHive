@@ -42,6 +42,40 @@ final class NetworkManager {
         )
     }
     
+    func getMovieCast(
+        movieID: Int,
+        movieCastParameter: MovieCastRequestParameter,
+        successHandler: @escaping (MovieCastResponse) -> (),
+        failureHandler: @escaping (NetworkError) -> ()
+    ) {
+        let components = TMDBRequestComponents(
+            path: "movie/\(movieID)/credits",
+            queryParamerters: movieCastParameter
+        )
+        callTMDBGET(
+            requestComponents: components,
+            successHandler: successHandler,
+            failureHandler: failureHandler
+        )
+    }
+    
+    func getMovieImages(
+        movieID: Int,
+        movieImageParameter: MovieImageRequestParameter,
+        successHandler: @escaping (MovieImageResponse) -> (),
+        failureHandler: @escaping (NetworkError) -> ()
+    ) {
+        let components = TMDBRequestComponents(
+            path: "movie/\(movieID)/images",
+            queryParamerters: movieImageParameter
+        )
+        callTMDBGET(
+            requestComponents: components,
+            successHandler: successHandler,
+            failureHandler: failureHandler
+        )
+    }
+    
     private func tmdbAuth() -> HTTPHeader? {
         guard
             let apiKey = KeyLoader.loadKey(scope: .TMDB, item: .apiKey)

@@ -19,7 +19,7 @@ final class MainViewController: BaseViewController {
     
     private lazy var recentQueryList = SectionedView(
         title: "최근 검색어",
-        accessoryButtonInfo: ("전체 삭제", { [weak self] in self?.deleteAllSubmittedQueries() }),
+        accessoryButtonInfo: ("전체 삭제", { [weak self] _ in self?.deleteAllSubmittedQueries() }),
         content: ScrollableHStack(spacing: 6, horizontalContentInset: 16),
         contentUnavailableMessage: "최근 검색어 내역이 없습니다."
     )
@@ -165,6 +165,21 @@ final class MainViewController: BaseViewController {
         self.push(viewController)
     }
     
+    private func goToDetail(summary: MovieSummary) {
+        let detail = MovieDetail(
+            id: summary.id,
+            title: summary.title,
+            releaseDate: summary.releaseDate,
+            voteAverage: summary.voteAverage,
+            genreIDS: summary.genreIDS,
+            overview: summary.overview,
+            liked: findMovieIfLiked(movieID: summary.id)
+        )
+        
+        let viewController = MovieDetailViewController(movieDetail: detail)
+        self.push(viewController)
+    }
+    
     private func toggleLike(movieID: Int) {
         if self.userProfile.likedMovieIDs.contains(movieID) {
             self.userProfile.likedMovieIDs.removeAll { id in id == movieID }
@@ -241,6 +256,7 @@ extension MainViewController: UICollectionViewDataSource, UICollectionViewDelega
         _ collectionView: UICollectionView,
         didSelectItemAt indexPath: IndexPath
     ) {
-        print(#function)
+        let targetSummary = self.trendingMovies[indexPath.item]
+        goToDetail(summary: targetSummary)
     }
 }
