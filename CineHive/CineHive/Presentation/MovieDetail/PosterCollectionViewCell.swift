@@ -31,6 +31,7 @@ final class PosterCollectionViewCell: UICollectionViewCell {
         self.imageView.snp.makeConstraints { make in
             make.edges.equalToSuperview()
         }
+        self.backgroundColor = .clear
     }
     
     func configure(with imageURL: URL?) {

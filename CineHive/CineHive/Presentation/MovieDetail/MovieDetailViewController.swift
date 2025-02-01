@@ -59,6 +59,16 @@ final class MovieDetailViewController: BaseViewController {
         content: self.castCollectionView
     )
     
+    private lazy var posterCollectionView = UICollectionView(
+        frame: .zero,
+        collectionViewLayout: self.posterCollectionViewLayout()
+    )
+    
+    private lazy var posterSection = SectionedView(
+        title: "Poster",
+        content: self.posterCollectionView
+    )
+    
     init(movieDetail: MovieDetail) {
         self.movieDetail = movieDetail
         self.backdropPaths = []
@@ -95,6 +105,18 @@ final class MovieDetailViewController: BaseViewController {
         let layout = UICollectionViewFlowLayout()
         let width = self.view.frame.width * 0.4
         let height = width * 0.45
+        layout.itemSize = CGSize(width: width, height: height)
+        layout.minimumLineSpacing = 10
+        layout.minimumInteritemSpacing = 10
+        layout.scrollDirection = .horizontal
+        layout.sectionInset = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
+        return layout
+    }
+    
+    private func posterCollectionViewLayout() -> UICollectionViewLayout {
+        let layout = UICollectionViewFlowLayout()
+        let width = self.view.frame.width * 0.27
+        let height = width * 1.3
         layout.itemSize = CGSize(width: width, height: height)
         layout.minimumLineSpacing = 10
         layout.minimumInteritemSpacing = 10
@@ -166,9 +188,15 @@ final class MovieDetailViewController: BaseViewController {
             make.height.equalTo(150)
         }
         
+        self.contentStack.addArrangedSubview(self.posterSection)
+        self.posterSection.content.snp.makeConstraints { make in
+            make.height.equalTo(150)
+        }
+        
         configureBackdropCollectionView()
         configureBackdropPageConntrol()
         configureCastCollectionView()
+        configurePosterCollectionView()
     }
     
     private func configureDetail() {
@@ -228,6 +256,13 @@ final class MovieDetailViewController: BaseViewController {
         self.castCollectionView.delegate = self
         self.castCollectionView.backgroundColor = .clear
     }
+    
+    private func configurePosterCollectionView() {
+        self.posterCollectionView.registerCellClass(PosterCollectionViewCell.self)
+        self.posterCollectionView.dataSource = self
+        self.posterCollectionView.delegate = self
+        self.posterCollectionView.backgroundColor = .clear
+    }
 }
 
 extension MovieDetailViewController {
@@ -274,7 +309,7 @@ extension MovieDetailViewController {
         reconfigureBackdropPageConntrol()
         
         self.posterPaths = response.posters.compactMap(\.filePath)
-        #warning("collection view 업데이트")
+        self.posterCollectionView.reloadData()
     }
 }
 
@@ -285,6 +320,8 @@ extension MovieDetailViewController: UICollectionViewDataSource, UICollectionVie
             return self.backdropPaths.count
         case self.castCollectionView:
             return self.casts.count
+        case self.posterCollectionView:
+            return self.posterPaths.count
         default:
             return 0
         }
@@ -304,6 +341,12 @@ extension MovieDetailViewController: UICollectionViewDataSource, UICollectionVie
             let profileURL = TMDBImage.w500(targetCast.profilePath ?? "").url
             let castInfo = CastInfo(profileURL: profileURL, name: targetCast.name, character: targetCast.character)
             cell.configure(with: castInfo)
+            return cell
+        case self.posterCollectionView:
+            guard let cell: PosterCollectionViewCell = collectionView.dequeueReusableCell(for: indexPath) else { return UICollectionViewCell() }
+            let path = self.posterPaths[indexPath.item]
+            let posterURL = TMDBImage.w500(path).url
+            cell.configure(with: posterURL)
             return cell
         default:
             return UICollectionViewCell()
