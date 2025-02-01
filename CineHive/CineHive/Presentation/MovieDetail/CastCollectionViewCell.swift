@@ -11,6 +11,7 @@ final class CastCollectionViewCell: UICollectionViewCell {
     private let profileImage = {
         let imageView = UIImageView()
         imageView.contentMode = .scaleAspectFill
+        imageView.backgroundColor = CHColor.darkLabelBackground
         return imageView
     }()
     
@@ -35,11 +36,10 @@ final class CastCollectionViewCell: UICollectionViewCell {
     
     private func configureViews() {
         self.contentView.addSubview(self.profileImage)
-        self.contentView.addSubview(self.nameLabel)
-        self.contentView.addSubview(self.characterLabel)
         
         self.profileImage.snp.makeConstraints { make in
             make.leading.verticalEdges.equalToSuperview()
+            make.width.equalTo(self.profileImage.snp.height)
         }
         
         let stack = UIStackView()
@@ -50,11 +50,14 @@ final class CastCollectionViewCell: UICollectionViewCell {
         stack.addArrangedSubview(self.nameLabel)
         stack.addArrangedSubview(self.characterLabel)
         
+        self.contentView.addSubview(stack)
         stack.snp.makeConstraints { make in
             make.leading.equalTo(self.profileImage.snp.trailing).offset(8)
             make.centerY.equalToSuperview()
-            make.trailing.equalToSuperview().inset(10)
+            make.trailing.equalToSuperview()
         }
+        
+        self.backgroundColor = .clear
     }
     
     func configure(with cast: CastInfo) {

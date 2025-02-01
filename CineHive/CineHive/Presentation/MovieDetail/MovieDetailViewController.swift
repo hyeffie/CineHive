@@ -28,7 +28,10 @@ final class MovieDetailViewController: BaseViewController {
         return stack
     }()
     
-    private lazy var backdropCollectionView = UICollectionView(frame: .zero, collectionViewLayout: self.backdropCollectionViewLayout())
+    private lazy var backdropCollectionView = UICollectionView(
+        frame: .zero,
+        collectionViewLayout: self.backdropCollectionViewLayout()
+    )
     
     private let backdropPageControl = UIPageControl(frame: .zero)
     
@@ -44,6 +47,16 @@ final class MovieDetailViewController: BaseViewController {
         title: "Synopsis",
         accessoryButtonInfo: ("More", { button in self.toggleFoldingSynopsis(button: button)  }),
         content: UIView()
+    )
+    
+    private lazy var castCollectionView = UICollectionView(
+        frame: .zero,
+        collectionViewLayout: self.castCollectionViewLayout()
+    )
+    
+    private lazy var castSection = SectionedView(
+        title: "Cast",
+        content: self.castCollectionView
     )
     
     init(movieDetail: MovieDetail) {
@@ -70,11 +83,23 @@ final class MovieDetailViewController: BaseViewController {
     private func backdropCollectionViewLayout() -> UICollectionViewLayout {
         let layout = UICollectionViewFlowLayout()
         let width = self.view.frame.width
-        let height = width * 0.75
+        let height = width * 0.6
         layout.itemSize = CGSize(width: width, height: height)
         layout.minimumLineSpacing = 0
         layout.minimumInteritemSpacing = 0
         layout.scrollDirection = .horizontal
+        return layout
+    }
+    
+    private func castCollectionViewLayout() -> UICollectionViewLayout {
+        let layout = UICollectionViewFlowLayout()
+        let width = self.view.frame.width * 0.4
+        let height = width * 0.45
+        layout.itemSize = CGSize(width: width, height: height)
+        layout.minimumLineSpacing = 10
+        layout.minimumInteritemSpacing = 10
+        layout.scrollDirection = .horizontal
+        layout.sectionInset = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
         return layout
     }
     
@@ -97,7 +122,7 @@ final class MovieDetailViewController: BaseViewController {
         backdropContainer.addSubview(self.backdropCollectionView)
         self.backdropCollectionView.snp.makeConstraints { make in
             make.edges.equalToSuperview()
-            make.height.equalTo(self.view.frame.width * 0.75)
+            make.height.equalTo(self.view.frame.width * 0.6)
         }
         
         backdropContainer.addSubview(self.backdropPageControl)
@@ -136,11 +161,14 @@ final class MovieDetailViewController: BaseViewController {
             make.verticalEdges.equalToSuperview()
         }
         
-        self.contentStack.addArrangedSubview(SpacingView(color: .blue))
-        self.contentStack.addArrangedSubview(SpacingView(color: .red))
+        self.contentStack.addArrangedSubview(self.castSection)
+        self.castSection.content.snp.makeConstraints { make in
+            make.height.equalTo(150)
+        }
         
         configureBackdropCollectionView()
         configureBackdropPageConntrol()
+        configureCastCollectionView()
     }
     
     private func configureDetail() {
@@ -193,6 +221,13 @@ final class MovieDetailViewController: BaseViewController {
             button.setTitle("Hide", for: .normal)
         }
     }
+    
+    private func configureCastCollectionView() {
+        self.castCollectionView.registerCellClass(CastCollectionViewCell.self)
+        self.castCollectionView.dataSource = self
+        self.castCollectionView.delegate = self
+        self.castCollectionView.backgroundColor = .clear
+    }
 }
 
 extension MovieDetailViewController {
@@ -211,7 +246,7 @@ extension MovieDetailViewController {
     
     private func handleCastResponse(response: MovieCastResponse) {
         self.casts = response.cast
-        #warning("collection view 업데이트")
+        self.castCollectionView.reloadData()
     }
     
     private func handleError(_ error: Error) {
@@ -248,6 +283,8 @@ extension MovieDetailViewController: UICollectionViewDataSource, UICollectionVie
         switch collectionView {
         case self.backdropCollectionView:
             return self.backdropPaths.count
+        case self.castCollectionView:
+            return self.casts.count
         default:
             return 0
         }
@@ -260,6 +297,13 @@ extension MovieDetailViewController: UICollectionViewDataSource, UICollectionVie
             let path = self.backdropPaths[indexPath.item]
             let url = TMDBImage.original(path).url
             cell.configure(with: url)
+            return cell
+        case self.castCollectionView:
+            guard let cell: CastCollectionViewCell = collectionView.dequeueReusableCell(for: indexPath) else { return UICollectionViewCell() }
+            let targetCast = self.casts[indexPath.item]
+            let profileURL = TMDBImage.w500(targetCast.profilePath ?? "").url
+            let castInfo = CastInfo(profileURL: profileURL, name: targetCast.name, character: targetCast.character)
+            cell.configure(with: castInfo)
             return cell
         default:
             return UICollectionViewCell()

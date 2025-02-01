@@ -41,7 +41,7 @@ final class SectionedView<Content: UIView>: UIView {
         super.init(frame: .zero)
         self.titleLabel.text = title
         self.contentUnavailableView.text = contentUnavailableMessage
-        configreViews()
+        configreViews(shouldDisplayUnavailablility: contentUnavailableMessage != nil)
         toggleContentAvailability(isAvailable: true)
     }
     
@@ -50,7 +50,7 @@ final class SectionedView<Content: UIView>: UIView {
         fatalError("init(coder:) has not been implemented")
     }
     
-    private func configreViews() {
+    private func configreViews(shouldDisplayUnavailablility: Bool = false) {
         let titleStack = UIStackView(arrangedSubviews: [self.titleLabel])
         titleStack.axis = .horizontal
         titleStack.alignment = .center
@@ -88,9 +88,11 @@ final class SectionedView<Content: UIView>: UIView {
             make.edges.equalToSuperview()
         }
         
-        self.addSubview(self.contentUnavailableView)
-        self.contentUnavailableView.snp.makeConstraints { make in
-            make.edges.equalTo(self.content)
+        if shouldDisplayUnavailablility {
+            self.addSubview(self.contentUnavailableView)
+            self.contentUnavailableView.snp.makeConstraints { make in
+                make.edges.equalTo(self.content)
+            }
         }
         
         self.contentUnavailableView.backgroundColor = CHColor.mainBackground
