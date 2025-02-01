@@ -8,7 +8,7 @@
 import UIKit
 
 final class SearchResultViewController: BaseViewController {
-    enum ContentState: ContenUnavailableState {
+    private enum ContentState: ContenUnavailableState {
         case noResult
         
         var displayingMessage: String {
