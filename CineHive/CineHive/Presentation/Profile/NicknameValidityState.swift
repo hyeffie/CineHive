@@ -31,7 +31,7 @@ enum NicknameValidityState {
     var message: String {
         switch self {
         case .valid:
-            return ""
+            return "사용할 수 있는 닉네임이에요"
         case .invalid(let state):
             return state.message
         }
