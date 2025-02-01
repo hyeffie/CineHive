@@ -8,6 +8,9 @@
 import UIKit
 
 final class MovieDetailViewController: BaseViewController {
+    @UserDefault(key: UserDefaultKey.userProfile)
+    private var userProfile: ProfileInfo!
+    
     private let networkRequester = NetworkManager()
     
     private let movieDetail: MovieDetail
@@ -193,6 +196,12 @@ final class MovieDetailViewController: BaseViewController {
             make.height.equalTo(150)
         }
         
+        self.navigationItem.rightBarButtonItem = LikeBarButtonItem(
+            id: self.movieDetail.id,
+            liked: self.movieDetail.liked,
+            action: { [weak self] _ in self?.toggleLike() }
+        )
+        
         configureBackdropCollectionView()
         configureBackdropPageConntrol()
         configureCastCollectionView()
@@ -358,5 +367,21 @@ extension MovieDetailViewController: UICollectionViewDataSource, UICollectionVie
         let pageWidth = backdropCollectionView.bounds.width
         let currentPage = Int((scrollView.contentOffset.x + (0.5 * pageWidth)) / pageWidth)
         backdropPageControl.currentPage = currentPage
+    }
+}
+
+extension MovieDetailViewController {
+    private func toggleLike() {
+        let movieID = self.movieDetail.id
+        if self.userProfile.likedMovieIDs.contains(movieID) {
+            self.userProfile.likedMovieIDs.removeAll { id in id == movieID }
+        } else {
+            self.userProfile.likedMovieIDs.append(movieID)
+        }
+        notifyLikedMovieMutated()
+    }
+    
+    private func notifyLikedMovieMutated() {
+        NotificationCenter.default.post(name: CHNotification.userLikedMovieMutated, object: nil)
     }
 }
