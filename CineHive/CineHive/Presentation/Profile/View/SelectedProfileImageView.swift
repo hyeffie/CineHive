@@ -55,8 +55,3 @@ final class SelectedProfileImageView: UIView {
         self.profileImageView.configureImage(name: imageName)
     }
 }
-
-#Preview {
-    let view = SelectedProfileImageView(imageName: CHImageName.profilePrefix + "1")
-    return view
-}
