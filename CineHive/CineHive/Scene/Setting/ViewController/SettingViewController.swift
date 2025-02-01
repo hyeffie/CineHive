@@ -42,7 +42,7 @@ final class SettingViewController: BaseViewController {
             make.bottom.equalTo(self.view.safeAreaLayoutGuide)
         }
         
-        self.title = "설정"
+        self.navigationItem.title = "설정"
         
         self.menuTableView.registerCellClass(MenuListTableViewCell.self)
         self.menuTableView.dataSource = self

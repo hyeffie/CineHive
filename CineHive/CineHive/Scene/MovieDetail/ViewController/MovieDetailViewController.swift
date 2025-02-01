@@ -208,7 +208,7 @@ final class MovieDetailViewController: BaseViewController {
     }
     
     private func configureDetail() {
-        self.title = self.movieDetail.title
+        self.navigationItem.title = self.movieDetail.title
         if let releaseDate = self.movieDetail.releaseDate { self.releaseDateTag.configure(with: releaseDate) }
         if let voteAverage = self.movieDetail.voteAverage { self.voteTag.configure(with: "\(voteAverage)") }
         let genres = self.movieDetail.genreIDS.compactMap { MovieGenre.getName(by:$0) }.prefix(2)

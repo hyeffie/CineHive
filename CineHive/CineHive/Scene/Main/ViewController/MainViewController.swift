@@ -134,7 +134,7 @@ final class MainViewController: BaseViewController {
         }
         self.todayFeaturedMovieList.content.setContentHuggingPriority(.defaultLow, for: .vertical)
         
-        self.title = "CineHive"
+        self.navigationItem.title = "CineHive"
         configureTodayMovieCollectionView()
         
         let searchButton = UIBarButtonItem(systemItem: .search)

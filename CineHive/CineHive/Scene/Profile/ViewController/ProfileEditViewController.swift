@@ -63,7 +63,7 @@ extension ProfileEditViewController {
         }
         
         if userProfile == nil {
-            self.title = "프로필 설정"
+            self.navigationItem.title = "프로필 설정"
             
             self.view.addSubview(self.completeButton)
             self.completeButton.snp.makeConstraints { make in
@@ -71,7 +71,7 @@ extension ProfileEditViewController {
                 make.horizontalEdges.equalTo(self.view.safeAreaLayoutGuide).inset(hInset)
             }
         } else {
-            self.title = "프로필 편집"
+            self.navigationItem.title = "프로필 편집"
             
             let dismissAction = UIAction { [weak self] _ in self?.dismiss(animated: true) }
             let dismissButton = UIBarButtonItem(image: CHSymbol.xmark.value, primaryAction: dismissAction)

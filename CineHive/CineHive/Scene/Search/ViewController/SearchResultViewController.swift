@@ -76,7 +76,7 @@ final class SearchResultViewController: BaseViewController {
     }
     
     private func configureViews() {
-        self.title = "영화 검색"
+        self.navigationItem.title = "영화 검색"
         
         self.view.addSubview(self.tableView)
         self.tableView.snp.makeConstraints { make in

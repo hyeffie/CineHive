@@ -41,7 +41,7 @@ final class ProfileImageViewController: BaseViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        self.title = "프로필 이미지 설정"
+        self.navigationItem.title = "프로필 이미지 설정"
         
         configureView()
         
