@@ -52,10 +52,3 @@ final class ProfileImageView: UIImageView {
         self.image = UIImage(named: name)
     }
 }
-
-#Preview {
-    return ProfileImageView(
-        imageName: CHImageName.profilePrefix + "0",
-        isSelected: true
-    )
-}

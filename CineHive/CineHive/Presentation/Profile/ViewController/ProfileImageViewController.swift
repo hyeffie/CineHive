@@ -127,8 +127,3 @@ extension ProfileImageViewController: UICollectionViewDelegate, UICollectionView
         self.imageSelectionHandler(number)
     }
 }
-
-#Preview {
-    let vc = ProfileImageViewController(selectedImageNumber: 1, imageSelectionHandler: { print($0) })
-    return NavigationController(rootViewController: vc)
-}

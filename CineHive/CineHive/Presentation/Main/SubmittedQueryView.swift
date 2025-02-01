@@ -82,11 +82,3 @@ final class SubmittedQueryView: UIView {
         self.deleteButton.addAction(deletionAction, for: .touchUpInside)
     }
 }
-
-#Preview {
-    SubmittedQueryView(
-        query: "최근 검색어",
-        tapHandler: { print("tap \($0)") },
-        deleteHandler: { print("delete \($0)") }
-    )
-}
