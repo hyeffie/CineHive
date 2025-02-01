@@ -107,7 +107,7 @@ final class MovieDetailViewController: BaseViewController {
     private func castCollectionViewLayout() -> UICollectionViewLayout {
         let layout = UICollectionViewFlowLayout()
         let width = self.view.frame.width * 0.4
-        let height = width * 0.45
+        let height = width * 0.35
         layout.itemSize = CGSize(width: width, height: height)
         layout.minimumLineSpacing = 10
         layout.minimumInteritemSpacing = 10

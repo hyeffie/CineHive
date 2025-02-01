@@ -15,9 +15,9 @@ final class CastCollectionViewCell: UICollectionViewCell {
         return imageView
     }()
     
-    private let nameLabel = BaseLabel(font: CHFont.mediumBold)
+    private let nameLabel = BaseLabel(font: CHFont.mediumBold, numberOfLines: 2)
     
-    private let characterLabel = BaseLabel(font: CHFont.small)
+    private let characterLabel = BaseLabel(font: CHFont.small, numberOfLines: 1)
     
     override init(frame: CGRect) {
         super.init(frame: frame)
