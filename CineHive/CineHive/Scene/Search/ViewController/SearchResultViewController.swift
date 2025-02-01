@@ -91,8 +91,6 @@ final class SearchResultViewController: BaseViewController {
         self.searchController.searchBar.delegate = self
         self.searchController.hidesNavigationBarDuringPresentation = false
         self.searchController.searchBar.placeholder = "영화를 검색해보세요."
-        self.searchController.searchBar.searchTextField.backgroundColor = CHColor.darkLabelBackground.withAlphaComponent(0.5)
-        self.searchController.searchBar.searchTextField.textColor = CHColor.primaryText
         self.searchController.searchBar.searchTextField.clearButtonMode = .never
         self.searchController.automaticallyShowsCancelButton = false
         self.searchController.searchBar.text = self.latestQuery
@@ -284,5 +282,3 @@ extension SearchResultViewController: UITableViewDataSourcePrefetching {
         }
     }
 }
-
-
