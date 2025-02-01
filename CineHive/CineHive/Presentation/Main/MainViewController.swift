@@ -165,6 +165,21 @@ final class MainViewController: BaseViewController {
         self.push(viewController)
     }
     
+    private func goToDetail(summary: MovieSummary) {
+        let detail = MovieDetail(
+            id: summary.id,
+            title: summary.title,
+            releaseDate: summary.releaseDate,
+            voteAverage: summary.voteAverage,
+            genreIDS: summary.genreIDS,
+            overview: summary.overview,
+            liked: findMovieIfLiked(movieID: summary.id)
+        )
+        
+        let viewController = MovieDetailViewController(movieDetail: detail)
+        self.push(viewController)
+    }
+    
     private func toggleLike(movieID: Int) {
         if self.userProfile.likedMovieIDs.contains(movieID) {
             self.userProfile.likedMovieIDs.removeAll { id in id == movieID }
@@ -241,18 +256,7 @@ extension MainViewController: UICollectionViewDataSource, UICollectionViewDelega
         _ collectionView: UICollectionView,
         didSelectItemAt indexPath: IndexPath
     ) {
-        let target = self.trendingMovies[indexPath.item]
-        let detail = MovieDetail(
-            id: target.id,
-            title: target.title,
-            releaseDate: target.releaseDate,
-            voteAverage: target.voteAverage,
-            genreIDS: target.genreIDS,
-            overview: target.overview,
-            liked: findMovieIfLiked(movieID: target.id)
-        )
-        
-        let viewController = MovieDetailViewController(movieDetail: detail)
-        self.push(viewController)
+        let targetSummary = self.trendingMovies[indexPath.item]
+        goToDetail(summary: targetSummary)
     }
 }

@@ -181,6 +181,21 @@ final class SearchResultViewController: BaseViewController {
             presentErrorAlert(message: presentableError.message)
         }
     }
+    
+    private func goToDetail(summary: MovieSummary) {
+        let detail = MovieDetail(
+            id: summary.id,
+            title: summary.title,
+            releaseDate: summary.releaseDate,
+            voteAverage: summary.voteAverage,
+            genreIDS: summary.genreIDS,
+            overview: summary.overview,
+            liked: findMovieIfLiked(movieID: summary.id)
+        )
+        
+        let viewController = MovieDetailViewController(movieDetail: detail)
+        self.push(viewController)
+    }
 }
 
 extension SearchResultViewController: UITableViewDelegate, UITableViewDataSource {
@@ -223,6 +238,14 @@ extension SearchResultViewController: UITableViewDelegate, UITableViewDataSource
             genres: genres,
             liked: findMovieIfLiked(movieID: movieSummary.id)
         )
+    }
+    
+    func tableView(
+        _ tableView: UITableView,
+        didSelectRowAt indexPath: IndexPath
+    ) {
+        let targetSummary = self.items[indexPath.row]
+        goToDetail(summary: targetSummary)
     }
 }
 
