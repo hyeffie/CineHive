@@ -7,7 +7,24 @@
 
 import UIKit
 
+enum ContentAvailablilty {
+    case available
+    case unavailable(ContenUnavailableState)
+}
+
+protocol ContenUnavailableState {
+    var displayingMessage: String { get }
+}
+
 class BaseViewController: UIViewController {
+    private var contentUnavailableView: ContentUnavailableView? = nil
+    
+    private var contentIsAvailable: ContentAvailablilty = .available {
+        didSet {
+            self.configureContentAvailability()
+        }
+    }
+     
     override func viewDidLoad() {
         super.viewDidLoad()
         configureView()
@@ -47,6 +64,22 @@ class BaseViewController: UIViewController {
             await MainActor.run {
                 self.present(alertController, animated: true)
             }
+        }
+    }
+    
+    func configureContentAvailability() {
+        self.contentUnavailableView?.removeFromSuperview()
+        switch self.contentIsAvailable {
+        case .available:
+            break
+        case .unavailable(let state):
+            let unavailableView = ContentUnavailableView(message: state.displayingMessage)
+            self.contentUnavailableView = unavailableView
+            
+            self.view.addSubview(unavailableView)
+            unavailableView.snp.makeConstraints({ make in
+                make.edges.equalTo(self.view.safeAreaLayoutGuide)
+            })
         }
     }
 }
