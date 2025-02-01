@@ -8,7 +8,11 @@
 import UIKit
 
 final class InfoTagView: UIView {
-    private let imageView = UIImageView()
+    private let imageView = {
+        let view = UIImageView()
+        view.tintColor = CHColor.darkLabelBackground
+        return view
+    }()
     
     private let label = BaseLabel(color: CHColor.darkLabelBackground, font: CHFont.small)
     
@@ -16,6 +20,7 @@ final class InfoTagView: UIView {
         super.init(frame: .zero)
         let symbolConfig = UIImage.SymbolConfiguration(scale: .medium)
         self.imageView.image = symbol.value?.applyingSymbolConfiguration(symbolConfig)
+        configureViews()
     }
     
     @available(*, unavailable)
@@ -28,7 +33,6 @@ final class InfoTagView: UIView {
         stack.axis = .horizontal
         stack.spacing = 4
         stack.alignment = .center
-        stack.distribution = .fillProportionally
         
         stack.addArrangedSubview(self.imageView)
         stack.addArrangedSubview(self.label)
@@ -50,4 +54,3 @@ final class InfoTagView: UIView {
         self.label.text = text
     }
 }
-

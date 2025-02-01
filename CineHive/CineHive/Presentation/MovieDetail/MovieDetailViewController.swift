@@ -164,7 +164,7 @@ final class MovieDetailViewController: BaseViewController {
         tagStack.axis = .horizontal
         tagStack.backgroundColor = .darkLabelBackground
         tagStack.alignment = .center
-        tagStack.spacing = 2
+        tagStack.spacing = 1
         
         tagStack.addArrangedSubview(self.releaseDateTag)
         tagStack.addArrangedSubview(self.voteTag)
@@ -174,7 +174,6 @@ final class MovieDetailViewController: BaseViewController {
         tagStack.snp.makeConstraints { make in
             make.centerX.equalToSuperview()
             make.verticalEdges.equalToSuperview()
-            make.height.equalTo(20)
         }
         
         self.contentStack.addArrangedSubview(tagContainer)
