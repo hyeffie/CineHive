@@ -119,22 +119,4 @@ struct SearchMovieSummary {
     let dateString: String
     let genres: [String]
     let liked: Bool
-    
-    static let dummyMovies: [SearchMovieSummary] = [
-        SearchMovieSummary(id: 1, posterURL: URL(string: "https://example.com/poster1.jpg"), title: "Inception", dateString: "2010-07-16", genres: ["Sci-Fi", "Action"], liked: true),
-        SearchMovieSummary(id: 2, posterURL: URL(string: "https://example.com/poster2.jpg"), title: "Interstellar", dateString: "2014-11-07", genres: ["Sci-Fi", "Drama"], liked: false),
-        SearchMovieSummary(id: 3, posterURL: URL(string: "https://example.com/poster3.jpg"), title: "The Dark Knight", dateString: "2008-07-18", genres: ["Action", "Crime"], liked: true),
-        SearchMovieSummary(id: 4, posterURL: URL(string: "https://example.com/poster4.jpg"), title: "Parasite", dateString: "2019-05-30", genres: ["Thriller", "Drama"], liked: false),
-        SearchMovieSummary(id: 5, posterURL: URL(string: "https://example.com/poster5.jpg"), title: "Avengers: Endgame", dateString: "2019-04-26", genres: ["Action", "Adventure"], liked: true),
-        SearchMovieSummary(id: 1, posterURL: URL(string: "https://example.com/poster1.jpg"), title: "Inception", dateString: "2010-07-16", genres: ["Sci-Fi", "Action"], liked: true),
-        SearchMovieSummary(id: 2, posterURL: URL(string: "https://example.com/poster2.jpg"), title: "Interstellar", dateString: "2014-11-07", genres: ["Sci-Fi", "Drama"], liked: false),
-        SearchMovieSummary(id: 3, posterURL: URL(string: "https://example.com/poster3.jpg"), title: "The Dark Knight", dateString: "2008-07-18", genres: ["Action", "Crime"], liked: true),
-        SearchMovieSummary(id: 4, posterURL: URL(string: "https://example.com/poster4.jpg"), title: "Parasite", dateString: "2019-05-30", genres: ["Thriller", "Drama"], liked: false),
-        SearchMovieSummary(id: 5, posterURL: URL(string: "https://example.com/poster5.jpg"), title: "Avengers: Endgame", dateString: "2019-04-26", genres: ["Action", "Adventure"], liked: true),
-        SearchMovieSummary(id: 1, posterURL: URL(string: "https://example.com/poster1.jpg"), title: "Inception", dateString: "2010-07-16", genres: ["Sci-Fi", "Action"], liked: true),
-        SearchMovieSummary(id: 2, posterURL: URL(string: "https://example.com/poster2.jpg"), title: "Interstellar", dateString: "2014-11-07", genres: ["Sci-Fi", "Drama"], liked: false),
-        SearchMovieSummary(id: 3, posterURL: URL(string: "https://example.com/poster3.jpg"), title: "The Dark Knight", dateString: "2008-07-18", genres: ["Action", "Crime"], liked: true),
-        SearchMovieSummary(id: 4, posterURL: URL(string: "https://example.com/poster4.jpg"), title: "Parasite", dateString: "2019-05-30", genres: ["Thriller", "Drama"], liked: false),
-        SearchMovieSummary(id: 5, posterURL: URL(string: "https://example.com/poster5.jpg"), title: "Avengers: Endgame", dateString: "2019-04-26", genres: ["Action", "Adventure"], liked: true)
-    ]
 }
