@@ -221,8 +221,8 @@ final class MovieDetailViewController: BaseViewController {
         self.backdropCollectionView.registerCellClass(BackdropCollectionViewCell.self)
         self.backdropCollectionView.dataSource = self
         self.backdropCollectionView.delegate = self
-        
         self.backdropCollectionView.isPagingEnabled = true
+        self.backdropCollectionView.showsHorizontalScrollIndicator = false
     }
     
     private func configureBackdropPageConntrol() {
@@ -263,6 +263,7 @@ final class MovieDetailViewController: BaseViewController {
         self.castCollectionView.dataSource = self
         self.castCollectionView.delegate = self
         self.castCollectionView.backgroundColor = .clear
+        self.castCollectionView.showsHorizontalScrollIndicator = false
     }
     
     private func configurePosterCollectionView() {
@@ -270,6 +271,7 @@ final class MovieDetailViewController: BaseViewController {
         self.posterCollectionView.dataSource = self
         self.posterCollectionView.delegate = self
         self.posterCollectionView.backgroundColor = .clear
+        self.posterCollectionView.showsHorizontalScrollIndicator = false
     }
 }
 
