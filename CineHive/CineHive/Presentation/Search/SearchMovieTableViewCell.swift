@@ -84,8 +84,6 @@ final class SearchMovieTableViewCell: UITableViewCell {
         }
         
         self.backgroundColor = .clear
-        
-        self.genreStack.backgroundColor = .red
     }
     
     func configure(
@@ -109,7 +107,6 @@ final class SearchMovieTableViewCell: UITableViewCell {
             let label = GenreLabel(genreName: genreName)
             self.genreStack.addArrangedSubview(label)
         }
-//        self.genreStack.layoutIfNeeded()
     }
 }
 

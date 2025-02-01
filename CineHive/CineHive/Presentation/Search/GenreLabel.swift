@@ -13,6 +13,7 @@ final class GenreLabel: UIView {
     init(genreName: String) {
         super.init(frame: .zero)
         self.label.text = genreName
+        configureViews()
     }
     
     @available(*, unavailable)
@@ -23,7 +24,11 @@ final class GenreLabel: UIView {
     private func configureViews() {
         self.addSubview(self.label)
         self.label.snp.makeConstraints { make in
-            make.edges.equalToSuperview().inset(2)
+            make.verticalEdges.equalToSuperview().inset(2)
+            make.horizontalEdges.equalToSuperview().inset(4)
         }
+        
+        self.configureRadius(to: 4)
+        self.backgroundColor = CHColor.darkLabelBackground.withAlphaComponent(0.7)
     }
 }
