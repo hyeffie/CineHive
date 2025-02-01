@@ -16,5 +16,10 @@ struct MovieCastResponse: Decodable {
         let profilePath: String?
         let name: String?
         let character: String?
+        
+        enum CodingKeys: String, CodingKey {
+            case profilePath = "profile_path"
+            case id, name, character
+        }
     }
 }
