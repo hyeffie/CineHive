@@ -19,7 +19,7 @@ protocol ContenUnavailableState {
 class BaseViewController: UIViewController {
     private var contentUnavailableView: ContentUnavailableView? = nil
     
-    private var contentIsAvailable: ContentAvailablilty = .available {
+    var contentIsAvailable: ContentAvailablilty = .available {
         didSet {
             self.configureContentAvailability()
         }
