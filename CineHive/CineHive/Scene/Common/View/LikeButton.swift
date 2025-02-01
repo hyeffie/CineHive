@@ -46,7 +46,7 @@ final class LikeButton: UIButton {
         }
     }
     
-    @objc func doAction() {
+    @objc private func doAction() {
         self.tapAction?()
     }
 }

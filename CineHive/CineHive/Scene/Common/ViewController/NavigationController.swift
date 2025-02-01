@@ -33,13 +33,4 @@ final class NavigationController: UINavigationController {
         ]
         self.navigationBar.standardAppearance = appearance
     }
-    
-    override func pushViewController(_ viewController: UIViewController, animated: Bool) {
-        super.pushViewController(viewController, animated: animated)
-    }
-    
-    override func popViewController(animated: Bool) -> UIViewController? {
-        let poppedViewController = super.popViewController(animated: animated)
-        return poppedViewController
-    }
 }
