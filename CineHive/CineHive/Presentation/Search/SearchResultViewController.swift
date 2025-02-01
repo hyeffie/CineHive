@@ -8,6 +8,16 @@
 import UIKit
 
 final class SearchResultViewController: BaseViewController {
+    private enum ContentState: ContenUnavailableState {
+        case noResult
+        
+        var displayingMessage: String {
+            switch self {
+            case .noResult: return "원하는 검색 결과를 찾지 못했습니다"
+            }
+        }
+    }
+    
     @UserDefault(key: UserDefaultKey.userProfile)
     private var userProfile: ProfileInfo!
     
@@ -33,26 +43,15 @@ final class SearchResultViewController: BaseViewController {
         return formatter
     }()
     
-    private enum ContentAvailability {
-        case noResult
-        case available
-    }
-    
-    private var contentAvailability: ContentAvailability {
-        didSet {
-            setNeedsUpdateContentUnavailableConfiguration()
-        }
-    }
-    
     private let tableView = UITableView(frame: .zero)
     
     init(query: String? = nil) {
         self.items = []
         self.latestQuery = query
-        self.contentAvailability = .available
         self.currentPage = 0
         self.isLastPage = false
         super.init(nibName: nil, bundle: nil)
+        self.contentIsAvailable = .available
         
         callSearchAPI()
     }
@@ -65,18 +64,6 @@ final class SearchResultViewController: BaseViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         configureViews()
-    }
-    
-    override func updateContentUnavailableConfiguration(using state: UIContentUnavailableConfigurationState) {
-        UIView.animate(withDuration: 0.3) { [weak self] in
-            guard let self else { return }
-            switch self.contentAvailability {
-            case .noResult:
-                self.contentUnavailableConfiguration = SearchUnavailableConfiguration.noSearchingResults
-            case .available:
-                self.contentUnavailableConfiguration = nil
-            }
-        }
     }
     
     private func configureViews() {
@@ -140,13 +127,13 @@ final class SearchResultViewController: BaseViewController {
         Task {
             await MainActor.run {
                 self.tableView.reloadData()
-                if self.latestQuery == nil { self.contentAvailability = .available }
+                if self.latestQuery == nil { self.contentIsAvailable = .available }
             }
         }
     }
     
     private func callSearchAPI() {
-        self.contentAvailability = .available
+        self.contentIsAvailable = .available
         guard let latestQuery, !latestQuery.isEmpty else { return }
         let searchParams = SearchMovieRequestParameter(
             query: latestQuery,
@@ -171,7 +158,7 @@ final class SearchResultViewController: BaseViewController {
         Task {
             await MainActor.run {
                 self.tableView.reloadData()
-                self.contentAvailability = self.items.isEmpty ? .noResult : .available
+                self.contentIsAvailable = self.items.isEmpty ? .unavailable(ContentState.noResult) : .available
             }
         }
     }
