@@ -183,7 +183,7 @@ final class SearchResultViewController: BaseViewController {
             title: summary.title,
             releaseDate: summary.releaseDate,
             voteAverage: summary.voteAverage,
-            genreIDS: summary.genreIDS,
+            genreIDS: summary.genreIDS ?? [],
             overview: summary.overview,
             liked: findMovieIfLiked(movieID: summary.id)
         )
@@ -223,7 +223,10 @@ extension SearchResultViewController: UITableViewDelegate, UITableViewDataSource
             dateString = ""
         }
         
-        let genres = Array(movieSummary.genreIDS.compactMap { id in MovieGenre.getName(by: id) }.prefix(2))
+        var genres: [String] = []
+        if let genreIDS = movieSummary.genreIDS {
+            genres.append(contentsOf: Array(genreIDS.compactMap { id in MovieGenre.getName(by: id) }.prefix(2)))
+        }
         
         return SearchMovieSummary(
             id: movieSummary.id,

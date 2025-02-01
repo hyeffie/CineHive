@@ -170,7 +170,7 @@ final class MainViewController: BaseViewController {
             title: summary.title,
             releaseDate: summary.releaseDate,
             voteAverage: summary.voteAverage,
-            genreIDS: summary.genreIDS,
+            genreIDS: summary.genreIDS ?? [],
             overview: summary.overview,
             liked: findMovieIfLiked(movieID: summary.id)
         )
