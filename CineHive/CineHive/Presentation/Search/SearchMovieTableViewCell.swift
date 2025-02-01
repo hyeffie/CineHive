@@ -58,6 +58,7 @@ final class SearchMovieTableViewCell: UITableViewCell {
         self.titleLabel.snp.makeConstraints { make in
             make.leading.equalTo(self.posterImageView.snp.trailing).offset(outerInset)
             make.top.equalTo(self.posterImageView).offset(4)
+            make.trailing.equalToSuperview().inset(20)
         }
         
         self.contentView.addSubview(self.releaseDateLabel)
