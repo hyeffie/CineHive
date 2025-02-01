@@ -8,8 +8,6 @@
 import UIKit
 
 final class NavigationController: UINavigationController {
-    private lazy var priorViewControllerTitle: String? = self.topViewController?.title
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         configureView()
@@ -26,24 +24,22 @@ final class NavigationController: UINavigationController {
             .font: CHFont.largeBold
         ]
         self.navigationBar.tintColor = CHColor.theme
-        self.navigationItem.backButtonTitle = ""
+        self.navigationItem.backButtonTitle = " "
         
         let appearance = UINavigationBarAppearance()
         appearance.backgroundColor = CHColor.mainBackground
+        appearance.titleTextAttributes = [
+            .foregroundColor: CHColor.primaryText,
+        ]
         self.navigationBar.standardAppearance = appearance
     }
     
     override func pushViewController(_ viewController: UIViewController, animated: Bool) {
-        self.priorViewControllerTitle = self.topViewController?.title
-        self.topViewController?.title = ""
         super.pushViewController(viewController, animated: animated)
     }
     
     override func popViewController(animated: Bool) -> UIViewController? {
-        let targetTitle = self.priorViewControllerTitle
-        self.priorViewControllerTitle = nil
         let poppedViewController = super.popViewController(animated: animated)
-        self.topViewController?.title = targetTitle
         return poppedViewController
     }
 }
