@@ -24,14 +24,14 @@
                                 </constraints>
                             </imageView>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="박혜정" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="RBO-7Z-JDw">
-                                <rect key="frame" x="175.66666666666666" y="582.33333333333337" width="42" height="20"/>
+                                <rect key="frame" x="175.66666666666666" y="592.66666666666663" width="42" height="20"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="16"/>
-                                <color key="textColor" name="primary-text"/>
+                                <color key="textColor" name="light-label-background"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="CineHIve" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="LjL-1i-TJl">
-                                <rect key="frame" x="160" y="534.33333333333337" width="73" height="20"/>
-                                <fontDescription key="fontDescription" type="system" weight="heavy" pointSize="16"/>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="CineHive" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="LjL-1i-TJl">
+                                <rect key="frame" x="128" y="534.33333333333337" width="137" height="38.333333333333371"/>
+                                <fontDescription key="fontDescription" name="HelveticaNeue-BoldItalic" family="Helvetica Neue" pointSize="32"/>
                                 <color key="textColor" name="primary-text"/>
                                 <nil key="highlightedColor"/>
                             </label>
@@ -42,7 +42,7 @@
                             <constraint firstItem="8R5-Jg-ICL" firstAttribute="centerY" secondItem="Ze5-6b-2t3" secondAttribute="centerY" constant="-70" id="5na-jf-4Yb"/>
                             <constraint firstItem="RBO-7Z-JDw" firstAttribute="centerX" secondItem="LjL-1i-TJl" secondAttribute="centerX" id="CHb-g7-UAh"/>
                             <constraint firstItem="8R5-Jg-ICL" firstAttribute="centerX" secondItem="Ze5-6b-2t3" secondAttribute="centerX" id="eYU-oP-rY8"/>
-                            <constraint firstItem="RBO-7Z-JDw" firstAttribute="top" secondItem="LjL-1i-TJl" secondAttribute="bottom" constant="28" id="lhH-ew-rl0"/>
+                            <constraint firstItem="RBO-7Z-JDw" firstAttribute="top" secondItem="LjL-1i-TJl" secondAttribute="bottom" constant="20" id="lhH-ew-rl0"/>
                             <constraint firstItem="LjL-1i-TJl" firstAttribute="centerX" secondItem="8R5-Jg-ICL" secondAttribute="centerX" id="oKA-pk-EME"/>
                             <constraint firstItem="8R5-Jg-ICL" firstAttribute="width" secondItem="Ze5-6b-2t3" secondAttribute="width" multiplier="0.5" id="pkW-Jp-M13"/>
                             <constraint firstItem="LjL-1i-TJl" firstAttribute="top" secondItem="8R5-Jg-ICL" secondAttribute="bottom" constant="80" id="qWt-bC-ZCI"/>
@@ -56,6 +56,9 @@
     </scenes>
     <resources>
         <image name="splash" width="200" height="220.66667175292969"/>
+        <namedColor name="light-label-background">
+            <color red="0.88235294117647056" green="0.88235294117647056" blue="0.88235294117647056" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        </namedColor>
         <namedColor name="main-background">
             <color red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </namedColor>
