@@ -23,7 +23,12 @@ extension AppDelegate: UIApplicationDelegate {
         self.window = UIWindow(frame: UIScreen.main.bounds)
         self.window?.rootViewController = viewController()
         self.window?.makeKeyAndVisible()
+        delayTransition()
         return true
+    }
+    
+    private func delayTransition() {
+        Thread.sleep(forTimeInterval: 2.0)
     }
     
     private func viewController() -> UIViewController {
