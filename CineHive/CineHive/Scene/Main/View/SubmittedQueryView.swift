@@ -41,6 +41,16 @@ final class SubmittedQueryView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
     
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        self.makeCircle()
+    }
+    
+    override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
+        super.touchesEnded(touches, with: event)
+        self.tapHandler(self.query)
+    }
+    
     private func configureViews() {
         let outerInset = 8
         self.addSubview(self.queryLabel)
@@ -58,16 +68,6 @@ final class SubmittedQueryView: UIView {
         }
         
         self.backgroundColor = CHColor.lightLabelBackground
-    }
-    
-    override func layoutSubviews() {
-        super.layoutSubviews()
-        self.makeCircle()
-    }
-    
-    override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
-        super.touchesEnded(touches, with: event)
-        self.tapHandler(self.query)
     }
 
     private func addActionToButton(

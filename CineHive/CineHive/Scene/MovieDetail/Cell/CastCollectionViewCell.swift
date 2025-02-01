@@ -68,9 +68,3 @@ final class CastCollectionViewCell: UICollectionViewCell {
 }
 
 extension CastCollectionViewCell: ReusableCell {}
-
-struct CastInfo {
-    let profileURL: URL?
-    let name: String?
-    let character: String?
-}

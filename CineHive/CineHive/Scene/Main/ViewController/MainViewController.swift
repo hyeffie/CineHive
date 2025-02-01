@@ -39,21 +39,9 @@ final class MainViewController: BaseViewController {
         fetchRecentQuery()
         getTrendingMovies()
     }
-    
-    private func fetchRecentQuery() {
-        let sortedQueries = self.userProfile.submittedQueries.sorted { $0.submittedDate > $1.submittedDate }
-        let contentIsAvailable = !sortedQueries.isEmpty
-        self.recentQueryList.toggleContentAvailability(isAvailable: contentIsAvailable)
-        let queryViews = sortedQueries.map { submittedQuery in
-            SubmittedQueryView(
-                query: submittedQuery.query,
-                tapHandler: { [weak self] query in self?.goToSearch(query: query) },
-                deleteHandler: { [weak self] query in self?.deleteSubmittedQuery(query) }
-            )
-        }
-        self.recentQueryList.content.addViews(queryViews)
-    }
-    
+}
+
+extension MainViewController {
     private func deleteSubmittedQuery(_ query: String) {
         let target = SubmittedQuery(submittedDate: .now, query: query)
         self.userProfile.submittedQueries.remove(target)
@@ -67,6 +55,63 @@ final class MainViewController: BaseViewController {
     
     private func notifySubmittedQueriesMutated() {
         NotificationCenter.default.post(name: CHNotification.userSubmittedQueryMutated, object: nil)
+    }
+    
+    private func notifyLikedMovieMutated() {
+        NotificationCenter.default.post(name: CHNotification.userLikedMovieMutated, object: nil)
+    }
+    
+    private func addNotificationObserver() {
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(self.updateLikes),
+            name: CHNotification.userLikedMovieMutated,
+            object: nil
+        )
+        
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(self.updateRecentQuerys),
+            name: CHNotification.userSubmittedQueryMutated,
+            object: nil
+        )
+    }
+    
+    private func toggleLike(movieID: Int) {
+        if self.userProfile.likedMovieIDs.contains(movieID) {
+            self.userProfile.likedMovieIDs.removeAll { id in id == movieID }
+        } else {
+            self.userProfile.likedMovieIDs.append(movieID)
+        }
+        notifyLikedMovieMutated()
+    }
+    
+    private func findMovieIfLiked(movieID: Int) -> Bool {
+        return self.userProfile.likedMovieIDs.contains(movieID)
+    }
+    
+    @objc private func updateLikes() {
+        self.todayFeaturedMovieList.content.reloadData()
+    }
+    
+    @objc private func updateRecentQuerys() {
+        self.fetchRecentQuery()
+    }
+}
+
+extension MainViewController {
+    private func fetchRecentQuery() {
+        let sortedQueries = self.userProfile.submittedQueries.sorted { $0.submittedDate > $1.submittedDate }
+        let contentIsAvailable = !sortedQueries.isEmpty
+        self.recentQueryList.toggleContentAvailability(isAvailable: contentIsAvailable)
+        let queryViews = sortedQueries.map { submittedQuery in
+            SubmittedQueryView(
+                query: submittedQuery.query,
+                tapHandler: { [weak self] query in self?.goToSearch(query: query) },
+                deleteHandler: { [weak self] query in self?.deleteSubmittedQuery(query) }
+            )
+        }
+        self.recentQueryList.content.addViews(queryViews)
     }
     
     private func getTrendingMovies() {
@@ -92,7 +137,9 @@ final class MainViewController: BaseViewController {
             presentErrorAlert(message: presentableError.message)
         }
     }
-    
+}
+
+extension MainViewController {
     private func todayMovieCollectionViewLayout() -> UICollectionViewLayout {
         let layout = UICollectionViewFlowLayout()
         let itemWidth = self.view.frame.width * 0.55
@@ -153,72 +200,6 @@ final class MainViewController: BaseViewController {
         collectionView.showsVerticalScrollIndicator = false
         collectionView.showsHorizontalScrollIndicator = false
     }
-    
-    private func goToProfileSetting() {
-        let viewController = NavigationController(rootViewController: ProfileEditViewController())
-        self.present(viewController, animated: true)
-    }
-    
-    private func goToSearch(query: String? = nil) {
-        let viewController = SearchResultViewController(query: query)
-        self.push(viewController)
-    }
-    
-    private func goToDetail(summary: MovieSummary) {
-        let detail = MovieDetail(
-            id: summary.id,
-            title: summary.title,
-            releaseDate: summary.releaseDate,
-            voteAverage: summary.voteAverage,
-            genreIDS: summary.genreIDS ?? [],
-            overview: summary.overview,
-            liked: findMovieIfLiked(movieID: summary.id)
-        )
-        
-        let viewController = MovieDetailViewController(movieDetail: detail)
-        self.push(viewController)
-    }
-    
-    private func toggleLike(movieID: Int) {
-        if self.userProfile.likedMovieIDs.contains(movieID) {
-            self.userProfile.likedMovieIDs.removeAll { id in id == movieID }
-        } else {
-            self.userProfile.likedMovieIDs.append(movieID)
-        }
-        notifyLikedMovieMutated()
-    }
-    
-    private func findMovieIfLiked(movieID: Int) -> Bool {
-        return self.userProfile.likedMovieIDs.contains(movieID)
-    }
-    
-    private func notifyLikedMovieMutated() {
-        NotificationCenter.default.post(name: CHNotification.userLikedMovieMutated, object: nil)
-    }
-    
-    private func addNotificationObserver() {
-        NotificationCenter.default.addObserver(
-            self,
-            selector: #selector(self.updateLikes),
-            name: CHNotification.userLikedMovieMutated,
-            object: nil
-        )
-        
-        NotificationCenter.default.addObserver(
-            self,
-            selector: #selector(self.updateRecentQuerys),
-            name: CHNotification.userSubmittedQueryMutated,
-            object: nil
-        )
-    }
-    
-    @objc private func updateLikes() {
-        self.todayFeaturedMovieList.content.reloadData()
-    }
-    
-    @objc private func updateRecentQuerys() {
-        self.fetchRecentQuery()
-    }
 }
 
 extension MainViewController: UICollectionViewDataSource, UICollectionViewDelegate {
@@ -258,5 +239,32 @@ extension MainViewController: UICollectionViewDataSource, UICollectionViewDelega
         collectionView.deselectItem(at: indexPath, animated: true)
         let targetSummary = self.trendingMovies[indexPath.item]
         goToDetail(summary: targetSummary)
+    }
+}
+
+extension MainViewController {
+    private func goToProfileSetting() {
+        let viewController = NavigationController(rootViewController: ProfileEditViewController())
+        self.present(viewController, animated: true)
+    }
+    
+    private func goToSearch(query: String? = nil) {
+        let viewController = SearchResultViewController(query: query)
+        self.push(viewController)
+    }
+    
+    private func goToDetail(summary: MovieSummary) {
+        let detail = MovieDetail(
+            id: summary.id,
+            title: summary.title,
+            releaseDate: summary.releaseDate,
+            voteAverage: summary.voteAverage,
+            genreIDS: summary.genreIDS ?? [],
+            overview: summary.overview,
+            liked: findMovieIfLiked(movieID: summary.id)
+        )
+        
+        let viewController = MovieDetailViewController(movieDetail: detail)
+        self.push(viewController)
     }
 }

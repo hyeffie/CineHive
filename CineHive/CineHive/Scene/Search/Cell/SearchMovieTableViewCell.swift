@@ -116,12 +116,3 @@ final class SearchMovieTableViewCell: UITableViewCell {
 }
 
 extension SearchMovieTableViewCell: ReusableCell {}
-
-struct SearchMovieSummary {
-    let id: Int
-    let posterURL: URL?
-    let title: String
-    let dateString: String
-    let genres: [String]
-    let liked: Bool
-}

@@ -92,7 +92,26 @@ final class MovieDetailViewController: BaseViewController {
         getCast()
         configureViews()
     }
+}
+
+extension MovieDetailViewController {
+    private func reconfigureBackdropPageConntrol() {
+        self.backdropPageControl.numberOfPages = self.backdropPaths.count
+        self.backdropPageControl.currentPage = 0
+    }
     
+    private func toggleFoldingSynopsis(button: UIButton) {
+        if self.synopsisLabel.numberOfLines == 0 {
+            self.synopsisLabel.numberOfLines = 3
+            button.setTitle("More", for: .normal)
+        } else {
+            self.synopsisLabel.numberOfLines = 0
+            button.setTitle("Hide", for: .normal)
+        }
+    }
+}
+
+extension MovieDetailViewController {
     private func backdropCollectionViewLayout() -> UICollectionViewLayout {
         let layout = UICollectionViewFlowLayout()
         let width = self.view.frame.width
@@ -239,23 +258,8 @@ final class MovieDetailViewController: BaseViewController {
         self.backdropPageControl.addAction(valueChangeAction, for: .valueChanged)
     }
     
-    private func reconfigureBackdropPageConntrol() {
-        self.backdropPageControl.numberOfPages = self.backdropPaths.count
-        self.backdropPageControl.currentPage = 0
-    }
-    
     @objc private func moveBackdropPage(to page: Int) {
         self.backdropCollectionView.scrollToItem(at: IndexPath(row: page, section: 0), at: .centeredHorizontally, animated: true)
-    }
-    
-    private func toggleFoldingSynopsis(button: UIButton) {
-        if self.synopsisLabel.numberOfLines == 0 {
-            self.synopsisLabel.numberOfLines = 3
-            button.setTitle("More", for: .normal)
-        } else {
-            self.synopsisLabel.numberOfLines = 0
-            button.setTitle("Hide", for: .normal)
-        }
     }
     
     private func configureCastCollectionView() {

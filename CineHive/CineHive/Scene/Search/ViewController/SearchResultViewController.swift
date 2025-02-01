@@ -74,7 +74,9 @@ final class SearchResultViewController: BaseViewController {
             }
         }
     }
-    
+}
+
+extension SearchResultViewController {
     private func configureViews() {
         self.navigationItem.title = "영화 검색"
         
@@ -108,7 +110,9 @@ final class SearchResultViewController: BaseViewController {
         self.tableView.separatorInset = UIEdgeInsets.init(top: 0, left: 20, bottom: 0, right: 20)
         self.tableView.backgroundColor = .clear
     }
-    
+}
+
+extension SearchResultViewController {
     private func toggleLike(movieID: Int) {
         if self.userProfile.likedMovieIDs.contains(movieID) {
             self.userProfile.likedMovieIDs.removeAll { id in id == movieID }
@@ -137,7 +141,9 @@ final class SearchResultViewController: BaseViewController {
             }
         }
     }
-    
+}
+
+extension SearchResultViewController {
     private func callSearchAPI() {
         self.contentIsAvailable = .available
         guard let latestQuery, !latestQuery.isEmpty else { return }

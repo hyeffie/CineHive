@@ -21,12 +21,14 @@ final class SettingViewController: BaseViewController {
     private lazy var profileInfoView = ProfileInfoView(tapHandler: self.goToProfileSetting)
     
     private lazy var menuTableView = UITableView(frame: .zero)
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         configureViews()
     }
-    
+}
+
+extension SettingViewController {
     private func configureViews() {
         self.view.addSubview(self.profileInfoView)
         self.profileInfoView.snp.makeConstraints { make in

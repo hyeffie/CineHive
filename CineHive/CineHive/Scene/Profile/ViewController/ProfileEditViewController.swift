@@ -43,7 +43,6 @@ final class ProfileEditViewController: BaseViewController {
     }
 }
 
-// MARK: - Configuring Views
 extension ProfileEditViewController {
     private func configureView() {
         let vOffset = 30

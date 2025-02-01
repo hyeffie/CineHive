@@ -54,7 +54,6 @@ final class ProfileImageViewController: BaseViewController {
     }
 }
 
-// MARK: - Configuring Views
 extension ProfileImageViewController {
     private func collectionViewLayout() -> UICollectionViewLayout {
         let layout = UICollectionViewFlowLayout()
