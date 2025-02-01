@@ -81,7 +81,7 @@ final class MainViewController: BaseViewController {
     }
     
     private func handleResponse(response: TrendingMovieResponse) {
-        self.trendingMovies = Array(response.movies.prefix(10))
+        self.trendingMovies = response.movies
         let contentIsAvailable = !self.trendingMovies.isEmpty
         self.todayFeaturedMovieList.toggleContentAvailability(isAvailable: contentIsAvailable)
         self.todayFeaturedMovieList.content.reloadData()

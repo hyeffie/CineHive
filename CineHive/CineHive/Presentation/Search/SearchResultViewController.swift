@@ -43,6 +43,8 @@ final class SearchResultViewController: BaseViewController {
         return formatter
     }()
     
+    private let searchController = UISearchController(searchResultsController: nil)
+    
     private let tableView = UITableView(frame: .zero)
     
     init(query: String? = nil) {
@@ -51,8 +53,6 @@ final class SearchResultViewController: BaseViewController {
         self.currentPage = 0
         self.isLastPage = false
         super.init(nibName: nil, bundle: nil)
-        self.contentIsAvailable = .available
-        
         callSearchAPI()
     }
     
@@ -64,6 +64,15 @@ final class SearchResultViewController: BaseViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         configureViews()
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        if self.latestQuery == nil {
+            DispatchQueue.main.async { [weak self] in
+                self?.searchController.searchBar.becomeFirstResponder()
+            }
+        }
     }
     
     private func configureViews() {
@@ -79,16 +88,15 @@ final class SearchResultViewController: BaseViewController {
     }
     
     private func configureSearchController() {
-        let searchController = UISearchController(searchResultsController: nil)
-        navigationItem.searchController = searchController
-        searchController.searchBar.delegate = self
-        searchController.hidesNavigationBarDuringPresentation = false
-        searchController.searchBar.placeholder = "영화를 검색해보세요."
-        searchController.searchBar.searchTextField.backgroundColor = CHColor.darkLabelBackground.withAlphaComponent(0.5)
-        searchController.searchBar.searchTextField.textColor = CHColor.primaryText
-        searchController.searchBar.searchTextField.clearButtonMode = .never
-        searchController.automaticallyShowsCancelButton = false
-        searchController.searchBar.text = self.latestQuery
+        self.searchController.searchBar.delegate = self
+        self.searchController.hidesNavigationBarDuringPresentation = false
+        self.searchController.searchBar.placeholder = "영화를 검색해보세요."
+        self.searchController.searchBar.searchTextField.backgroundColor = CHColor.darkLabelBackground.withAlphaComponent(0.5)
+        self.searchController.searchBar.searchTextField.textColor = CHColor.primaryText
+        self.searchController.searchBar.searchTextField.clearButtonMode = .never
+        self.searchController.automaticallyShowsCancelButton = false
+        self.searchController.searchBar.text = self.latestQuery
+        navigationItem.searchController = self.searchController
     }
     
     private func configureTableView() {
