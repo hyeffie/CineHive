@@ -20,6 +20,8 @@ extension AppDelegate: UIApplicationDelegate {
         _ application: UIApplication,
         didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
     ) -> Bool {
+        configureGlobalAppearance()
+        
         self.window = UIWindow(frame: UIScreen.main.bounds)
         self.window?.rootViewController = viewController()
         self.window?.makeKeyAndVisible()
@@ -38,5 +40,14 @@ extension AppDelegate: UIApplicationDelegate {
         } else {
             return TabBarController()
         }
+    }
+    
+    private func configureGlobalAppearance() {
+        let appearance = UITextField.appearance()
+        appearance.backgroundColor = CHColor.darkLabelBackground.withAlphaComponent(0.3)
+        appearance.textColor = CHColor.primaryText
+        appearance.tintColor = CHColor.primaryText
+        appearance.keyboardAppearance = .dark
+        appearance.borderStyle = .roundedRect
     }
 }
