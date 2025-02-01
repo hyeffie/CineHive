@@ -27,6 +27,10 @@ final class NavigationController: UINavigationController {
         ]
         self.navigationBar.tintColor = CHColor.theme
         self.navigationItem.backButtonTitle = ""
+        
+        let appearance = UINavigationBarAppearance()
+        appearance.backgroundColor = CHColor.mainBackground
+        self.navigationBar.standardAppearance = appearance
     }
     
     override func pushViewController(_ viewController: UIViewController, animated: Bool) {

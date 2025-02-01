@@ -40,6 +40,9 @@ final class TabBarController: UITabBarController {
     private func configure() {
         self.tabBar.tintColor = CHColor.theme
         self.tabBar.unselectedItemTintColor = CHColor.darkLabelBackground
+        let appearance = UITabBarAppearance()
+        appearance.backgroundColor = CHColor.mainBackground
+        self.tabBar.standardAppearance = appearance
     }
     
     private func navigationEmebed(
