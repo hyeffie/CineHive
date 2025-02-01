@@ -15,7 +15,12 @@ final class OnboardingViewController: BaseViewController {
         return imageView
     }()
     
-    private let titleLabel = BaseLabel(font: CHFont.largeBold, alignment: .center)
+    private let titleLabel = {
+        let fontDescriptor = UIFontDescriptor.preferredFontDescriptor(withTextStyle: .body)
+        let italicBoldDescriptor = fontDescriptor.withSymbolicTraits([.traitBold, .traitItalic])!
+        let font = UIFont(descriptor: italicBoldDescriptor, size: 32)
+        return BaseLabel(font: font, alignment: .center)
+    }()
     
     private let subtitleLabel = BaseLabel(font: CHFont.large, alignment: .center)
     
@@ -30,19 +35,19 @@ final class OnboardingViewController: BaseViewController {
         self.view.addSubview(self.imageView)
         self.imageView.snp.makeConstraints { make in
             make.horizontalEdges.equalTo(self.view)
-            make.centerY.equalTo(self.view.safeAreaLayoutGuide).offset(-100)
+            make.centerY.equalTo(self.view.safeAreaLayoutGuide).offset(-110)
             make.height.equalTo(self.view.safeAreaLayoutGuide).multipliedBy(0.6)
         }
         
         self.view.addSubview(self.titleLabel)
         self.titleLabel.snp.makeConstraints { make in
-            make.top.equalTo(self.imageView.snp.bottom)
+            make.top.equalTo(self.imageView.snp.bottom).offset(16)
             make.centerX.equalToSuperview()
         }
         
         self.view.addSubview(self.subtitleLabel)
         self.subtitleLabel.snp.makeConstraints { make in
-            make.top.equalTo(self.titleLabel.snp.bottom).offset(24)
+            make.top.equalTo(self.titleLabel.snp.bottom).offset(16)
             make.centerX.equalToSuperview()
         }
         
