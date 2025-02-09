@@ -99,7 +99,7 @@ extension ProfileEditViewController {
             
             self.view.addSubview(self.completeButton)
             self.completeButton.snp.makeConstraints { make in
-                make.top.equalTo(self.nicknameTextField.snp.bottom).offset(vOffset)
+                make.bottom.equalTo(self.view.safeAreaLayoutGuide).inset(vOffset)
                 make.horizontalEdges.equalTo(self.view.safeAreaLayoutGuide).inset(hInset)
             }
         case .update:
