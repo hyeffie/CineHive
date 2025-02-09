@@ -8,7 +8,7 @@
 import UIKit
 
 struct MBTI {
-    protocol Element { }
+    protocol Element: CaseIterable { }
     
     enum EI: String, Element {
         case e = "E"
