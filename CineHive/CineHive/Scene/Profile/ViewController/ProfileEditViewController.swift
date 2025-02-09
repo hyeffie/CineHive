@@ -48,6 +48,10 @@ extension ProfileEditViewController {
             self?.setImage(number: imageNumber)
         }
         
+        self.viewModel.nicknameFieldText.lazyBind { [weak self] nickname in
+            self?.nicknameTextField.setNickname(nickname)
+        }
+        
         self.viewModel.nicknameValidationResultText.lazyBind { [weak self] resultText in
             self?.nicknameTextField.configureValidationResult(message: resultText)
         }

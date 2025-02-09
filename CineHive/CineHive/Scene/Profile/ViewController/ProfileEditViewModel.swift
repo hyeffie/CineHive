@@ -32,6 +32,8 @@ final class ProfileEditViewModel {
     
     let profileImageNumber: Observable<Int?> = Observable(value: nil)
     
+    let nicknameFieldText: Observable<String> = Observable(value: "")
+    
     let nicknameValidationResultText: Observable<String?> = Observable(value: nil)
     
     let nicknameIsValid: Observable<Bool> = Observable(value: false)
@@ -57,6 +59,7 @@ final class ProfileEditViewModel {
         
         self.nicknameValidationResult.lazyBind { state in
             let isValid = state.isEnabled
+            if case .valid(let nickname) = state { self.nicknameFieldText.value = nickname }
             self.nicknameValidationResultText.value = state.message
             self.nicknameIsValid.value = state.isEnabled
             self.profileFormIsValid.value = isValid
@@ -80,18 +83,17 @@ final class ProfileEditViewModel {
     }
     
     private func _setForm() {
-        let form: ProfileInfoForm
         if let userProfile = self.userProfileManager.getCurrentProfile() {
-            form = ProfileInfoForm(
-                imageNumber: userProfile.imageNumber,
-                nickname: userProfile.nickname
-            )
+            self.profileImageNumber.value = userProfile.imageNumber
+            self.nicknameValidationResult.value = .valid(nickname: userProfile.nickname)
         } else {
-            form = ProfileInfoForm()
+            self.profileImageNumber.value = randomizeImageNumber()
+            self.nicknameValidationResult.value = .empty
         }
-        
-        self.profileImageNumber.value = form.imageNumber
-        self.nicknameValidationResult.value = .valid(nickname: form.nickname)
+    }
+    
+    private func randomizeImageNumber() -> Int {
+        return (0..<12).randomElement() ?? 0
     }
     
     private func validateNickname(_ input: String?) {
