@@ -15,4 +15,6 @@ struct CHColor {
     static let primaryText = UIColor.primaryText
     static let validaText = UIColor.validText
     static let invalidText = UIColor.invalidText
+    static let validCompleteButton = UIColor.validCompleteButton
+    static let invalidCompleteButton = UIColor.invalidCompleteButton
 }
