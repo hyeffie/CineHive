@@ -1,30 +1,11 @@
 //
-//  ProfileEditViewModel.swift
+//  UserProfileManager.swift
 //  CineHive
 //
 //  Created by Effie on 2/9/25.
 //
 
 import Foundation
-
-enum ProfileEditMode {
-    case create
-    case update
-}
-
-final class ProfileEditViewModel {
-    // MARK: input
-    
-    // MARK: output
-    let mode: Observable<ProfileEditMode>
-    
-    // MARK: privates
-    private let userProfileManager = UserProfileManager()
-    
-    init(mode: ProfileEditMode) {
-        self.mode = Observable(value: mode)
-    }
-}
 
 struct UserProfileManager {
     @UserDefault(key: UserDefaultKey.userProfile)

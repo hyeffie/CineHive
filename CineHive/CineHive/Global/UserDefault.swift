@@ -9,7 +9,11 @@ import Foundation
 
 @propertyWrapper
 struct UserDefault<T: Codable> {
-    let key: String
+    private let key: String
+    
+    init(key: String) {
+        self.key = key
+    }
     
     var wrappedValue: T? {
         get {
