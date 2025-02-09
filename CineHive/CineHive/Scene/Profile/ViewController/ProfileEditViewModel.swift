@@ -27,6 +27,8 @@ final class ProfileEditViewModel {
     
     let resignButtonTapped: Observable<Void> = Observable(value: ())
     
+    let setImageNumber: Observable<Int?> = Observable(value: nil)
+    
     // MARK: outputs
     let mode: Observable<ProfileEditMode>
     
@@ -79,6 +81,11 @@ final class ProfileEditViewModel {
         
         self.resignButtonTapped.lazyBind { _ in
             self.resignScene.value = ()
+        }
+        
+        self.setImageNumber.lazyBind { imageNumber in
+            guard let imageNumber else { return }
+            self.profileImageNumber.value = imageNumber
         }
     }
     

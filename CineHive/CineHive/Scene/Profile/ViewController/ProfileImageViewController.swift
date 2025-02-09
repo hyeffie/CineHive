@@ -8,13 +8,9 @@
 import UIKit
 
 final class ProfileImageViewController: BaseViewController {
-    private var selectedImageNumber: Int
-    
-    private let imageNumberRange = (0..<12)
-    
-    private let imageSelectionHandler: (Int) -> Void
+    private let viewModel: ProfileImageViewModel
 
-    private let selectedProfileImageView: SelectedProfileImageView
+    private let selectedProfileImageView = SelectedProfileImageView()
     
     private lazy var collectionView = UICollectionView(
         frame: .zero,
@@ -22,15 +18,11 @@ final class ProfileImageViewController: BaseViewController {
     )
     
     init(
-        selectedImageNumber: Int,
-        imageSelectionHandler: @escaping (Int) -> Void
+        viewModel: ProfileImageViewModel
     ) {
-        self.selectedImageNumber = selectedImageNumber
-        self.imageSelectionHandler = imageSelectionHandler
-        self.selectedProfileImageView = SelectedProfileImageView(
-            imageName: CHImageName.profileImage(number: selectedImageNumber)
-        )
+        self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
+        bind()
     }
     
     @available(*, unavailable)
@@ -40,17 +32,28 @@ final class ProfileImageViewController: BaseViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        self.navigationItem.title = "프로필 이미지 설정"
-        
         configureView()
+        self.viewModel.viewDidLoad.value = ()
+    }
+    
+    private func bind() {
+        self.viewModel.navigationTitle.lazyBind { [weak self] title in
+            self?.navigationItem.title = title
+        }
         
-        let selectedIndexPath = IndexPath(item: self.selectedImageNumber, section: 0)
-        self.collectionView.selectItem(
-            at: selectedIndexPath,
-            animated: false,
-            scrollPosition: .top
-        )
+        self.viewModel.selectedCellIndex.lazyBind { [weak self] cellIndex in
+            guard let cellIndex else { return }
+            let selectedIndexPath = IndexPath(item: cellIndex, section: 0)
+            self?.collectionView.selectItem(
+                at: selectedIndexPath,
+                animated: false,
+                scrollPosition: .top
+            )
+        }
+        
+        self.viewModel.selectedImageNumber.lazyBind { [weak self] imageNumber in
+            self?.selectedProfileImageView.configureImage(number: imageNumber)
+        }
     }
 }
 
@@ -98,7 +101,7 @@ extension ProfileImageViewController: UICollectionViewDelegate, UICollectionView
         _ collectionView: UICollectionView,
         numberOfItemsInSection section: Int
     ) -> Int {
-        return imageNumberRange.count
+        return self.viewModel.imageNumberRange.value.count
     }
     
     func collectionView(
@@ -108,7 +111,8 @@ extension ProfileImageViewController: UICollectionViewDelegate, UICollectionView
         guard let cell: ProfileImageCollectionViewCell = collectionView.dequeueReusableCell(for: indexPath) else {
             return UICollectionViewCell()
         }
-        cell.configureImage(imageNumber: indexPath.item)
+        let imageNumber = self.viewModel.imageNumberRange.value[indexPath.item]
+        cell.configureImage(imageNumber: imageNumber)
         return cell
     }
     
@@ -116,13 +120,6 @@ extension ProfileImageViewController: UICollectionViewDelegate, UICollectionView
         _ collectionView: UICollectionView,
         didSelectItemAt indexPath: IndexPath
     ) {
-        let number = indexPath.item
-        selectImage(number: number)
-    }
-    
-    private func selectImage(number: Int) {
-        self.selectedImageNumber = number
-        self.selectedProfileImageView.configureImage(number: number)
-        self.imageSelectionHandler(number)
+        self.viewModel.didSelectCell.value = indexPath.item
     }
 }
