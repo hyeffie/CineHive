@@ -8,6 +8,8 @@
 import UIKit
 
 final class ProfileImageViewController: BaseViewController {
+    private let viewModel: ProfileImageViewModel
+    
     private var selectedImageNumber: Int
     
     private let imageNumberRange = (0..<12)
@@ -25,12 +27,17 @@ final class ProfileImageViewController: BaseViewController {
         selectedImageNumber: Int,
         imageSelectionHandler: @escaping (Int) -> Void
     ) {
+        self.viewModel = ProfileImageViewModel(
+            selectedImageNumber: selectedImageNumber,
+            imageSelectionHandler: imageSelectionHandler
+        )
         self.selectedImageNumber = selectedImageNumber
         self.imageSelectionHandler = imageSelectionHandler
         self.selectedProfileImageView = SelectedProfileImageView(
             imageName: CHImageName.profileImage(number: selectedImageNumber)
         )
         super.init(nibName: nil, bundle: nil)
+        bind()
     }
     
     @available(*, unavailable)
@@ -40,17 +47,28 @@ final class ProfileImageViewController: BaseViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        self.navigationItem.title = "프로필 이미지 설정"
-        
         configureView()
+        self.viewModel.viewDidLoad.value = ()
+    }
+    
+    private func bind() {
+        self.viewModel.navigationTitle.lazyBind { [weak self] title in
+            self?.navigationItem.title = title
+        }
         
-        let selectedIndexPath = IndexPath(item: self.selectedImageNumber, section: 0)
-        self.collectionView.selectItem(
-            at: selectedIndexPath,
-            animated: false,
-            scrollPosition: .top
-        )
+        self.viewModel.selectedCellIndex.lazyBind { [weak self] cellIndex in
+            guard let cellIndex else { return }
+            let selectedIndexPath = IndexPath(item: cellIndex, section: 0)
+            self?.collectionView.selectItem(
+                at: selectedIndexPath,
+                animated: false,
+                scrollPosition: .top
+            )
+        }
+        
+        self.viewModel.selectedImageNumber.lazyBind { [weak self] imageNumber in
+            self?.selectedProfileImageView.configureImage(number: imageNumber)
+        }
     }
 }
 

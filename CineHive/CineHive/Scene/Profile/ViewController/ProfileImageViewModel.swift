@@ -20,6 +20,8 @@ final class ProfileImageViewModel {
     
     let selectedImageNumber: Observable<Int>
     
+    let selectedCellIndex: Observable<Int?> = Observable(value: nil)
+    
     // MARK: privates
     private let imageSelectionHandler: (Int) -> Void
     
@@ -36,11 +38,13 @@ final class ProfileImageViewModel {
         self.viewDidLoad.lazyBind { _ in
             self.navigationTitle.value = "프로필 이미지 설정"
             self.selectedImageNumber.value = self.selectedImageNumber.value
+            self.selectedCellIndex.value = self.selectedImageNumber.value
         }
         
         self.didSelectCell.lazyBind { selectedCellIndex in
             guard let selectedCellIndex else { return }
             self.selectedImageNumber.value = selectedCellIndex
+            self.imageSelectionHandler(selectedCellIndex)
         }
     }
 }
