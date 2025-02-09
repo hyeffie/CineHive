@@ -65,7 +65,8 @@ final class OnboardingViewController: BaseViewController {
     }
     
     @objc private func startButtonTapped() {
-        let profileViewController = ProfileEditViewController()
+        let profileViewModel = ProfileEditViewModel(mode: .create)
+        let profileViewController = ProfileEditViewController(viewModel: profileViewModel)
         self.push(profileViewController)
     }
 }

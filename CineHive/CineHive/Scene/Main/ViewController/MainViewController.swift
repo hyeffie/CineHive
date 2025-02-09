@@ -244,7 +244,8 @@ extension MainViewController: UICollectionViewDataSource, UICollectionViewDelega
 
 extension MainViewController {
     private func goToProfileSetting() {
-        let viewController = NavigationController(rootViewController: ProfileEditViewController())
+        let viewModel = ProfileEditViewModel(mode: .update)
+        let viewController = NavigationController(rootViewController: ProfileEditViewController(viewModel: viewModel))
         self.present(viewController, animated: true)
     }
     

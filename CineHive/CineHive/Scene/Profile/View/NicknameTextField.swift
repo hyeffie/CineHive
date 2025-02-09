@@ -81,12 +81,16 @@ final class NicknameTextField: UIView {
 }
 
 extension NicknameTextField {
-    func configureValidationResult(message: String) {
-        self.validationResultLabel.text = message
+    func configureValidationResult(message: String?) {
+        self.validationResultLabel.text = message ?? ""
+    }
+    
+    func configureValidationResult(isValid: Bool) {
+        self.validationResultLabel.textColor = isValid ? CHColor.validaText : CHColor.invalidText
     }
     
     func setActionToTextField(
-        valueChangeHandler: @escaping (String) -> String?
+        valueChangeHandler: @escaping (String) -> Void
     ) {
         let action = UIAction { [weak self] _ in
             guard let self else { return }
