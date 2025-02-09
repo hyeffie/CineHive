@@ -17,6 +17,8 @@ final class ProfileEditViewModel {
     private let userProfileManager = UserProfileManager()
     
     // MARK: inputs
+    let setForm: Observable<Void> = Observable(value: ())
+    
     let nicknameTextFieldInput: Observable<String?> = Observable(value: nil)
     
     let profileImageButtonTapped: Observable<Void> = Observable(value: ())
@@ -28,6 +30,8 @@ final class ProfileEditViewModel {
     // MARK: outputs
     let mode: Observable<ProfileEditMode>
     
+    let profileImageName: Observable<String?> = Observable(value: nil)
+    
     let nicknameValidationResultText: Observable<String?> = Observable(value: nil)
     
     let nicknameIsValid: Observable<Bool> = Observable(value: false)
@@ -36,21 +40,9 @@ final class ProfileEditViewModel {
     
     let goToImageSelectScene: Observable<Void> = Observable(value: ())
     
-    // MARK: privates
-    private lazy var profileForm: Observable<ProfileInfoForm> = {
-        let form: ProfileInfoForm
-        if let userProfile = self.userProfileManager.getCurrentProfile() {
-            form = ProfileInfoForm(
-                imageNumber: userProfile.imageNumber,
-                nickname: userProfile.nickname
-            )
-            
-        } else {
-            form = ProfileInfoForm()
-        }
-        return Observable(value: form)
-    }()
+    let profileFormIsValid: Observable<Bool> = Observable(value: false)
     
+    // MARK: privates
     private let nicknameValidationResult: Observable<NicknameValidityState> = Observable(value: .empty)
     
     init(mode: ProfileEditMode) {
