@@ -13,40 +13,52 @@ enum ProfileEditMode {
 }
 
 final class ProfileEditViewModel {
-    // MARK: input
+    // MARK: helpers
+    private let userProfileManager = UserProfileManager()
     
-    // MARK: output
+    // MARK: inputs
+    let nicknameTextFieldInput: Observable<String?> = Observable(value: nil)
+    
+    let profileImageButtonTapped: Observable<Void> = Observable(value: ())
+    
+    let saveButtonTapped: Observable<Void> = Observable(value: ())
+    
+    let resignButtonTapped: Observable<Void> = Observable(value: ())
+    
+    // MARK: outputs
     let mode: Observable<ProfileEditMode>
     
+    let nicknameValidationResultText: Observable<String?> = Observable(value: nil)
+    
+    let nicknameIsValid: Observable<Bool> = Observable(value: false)
+    
+    let resignScene: Observable<Void> = Observable(value: ())
+    
+    let goToImageSelectScene: Observable<Void> = Observable(value: ())
+    
     // MARK: privates
-    private let userProfileManager = UserProfileManager()
+    private lazy var profileForm: Observable<ProfileInfoForm> = {
+        let form: ProfileInfoForm
+        if let userProfile = self.userProfileManager.getCurrentProfile() {
+            form = ProfileInfoForm(
+                imageNumber: userProfile.imageNumber,
+                nickname: userProfile.nickname
+            )
+            
+        } else {
+            form = ProfileInfoForm()
+        }
+        return Observable(value: form)
+    }()
+    
+    private let nicknameValidationResult: Observable<NicknameValidityState> = Observable(value: .empty)
     
     init(mode: ProfileEditMode) {
         self.mode = Observable(value: mode)
-    }
-}
-
-struct UserProfileManager {
-    @UserDefault(key: UserDefaultKey.userProfile)
-    private var userProfile: ProfileInfo?
-    
-    func getCurrentProfile() -> ProfileInfoForm? {
-        guard let userProfile = self.userProfile else { return nil }
-        return ProfileInfoForm(
-            imageNumber: userProfile.imageNumber,
-            nickname: userProfile.nickname
-        )
+        bind()
     }
     
-    mutating func saveProfile(withForm form: ProfileInfoForm) {
-        let newUserProfile = ProfileInfo(
-            imageNumber: form.imageNumber,
-            nickname: form.nickname,
-            createdAt: self.userProfile?.createdAt ?? .now,
-            likedMovieIDs: self.userProfile?.likedMovieIDs ?? [],
-            submittedQueries: []
-        )
+    private func bind() {
         
-        self.userProfile = newUserProfile
     }
 }
