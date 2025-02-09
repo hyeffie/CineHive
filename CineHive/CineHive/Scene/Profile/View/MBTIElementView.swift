@@ -37,16 +37,16 @@ struct MBTI {
 }
 
 protocol SelectionDelegate: AnyObject {
-    func didSelect()
-    func didDeselect()
+    func didSelect(_ selected: UIControl)
+    func didDeselect(_ deselected: UIControl)
 }
 
 final class CharacterButton: UIButton {
-    private weak var selectionDelegate: SelectionDelegate?
+    private weak var selectionDelegate: (any SelectionDelegate)?
     
     init(
         character: Character,
-        selectionDelegate: SelectionDelegate
+        selectionDelegate: any SelectionDelegate
     ) {
         super.init(frame: .zero)
         configureView(title: "\(character)")
@@ -56,9 +56,9 @@ final class CharacterButton: UIButton {
     override var isSelected: Bool {
         didSet {
             if self.isSelected {
-                self.selectionDelegate?.didSelect()
+                self.selectionDelegate?.didSelect(self)
             } else {
-                self.selectionDelegate?.didDeselect()
+                self.selectionDelegate?.didDeselect(self)
             }
         }
     }
