@@ -28,21 +28,18 @@ final class ThemePillShapeButton: UIButton {
         var attributeContainer = AttributeContainer()
         attributeContainer.font = CHFont.largeBold
         configuration.cornerStyle = .capsule
-        configuration.baseBackgroundColor = .clear
-        configuration.background.strokeWidth = 2
         
         self.configuration = configuration
         
         self.configurationUpdateHandler = { button in
             var attributeContainer = AttributeContainer()
             attributeContainer.font = CHFont.largeBold
+            attributeContainer.foregroundColor = CHColor.primaryText
             switch button.state {
             case .normal:
-                attributeContainer.foregroundColor = CHColor.theme
-                button.configuration?.background.strokeColor = CHColor.theme
+                button.configuration?.background.backgroundColor = CHColor.validCompleteButton
             case .disabled:
-                attributeContainer.foregroundColor = CHColor.darkLabelBackground
-                button.configuration?.background.strokeColor = CHColor.darkLabelBackground
+                button.configuration?.background.backgroundColor = CHColor.invalidCompleteButton
             default:
                 return
             }
