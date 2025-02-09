@@ -133,7 +133,7 @@ extension ProfileEditViewController {
         }
         let viewModel = ProfileImageViewModel(
             selectedImageNumber: imageNumber,
-            imageSelectionHandler: { [weak self] number in self?.setImage(number: number) }
+            imageSelectionHandler: { [weak self] number in self?.viewModel.setImageNumber.value = number }
         )
         let viewController = ProfileImageViewController(viewModel: viewModel)
         self.push(viewController)
