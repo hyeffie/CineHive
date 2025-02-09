@@ -13,4 +13,6 @@ struct CHColor {
     static let mainBackground = UIColor.mainBackground
     static let theme = UIColor.hiveTheme
     static let primaryText = UIColor.primaryText
+    static let validaText = UIColor.validText
+    static let invalidText = UIColor.invalidText
 }
