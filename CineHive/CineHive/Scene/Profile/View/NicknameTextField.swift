@@ -18,6 +18,12 @@ final class NicknameTextField: UIView {
         field.textColor = CHColor.primaryText
         field.font = CHFont.medium
         field.backgroundColor = .clear
+        field.attributedPlaceholder = NSAttributedString(
+            string: "닉네임을 입력해주세요 :)",
+            attributes: [
+                .foregroundColor: CHColor.darkLabelBackground,
+            ]
+        )
         return field
     }()
     
