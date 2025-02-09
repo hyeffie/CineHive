@@ -131,10 +131,11 @@ extension ProfileEditViewController {
         guard let imageNumber = self.viewModel.profileImageNumber.value else {
             return
         }
-        let viewController = ProfileImageViewController(
+        let viewModel = ProfileImageViewModel(
             selectedImageNumber: imageNumber,
             imageSelectionHandler: { [weak self] number in self?.setImage(number: number) }
         )
+        let viewController = ProfileImageViewController(viewModel: viewModel)
         self.push(viewController)
     }
     

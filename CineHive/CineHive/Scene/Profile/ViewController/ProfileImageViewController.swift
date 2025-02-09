@@ -9,14 +9,8 @@ import UIKit
 
 final class ProfileImageViewController: BaseViewController {
     private let viewModel: ProfileImageViewModel
-    
-    private var selectedImageNumber: Int
-    
-    private let imageNumberRange = (0..<12)
-    
-    private let imageSelectionHandler: (Int) -> Void
 
-    private let selectedProfileImageView: SelectedProfileImageView
+    private let selectedProfileImageView = SelectedProfileImageView()
     
     private lazy var collectionView = UICollectionView(
         frame: .zero,
@@ -24,18 +18,9 @@ final class ProfileImageViewController: BaseViewController {
     )
     
     init(
-        selectedImageNumber: Int,
-        imageSelectionHandler: @escaping (Int) -> Void
+        viewModel: ProfileImageViewModel
     ) {
-        self.viewModel = ProfileImageViewModel(
-            selectedImageNumber: selectedImageNumber,
-            imageSelectionHandler: imageSelectionHandler
-        )
-        self.selectedImageNumber = selectedImageNumber
-        self.imageSelectionHandler = imageSelectionHandler
-        self.selectedProfileImageView = SelectedProfileImageView(
-            imageName: CHImageName.profileImage(number: selectedImageNumber)
-        )
+        self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
         bind()
     }
@@ -116,7 +101,7 @@ extension ProfileImageViewController: UICollectionViewDelegate, UICollectionView
         _ collectionView: UICollectionView,
         numberOfItemsInSection section: Int
     ) -> Int {
-        return imageNumberRange.count
+        return self.viewModel.imageNumberRange.value.count
     }
     
     func collectionView(
@@ -126,7 +111,8 @@ extension ProfileImageViewController: UICollectionViewDelegate, UICollectionView
         guard let cell: ProfileImageCollectionViewCell = collectionView.dequeueReusableCell(for: indexPath) else {
             return UICollectionViewCell()
         }
-        cell.configureImage(imageNumber: indexPath.item)
+        let imageNumber = self.viewModel.imageNumberRange.value[indexPath.item]
+        cell.configureImage(imageNumber: imageNumber)
         return cell
     }
     
@@ -134,13 +120,6 @@ extension ProfileImageViewController: UICollectionViewDelegate, UICollectionView
         _ collectionView: UICollectionView,
         didSelectItemAt indexPath: IndexPath
     ) {
-        let number = indexPath.item
-        selectImage(number: number)
-    }
-    
-    private func selectImage(number: Int) {
-        self.selectedImageNumber = number
-        self.selectedProfileImageView.configureImage(number: number)
-        self.imageSelectionHandler(number)
+        self.viewModel.didSelectCell.value = indexPath.item
     }
 }
