@@ -86,7 +86,7 @@ extension NicknameTextField {
     }
     
     func setActionToTextField(
-        valueChangeHandler: @escaping (String) -> String?
+        valueChangeHandler: @escaping (String) -> Void
     ) {
         let action = UIAction { [weak self] _ in
             guard let self else { return }

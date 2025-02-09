@@ -8,19 +8,21 @@
 import UIKit
 
 final class ProfileEditViewController: BaseViewController {
-    @UserDefault(key: UserDefaultKey.userProfile)
-    private var userProfile: ProfileInfo?
+//    @UserDefault(key: UserDefaultKey.userProfile)
+//    private var userProfile: ProfileInfo?
+//    
+//    private lazy var form: ProfileInfoForm = {
+//        if let userProfile {
+//            return ProfileInfoForm(
+//                imageNumber: userProfile.imageNumber,
+//                nickname: userProfile.nickname
+//            )
+//        } else {
+//            return ProfileInfoForm()
+//        }
+//    }()
     
-    private lazy var form: ProfileInfoForm = {
-        if let userProfile {
-            return ProfileInfoForm(
-                imageNumber: userProfile.imageNumber,
-                nickname: userProfile.nickname
-            )
-        } else {
-            return ProfileInfoForm()
-        }
-    }()
+    private let viewModel: ProfileEditViewModel
     
     private lazy var selectedProfileImageView = SelectedProfileImageView(
         imageName: nil,
@@ -35,6 +37,15 @@ final class ProfileEditViewController: BaseViewController {
         button.addAction(action, for: .touchUpInside)
         return button
     }()
+    
+    init(viewModel: ProfileEditViewModel) {
+        self.viewModel = viewModel
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -61,7 +72,8 @@ extension ProfileEditViewController {
             make.horizontalEdges.equalTo(self.view.safeAreaLayoutGuide).inset(hInset)
         }
         
-        if userProfile == nil {
+        switch self.viewModel.mode.value {
+        case .create:
             self.navigationItem.title = "프로필 설정"
             
             self.view.addSubview(self.completeButton)
@@ -69,7 +81,7 @@ extension ProfileEditViewController {
                 make.top.equalTo(self.nicknameTextField.snp.bottom).offset(vOffset)
                 make.horizontalEdges.equalTo(self.view.safeAreaLayoutGuide).inset(hInset)
             }
-        } else {
+        case .update:
             self.navigationItem.title = "프로필 편집"
             
             let dismissAction = UIAction { [weak self] _ in self?.dismiss(animated: true) }
@@ -85,81 +97,50 @@ extension ProfileEditViewController {
     }
     
     private func setForm() {
-        self.selectedProfileImageView.configureImage(number: self.form.imageNumber)
-        self.nicknameTextField.setNickname(self.form.nickname)
-        let _ = validateNickname(self.form.nickname)
+        self.viewModel.setForm.value = ()
     }
 }
 
 extension ProfileEditViewController {
-    private func validateNickname(_ input: String) -> String? {
-        let validNicknameLengthRange = (2..<10)
-        guard validNicknameLengthRange.contains(input.count) else {
-            presentValidationResult(.invalid(.invalidLength))
-            return nil
-        }
-        
-        let invalidCharacterSet = CharacterSet(arrayLiteral: "@", "#", "$", "%")
-        guard input.rangeOfCharacter(from: invalidCharacterSet) == nil else {
-            presentValidationResult(.invalid(.invalidCharacter))
-            return nil
-        }
-        
-        let numberCharacterSet = CharacterSet.decimalDigits
-        guard input.rangeOfCharacter(from: numberCharacterSet) == nil else {
-            presentValidationResult(.invalid(.numberContained))
-            return nil
-        }
-        presentValidationResult(.valid(nickname: input))
-        return input
+    private func validateNickname(_ input: String) {
+        self.viewModel.nicknameTextFieldInput.value = input
     }
     
     private func presentValidationResult(_ state: NicknameValidityState) {
         self.nicknameTextField.configureValidationResult(message: state.message ?? "")
         self.completeButton.isEnabled = state.isEnabled
         self.navigationItem.rightBarButtonItem?.isEnabled = state.isEnabled
-        if case .valid(let nickname) = state { self.form.nickname = nickname }
     }
 }
 
 extension ProfileEditViewController {
     private func goToProfileImageSelectScene() {
+        guard let imageNumber = self.viewModel.profileImageNumber.value else {
+            return
+        }
         let viewController = ProfileImageViewController(
-            selectedImageNumber: self.form.imageNumber,
+            selectedImageNumber: imageNumber,
             imageSelectionHandler: { [weak self] number in self?.setImage(number: number) }
         )
         self.push(viewController)
     }
     
     private func setImage(number: Int) {
-        self.form.imageNumber = number
         self.selectedProfileImageView.configureImage(number: number)
     }
 }
 
 extension ProfileEditViewController {
     private func saveProfile() {
-        let isSignUp = self.userProfile == nil
-        
-        let newUserProfile = ProfileInfo(
-            imageNumber: self.form.imageNumber,
-            nickname: self.form.nickname,
-            createdAt: self.userProfile?.createdAt ?? .now,
-            likedMovieIDs: self.userProfile?.likedMovieIDs ?? [],
-            submittedQueries: []
-        )
-        
-        self.userProfile = newUserProfile
-        
-        if isSignUp {
-            self.replaceWindowRoot(to: TabBarController())
-        } else {
-            nofifyUserProfileUpdate()
-            self.dismiss(animated: true)
-        }
+        self.viewModel.saveButtonTapped.value = ()
     }
     
-    private func nofifyUserProfileUpdate() {
-        NotificationCenter.default.post(name: CHNotification.userProfileUpdated, object: nil)
+    private func resignScene() {
+        switch self.viewModel.mode.value {
+        case .create:
+            self.replaceWindowRoot(to: TabBarController())
+        case .update:
+            self.dismiss(animated: true)
+        }
     }
 }
