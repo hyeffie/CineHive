@@ -105,7 +105,12 @@ final class ProfileEditViewModel {
     
     private func validateNickname(_ input: String?) {
         guard let input else {
-            self.nicknameValidationResult.value = .invalid(.invalidLength)
+            self.nicknameValidationResult.value = .empty
+            return
+        }
+        
+        guard input.isEmpty == false else {
+            self.nicknameValidationResult.value = .empty
             return
         }
         
