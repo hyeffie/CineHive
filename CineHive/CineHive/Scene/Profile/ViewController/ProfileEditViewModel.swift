@@ -57,6 +57,8 @@ final class ProfileEditViewModel {
         
         self.nicknameValidationResult.lazyBind { state in
             let isValid = state.isEnabled
+            self.nicknameValidationResultText.value = state.message
+            self.nicknameIsValid.value = state.isEnabled
             self.profileFormIsValid.value = isValid
         }
         

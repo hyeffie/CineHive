@@ -8,20 +8,6 @@
 import UIKit
 
 final class ProfileEditViewController: BaseViewController {
-//    @UserDefault(key: UserDefaultKey.userProfile)
-//    private var userProfile: ProfileInfo?
-//    
-//    private lazy var form: ProfileInfoForm = {
-//        if let userProfile {
-//            return ProfileInfoForm(
-//                imageNumber: userProfile.imageNumber,
-//                nickname: userProfile.nickname
-//            )
-//        } else {
-//            return ProfileInfoForm()
-//        }
-//    }()
-    
     private let viewModel: ProfileEditViewModel
     
     private lazy var selectedProfileImageView = SelectedProfileImageView(
@@ -41,6 +27,7 @@ final class ProfileEditViewController: BaseViewController {
     init(viewModel: ProfileEditViewModel) {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
+        bind()
     }
     
     required init?(coder: NSCoder) {
@@ -51,6 +38,36 @@ final class ProfileEditViewController: BaseViewController {
         super.viewDidLoad()
         configureView()
         setForm()
+    }
+}
+
+extension ProfileEditViewController {
+    private func bind() {
+        self.viewModel.profileImageNumber.lazyBind { [weak self] imageNumber in
+            guard let imageNumber else { return }
+            self?.setImage(number: imageNumber)
+        }
+        
+        self.viewModel.nicknameValidationResultText.lazyBind { [weak self] resultText in
+            self?.nicknameTextField.configureValidationResult(message: resultText)
+        }
+        
+        self.viewModel.nicknameIsValid.lazyBind { [weak self] isValid in
+            self?.nicknameTextField.configureValidationResult(isValid: isValid)
+        }
+        
+        self.viewModel.resignScene.lazyBind { [weak self] _ in
+            self?.resignScene()
+        }
+        
+        self.viewModel.goToImageSelectScene.lazyBind { [weak self] _ in
+            self?.goToProfileImageSelectScene()
+        }
+        
+        self.viewModel.profileFormIsValid.lazyBind { submittionIsValid in
+            self.completeButton.isEnabled = submittionIsValid
+            self.navigationItem.rightBarButtonItem?.isEnabled = submittionIsValid
+        }
     }
 }
 
@@ -95,25 +112,17 @@ extension ProfileEditViewController {
         
         self.nicknameTextField.setActionToTextField(valueChangeHandler: self.validateNickname(_:))
     }
-    
+}
+
+extension ProfileEditViewController {
     private func setForm() {
         self.viewModel.setForm.value = ()
     }
-}
 
-extension ProfileEditViewController {
     private func validateNickname(_ input: String) {
         self.viewModel.nicknameTextFieldInput.value = input
     }
-    
-    private func presentValidationResult(_ state: NicknameValidityState) {
-        self.nicknameTextField.configureValidationResult(message: state.message ?? "")
-        self.completeButton.isEnabled = state.isEnabled
-        self.navigationItem.rightBarButtonItem?.isEnabled = state.isEnabled
-    }
-}
 
-extension ProfileEditViewController {
     private func goToProfileImageSelectScene() {
         guard let imageNumber = self.viewModel.profileImageNumber.value else {
             return
@@ -128,9 +137,7 @@ extension ProfileEditViewController {
     private func setImage(number: Int) {
         self.selectedProfileImageView.configureImage(number: number)
     }
-}
 
-extension ProfileEditViewController {
     private func saveProfile() {
         self.viewModel.saveButtonTapped.value = ()
     }
