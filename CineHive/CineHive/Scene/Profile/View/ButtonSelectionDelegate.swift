@@ -8,6 +8,6 @@
 import UIKit
 
 protocol ButtonSelectionDelegate: AnyObject {
-    func didSelect(_ selected: SelectableView)
-    func didDeselect(_ deselected: SelectableView)
+    func shouldSelect(_ selected: SelectableView)
+    func shouldDeSelect(_ deselected: SelectableView)
 }

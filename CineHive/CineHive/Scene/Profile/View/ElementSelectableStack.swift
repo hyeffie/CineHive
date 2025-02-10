@@ -68,10 +68,11 @@ final class ElementSelectableStack: UIStackView {
 
 
 extension ElementSelectableStack: ButtonSelectionDelegate {
-    func didSelect(_ selected: SelectableView) {
+    func shouldSelect(_ selected: SelectableView) {
         self.selectables.enumerated().forEach { (index, control) in
             if control === selected {
                 self.selectedIndex = index
+                control.select()
                 self.delegate?.didSelectControl(at: index)
             } else {
                 control.deselect()
@@ -79,9 +80,10 @@ extension ElementSelectableStack: ButtonSelectionDelegate {
         }
     }
     
-    func didDeselect(_ deselected: SelectableView) {
-        guard let index = self.selectables.firstIndex(where: { selectable in selectable === deselected }) else { return }
+    func shouldDeSelect(_ deselected: SelectableView) {
+        deselected.deselect()
         self.selectedIndex = nil
+        guard let index = self.selectables.firstIndex(where: { selectable in selectable === deselected }) else { return }
         self.delegate?.didDeselecControl(at: index)
     }
 }

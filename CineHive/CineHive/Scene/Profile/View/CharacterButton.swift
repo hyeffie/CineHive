@@ -20,15 +20,15 @@ final class CharacterButton: UIButton {
         addEventHandler()
     }
     
-    override var isSelected: Bool {
-        didSet {
-            if self.isSelected {
-                self.selectionDelegate.didSelect(self)
-            } else {
-                self.selectionDelegate.didDeselect(self)
-            }
-        }
-    }
+//    override var isSelected: Bool {
+//        didSet {
+//            if self.isSelected {
+//                self.selectionDelegate.didSelect(self)
+//            } else {
+//                self.selectionDelegate.didDeselect(self)
+//            }
+//        }
+//    }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
@@ -73,7 +73,11 @@ final class CharacterButton: UIButton {
     }
     
     @objc private func toggle() {
-        self.isSelected.toggle()
+        if self.isSelected {
+            self.selectionDelegate.shouldDeSelect(self)
+        } else {
+            self.selectionDelegate.shouldSelect(self)
+        }
     }
 }
 
