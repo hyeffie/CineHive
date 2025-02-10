@@ -63,9 +63,9 @@ final class ProfileEditViewModel: BaseViewModelProtocol {
     
     private let mbtiValidationResult: Observable<MBTIValidationState> = Observable(value: .invalid)
     
-    var input: Input
+    private(set) var input: Input
     
-    var output: Output
+    private(set) var output: Output
     
     init(mode: ProfileEditMode) {
         self.input = Input()

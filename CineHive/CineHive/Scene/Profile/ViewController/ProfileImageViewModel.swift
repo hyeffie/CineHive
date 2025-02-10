@@ -24,9 +24,9 @@ final class ProfileImageViewModel: BaseViewModelProtocol {
         let selectedCellIndex: Observable<Int?> = Observable(value: nil)
     }
     
-    var input: Input
+    private(set) var input: Input
     
-    var output: Output
+    private(set) var output: Output
     
     private let imageSelectionHandler: (Int) -> Void
     
