@@ -29,11 +29,6 @@ final class SelectedProfileImageView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
     
-    override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
-        super.touchesEnded(touches, with: event)
-        tapHandler?()
-    }
-    
     private func configureViews() {
         self.addSubview(self.profileImageView)
         self.profileImageView.snp.makeConstraints { make in
@@ -48,6 +43,17 @@ final class SelectedProfileImageView: UIView {
         }
         
         self.profileImageView.setState(isSelected: true)
+        addTapGestureRecognizer()
+    }
+    
+    private func addTapGestureRecognizer() {
+        let tapRecognizer = UITapGestureRecognizer()
+        tapRecognizer.addTarget(self, action: #selector(handleTap))
+        self.addGestureRecognizer(tapRecognizer)
+    }
+    
+    @objc private func handleTap() {
+        self.tapHandler?()
     }
     
     func configureImage(number: Int) {
