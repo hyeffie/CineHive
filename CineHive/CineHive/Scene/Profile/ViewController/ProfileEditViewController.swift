@@ -80,6 +80,10 @@ extension ProfileEditViewController {
             self.completeButton.isEnabled = submittionIsValid
             self.navigationItem.rightBarButtonItem?.isEnabled = submittionIsValid
         }
+        
+        self.viewModel.setMBTI.lazyBind { mbti in
+            self.mbtiStack.setMBTI(mbti)
+        }
     }
 }
 

@@ -48,6 +48,8 @@ final class ProfileEditViewModel {
     
     let profileFormIsValid: Observable<Bool> = Observable(value: false)
     
+    let setMBTI: Observable<MBTI> = Observable(value: MBTI())
+    
     // MARK: privates
     private let nicknameValidationResult: Observable<NicknameValidityState> = Observable(value: .empty)
     
@@ -107,9 +109,12 @@ final class ProfileEditViewModel {
         if let userProfile = self.userProfileManager.getCurrentProfile() {
             self.profileImageNumber.value = userProfile.imageNumber
             self.nicknameValidationResult.value = .valid(nickname: userProfile.nickname)
+            let mbti = userProfile.mbti
+            self.setMBTI.value = MBTI(ei: mbti.ei, ns: mbti.ns, tf: mbti.tf, pj: mbti.pj)
         } else {
             self.profileImageNumber.value = randomizeImageNumber()
             self.nicknameValidationResult.value = .empty
+            self.setMBTI.value = MBTI()
         }
     }
     

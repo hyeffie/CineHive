@@ -60,8 +60,6 @@ final class MBTIStack: UIStackView {
     }
     
     func setMBTI(_ mbti: MBTI) {
-        self.mbti = mbti
-        
         if let ei = mbti.ei {
             self.eiStack.selectIndex(at: MBTI.EI.allCases.firstIndex(of: ei)!)
         }
@@ -74,6 +72,8 @@ final class MBTIStack: UIStackView {
         if let pj = mbti.pj {
             self.pjStack.selectIndex(at: MBTI.PJ.allCases.firstIndex(of: pj)!)
         }
+        
+        self.mbti = mbti
     }
 }
 

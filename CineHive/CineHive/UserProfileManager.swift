@@ -34,6 +34,8 @@ struct UserProfileManager {
         self.notifyUserProfileUpdate()
     }
     
+    
+    
     private func notifyUserProfileUpdate() {
         NotificationCenter.default.post(name: CHNotification.userProfileUpdated, object: nil)
     }
