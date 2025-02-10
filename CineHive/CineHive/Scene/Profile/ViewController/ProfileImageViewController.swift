@@ -33,15 +33,15 @@ final class ProfileImageViewController: BaseViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         configureView()
-        self.viewModel.viewDidLoad.value = ()
+        self.viewModel.input.viewDidLoad.value = ()
     }
     
     private func bind() {
-        self.viewModel.navigationTitle.lazyBind { [weak self] title in
+        self.viewModel.output.navigationTitle.lazyBind { [weak self] title in
             self?.navigationItem.title = title
         }
         
-        self.viewModel.selectedCellIndex.lazyBind { [weak self] cellIndex in
+        self.viewModel.output.selectedCellIndex.lazyBind { [weak self] cellIndex in
             guard let cellIndex else { return }
             let selectedIndexPath = IndexPath(item: cellIndex, section: 0)
             self?.collectionView.selectItem(
@@ -51,7 +51,7 @@ final class ProfileImageViewController: BaseViewController {
             )
         }
         
-        self.viewModel.selectedImageNumber.lazyBind { [weak self] imageNumber in
+        self.viewModel.output.selectedImageNumber.lazyBind { [weak self] imageNumber in
             self?.selectedProfileImageView.configureImage(number: imageNumber)
         }
     }
@@ -101,7 +101,7 @@ extension ProfileImageViewController: UICollectionViewDelegate, UICollectionView
         _ collectionView: UICollectionView,
         numberOfItemsInSection section: Int
     ) -> Int {
-        return self.viewModel.imageNumberRange.value.count
+        return self.viewModel.output.imageNumberRange.value.count
     }
     
     func collectionView(
@@ -111,7 +111,7 @@ extension ProfileImageViewController: UICollectionViewDelegate, UICollectionView
         guard let cell: ProfileImageCollectionViewCell = collectionView.dequeueReusableCell(for: indexPath) else {
             return UICollectionViewCell()
         }
-        let imageNumber = self.viewModel.imageNumberRange.value[indexPath.item]
+        let imageNumber = self.viewModel.output.imageNumberRange.value[indexPath.item]
         cell.configureImage(imageNumber: imageNumber)
         return cell
     }
@@ -120,6 +120,6 @@ extension ProfileImageViewController: UICollectionViewDelegate, UICollectionView
         _ collectionView: UICollectionView,
         didSelectItemAt indexPath: IndexPath
     ) {
-        self.viewModel.didSelectCell.value = indexPath.item
+        self.viewModel.input.didSelectCell.value = indexPath.item
     }
 }

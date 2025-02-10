@@ -7,43 +7,49 @@
 
 import Foundation
 
-final class ProfileImageViewModel {
-    // MARK: inputs
-    let viewDidLoad: Observable<Void> = Observable(value: ())
+final class ProfileImageViewModel: BaseViewModelProtocol {
+    struct Input {
+        let viewDidLoad: Observable<Void> = Observable(value: ())
+        
+        let didSelectCell: Observable<Int?> = Observable(value: nil)
+    }
     
-    let didSelectCell: Observable<Int?> = Observable(value: nil)
+    struct Output {
+        let navigationTitle: Observable<String> = Observable(value: "")
+        
+        let imageNumberRange: Observable<Range<Int>> = Observable(value: (0..<12))
+        
+        let selectedImageNumber: Observable<Int>
+        
+        let selectedCellIndex: Observable<Int?> = Observable(value: nil)
+    }
     
-    // MARK: outputs
-    let navigationTitle: Observable<String> = Observable(value: "")
+    var input: Input
     
-    let imageNumberRange: Observable<Range<Int>> = Observable(value: (0..<12))
+    var output: Output
     
-    let selectedImageNumber: Observable<Int>
-    
-    let selectedCellIndex: Observable<Int?> = Observable(value: nil)
-    
-    // MARK: privates
     private let imageSelectionHandler: (Int) -> Void
     
     init(
         selectedImageNumber: Int,
         imageSelectionHandler: @escaping (Int) -> Void
     ) {
-        self.selectedImageNumber = Observable(value: selectedImageNumber)
+        self.input = Input()
+        self.output = Output(selectedImageNumber: Observable(value: selectedImageNumber))
         self.imageSelectionHandler = imageSelectionHandler
-        bind()
+        transform()
     }
     
-    private func bind() {
-        self.viewDidLoad.lazyBind { _ in
-            self.navigationTitle.value = "프로필 이미지 설정"
-            self.selectedImageNumber.value = self.selectedImageNumber.value
-            self.selectedCellIndex.value = self.selectedImageNumber.value
+    func transform() {
+        self.input.viewDidLoad.lazyBind { _ in
+            self.output.navigationTitle.value = "프로필 이미지 설정"
+            self.output.selectedImageNumber.value = self.output.selectedImageNumber.value
+            self.output.selectedCellIndex.value = self.output.selectedImageNumber.value
         }
         
-        self.didSelectCell.lazyBind { selectedCellIndex in
+        self.input.didSelectCell.lazyBind { selectedCellIndex in
             guard let selectedCellIndex else { return }
-            self.selectedImageNumber.value = selectedCellIndex
+            self.output.selectedImageNumber.value = selectedCellIndex
             self.imageSelectionHandler(selectedCellIndex)
         }
     }
