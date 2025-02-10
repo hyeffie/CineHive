@@ -15,10 +15,10 @@ final class MBTIStack: UIStackView {
     weak var delegate: MBTIStackDelegate?
     private var mbti: MBTI
     
-    private lazy var eiStack: ElementSelectableStack = ElementSelectableStack(delegate: self, axis: .horizontal, spacing: 8)
-    private lazy var nsStack: ElementSelectableStack = ElementSelectableStack(delegate: self, axis: .horizontal, spacing: 8)
-    private lazy var tfStack: ElementSelectableStack = ElementSelectableStack(delegate: self, axis: .horizontal, spacing: 8)
-    private lazy var pjStack: ElementSelectableStack = ElementSelectableStack(delegate: self, axis: .horizontal, spacing: 8)
+    private lazy var eiStack = ElementSelectableStack(delegate: self)
+    private lazy var nsStack = ElementSelectableStack(delegate: self)
+    private lazy var tfStack = ElementSelectableStack(delegate: self)
+    private lazy var pjStack = ElementSelectableStack(delegate: self)
     
     init(delegate: MBTIStackDelegate) {
         self.delegate = delegate
@@ -33,7 +33,7 @@ final class MBTIStack: UIStackView {
     }
     
     private func configureStack() {
-        self.axis = .vertical
+        self.axis = .horizontal
         self.spacing = 12
         
         self.addArrangedSubview(eiStack)
@@ -57,10 +57,19 @@ final class MBTIStack: UIStackView {
     
     func setMBTI(_ mbti: MBTI) {
         self.mbti = mbti
-        if let ei = mbti.ei { eiStack.selectIndex(at: MBTI.EI.allCases.firstIndex(of: ei)!) }
-        if let ns = mbti.ns { nsStack.selectIndex(at: MBTI.NS.allCases.firstIndex(of: ns)!) }
-        if let tf = mbti.tf { tfStack.selectIndex(at: MBTI.TF.allCases.firstIndex(of: tf)!) }
-        if let pj = mbti.pj { pjStack.selectIndex(at: MBTI.PJ.allCases.firstIndex(of: pj)!) }
+        
+        if let ei = mbti.ei {
+            self.eiStack.selectIndex(at: MBTI.EI.allCases.firstIndex(of: ei)!)
+        }
+        if let ns = mbti.ns {
+            self.nsStack.selectIndex(at: MBTI.NS.allCases.firstIndex(of: ns)!)
+        }
+        if let tf = mbti.tf {
+            self.tfStack.selectIndex(at: MBTI.TF.allCases.firstIndex(of: tf)!)
+        }
+        if let pj = mbti.pj {
+            self.pjStack.selectIndex(at: MBTI.PJ.allCases.firstIndex(of: pj)!)
+        }
     }
 }
 

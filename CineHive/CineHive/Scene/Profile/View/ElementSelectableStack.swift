@@ -23,8 +23,8 @@ final class ElementSelectableStack: UIStackView {
     
     init(
         delegate: ElementSelectableStackDelegate,
-        axis: NSLayoutConstraint.Axis,
-        spacing: CGFloat
+        axis: NSLayoutConstraint.Axis = .vertical,
+        spacing: CGFloat = 8
     ) {
         self.delegate = delegate
         super.init(frame: .zero)
@@ -63,8 +63,8 @@ final class ElementSelectableStack: UIStackView {
 }
 
 
-extension ElementSelectableStack: SelectionDelegate {
-    func didSelect(_ selected: UIControl) {
+extension ElementSelectableStack: ButtonSelectionDelegate {
+    func didSelect(_ selected: SelectableView) {
         self.controls.enumerated().forEach { (index, control) in
             if control === selected {
                 self.selectedIndex = index
@@ -75,7 +75,7 @@ extension ElementSelectableStack: SelectionDelegate {
         }
     }
     
-    func didDeselect(_ deselected: UIControl) {
+    func didDeselect(_ deselected: SelectableView) {
         guard let index = self.selectedIndex else { return }
         self.delegate?.didDeselecControl(at: index)
         self.selectedIndex = nil
