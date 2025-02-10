@@ -53,41 +53,41 @@ final class ProfileEditViewController: BaseViewController {
 
 extension ProfileEditViewController {
     private func bind() {
-        self.viewModel.profileImageNumber.lazyBind { [weak self] imageNumber in
+        self.viewModel.output.profileImageNumber.lazyBind { [weak self] imageNumber in
             guard let imageNumber else { return }
             self?.setImage(number: imageNumber)
         }
         
-        self.viewModel.nicknameFieldText.lazyBind { [weak self] nickname in
+        self.viewModel.output.nicknameFieldText.lazyBind { [weak self] nickname in
             self?.nicknameTextField.setNickname(nickname)
         }
         
-        self.viewModel.nicknameValidationResultText.lazyBind { [weak self] resultText in
+        self.viewModel.output.nicknameValidationResultText.lazyBind { [weak self] resultText in
             self?.nicknameTextField.configureValidationResult(message: resultText)
         }
         
-        self.viewModel.nicknameIsValid.lazyBind { [weak self] isValid in
+        self.viewModel.output.nicknameIsValid.lazyBind { [weak self] isValid in
             self?.nicknameTextField.configureValidationResult(isValid: isValid)
         }
         
-        self.viewModel.resignScene.lazyBind { [weak self] _ in
+        self.viewModel.output.resignScene.lazyBind { [weak self] _ in
             self?.resignScene()
         }
         
-        self.viewModel.goToImageSelectScene.lazyBind { [weak self] _ in
+        self.viewModel.output.goToImageSelectScene.lazyBind { [weak self] _ in
             self?.goToProfileImageSelectScene()
         }
         
-        self.viewModel.profileFormIsValid.lazyBind { [weak self] submittionIsValid in
+        self.viewModel.output.profileFormIsValid.lazyBind { [weak self] submittionIsValid in
             self?.completeButton.isEnabled = submittionIsValid
             self?.navigationItem.rightBarButtonItem?.isEnabled = submittionIsValid
         }
         
-        self.viewModel.setMBTI.lazyBind { [weak self] mbti in
+        self.viewModel.output.setMBTI.lazyBind { [weak self] mbti in
             self?.mbtiStack.setMBTI(mbti)
         }
         
-        self.viewModel.resignKeyboard.lazyBind { [weak self] _ in
+        self.viewModel.output.resignKeyboard.lazyBind { [weak self] _ in
             self?.resignKeyboard()
         }
     }
@@ -123,7 +123,7 @@ extension ProfileEditViewController {
             make.trailing.equalTo(self.view.safeAreaLayoutGuide).inset(24)
         }
         
-        switch self.viewModel.mode.value {
+        switch self.viewModel.output.mode.value {
         case .create:
             self.navigationItem.title = "프로필 설정"
             
@@ -153,26 +153,28 @@ extension ProfileEditViewController {
     }
     
     @objc private func tapGestureDidRecognize() {
-        self.viewModel.tapGestureDidRecognize.value = ()
+        self.viewModel.input.tapGestureDidRecognize.value = ()
     }
 }
 
 extension ProfileEditViewController {
     private func setForm() {
-        self.viewModel.setForm.value = ()
+        self.viewModel.input.setForm.value = ()
     }
 
     private func validateNickname(_ input: String) {
-        self.viewModel.nicknameTextFieldInput.value = input
+        self.viewModel.input.nicknameTextFieldInput.value = input
     }
 
     private func goToProfileImageSelectScene() {
-        guard let imageNumber = self.viewModel.profileImageNumber.value else {
+        guard let imageNumber = self.viewModel.output.profileImageNumber.value else {
             return
         }
         let viewModel = ProfileImageViewModel(
             selectedImageNumber: imageNumber,
-            imageSelectionHandler: { [weak self] number in self?.viewModel.setImageNumber.value = number }
+            imageSelectionHandler: { [weak self] number in
+                self?.viewModel.input.setImageNumber.value = number
+            }
         )
         let viewController = ProfileImageViewController(viewModel: viewModel)
         self.push(viewController)
@@ -183,11 +185,11 @@ extension ProfileEditViewController {
     }
 
     private func saveProfile() {
-        self.viewModel.saveButtonTapped.value = ()
+        self.viewModel.input.saveButtonTapped.value = ()
     }
     
     private func resignScene() {
-        switch self.viewModel.mode.value {
+        switch self.viewModel.output.mode.value {
         case .create:
             self.replaceWindowRoot(to: TabBarController())
         case .update:
@@ -202,13 +204,13 @@ extension ProfileEditViewController {
 
 extension ProfileEditViewController: MBTIStackDelegate {
     func didUpdateMBTI(_ mbti: MBTI) {
-        self.viewModel.mbtiDidSelect.value = mbti
+        self.viewModel.input.mbtiDidSelect.value = mbti
     }
 }
 
 extension ProfileEditViewController: UITextFieldDelegate {
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-        self.viewModel.keyboardReturnKeyTapped.value = ()
+        self.viewModel.input.keyboardReturnKeyTapped.value = ()
         return true
     }
 }
