@@ -9,4 +9,6 @@ import Foundation
 
 protocol SelectableView: AnyObject {
     var isSelected: Bool { get }
+    func select()
+    func deselect()
 }

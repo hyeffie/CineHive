@@ -23,7 +23,6 @@ final class MBTIStack: UIStackView {
     init(delegate: MBTIStackDelegate) {
         self.delegate = delegate
         self.mbti = MBTI()
-        
         super.init(frame: .zero)
         configureStack()
     }
@@ -88,18 +87,35 @@ extension MBTIStack: ElementSelectableStackDelegate {
     }
     
     private func updateMBTI() {
-        guard let eiIndex = eiStack.selectedIndex,
-              let nsIndex = nsStack.selectedIndex,
-              let tfIndex = tfStack.selectedIndex,
-              let pjIndex = pjStack.selectedIndex else { return }
+        if let eiIndex = eiStack.selectedIndex {
+            self.mbti.ei = MBTI.EI.allCases[eiIndex]
+        } else {
+            self.mbti.ei = nil
+        }
         
-        self.mbti = MBTI(
-            ei: MBTI.EI.allCases[eiIndex],
-            ns: MBTI.NS.allCases[nsIndex],
-            tf: MBTI.TF.allCases[tfIndex],
-            pj: MBTI.PJ.allCases[pjIndex]
-        )
+        if let nsIndex = nsStack.selectedIndex {
+            self.mbti.ns = MBTI.NS.allCases[nsIndex]
+        } else {
+            self.mbti.ns = nil
+        }
         
-        self.delegate?.didUpdateMBTI(mbti)
+        if let tfIndex = tfStack.selectedIndex {
+            self.mbti.tf = MBTI.TF.allCases[tfIndex]
+        } else {
+            self.mbti.tf = nil
+        }
+        
+        if let pjIndex = pjStack.selectedIndex {
+            self.mbti.pj = MBTI.PJ.allCases[pjIndex]
+        } else {
+            self.mbti.pj = nil
+        }
+        
+        self.delegate?.didUpdateMBTI(self.mbti)
+        printMBTI()
+    }
+    
+    private func printMBTI() {
+        print("\(self.mbti.ei?.rawValue ?? "?") \(self.mbti.ns?.rawValue ?? "?") \(self.mbti.tf?.rawValue ?? "?") \(self.mbti.pj?.rawValue ?? "?")")
     }
 }

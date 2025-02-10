@@ -69,7 +69,7 @@ final class CharacterButton: UIButton {
     }
     
     private func addEventHandler() {
-        self.addTarget(self, action: #selector(toggle), for: .touchUpInside)
+        self.addTarget(self, action: #selector(self.toggle), for: .touchUpInside)
     }
     
     @objc private func toggle() {
@@ -77,4 +77,12 @@ final class CharacterButton: UIButton {
     }
 }
 
-extension CharacterButton: SelectableView { }
+extension CharacterButton: SelectableView {
+    func select() {
+        self.isSelected = true
+    }
+    
+    func deselect() {
+        self.isSelected = false
+    }
+}

@@ -17,8 +17,8 @@ final class ElementSelectableStack: UIStackView {
     
     private weak var delegate: ElementSelectableStackDelegate?
     
-    private var controls: [UIControl] {
-        return self.arrangedSubviews.compactMap { view in view as? UIControl }
+    private var selectables: [SelectableView] {
+        return self.arrangedSubviews.compactMap { view in view as? SelectableView }
     }
     
     init(
@@ -55,8 +55,12 @@ final class ElementSelectableStack: UIStackView {
     }
     
     func selectIndex(at selectedIndex: Int) {
-        self.controls.enumerated().forEach { (index, control) in
-            control.isSelected = index == selectedIndex
+        self.selectables.enumerated().forEach { (index, control) in
+            if index == selectedIndex {
+                control.select()
+            } else {
+                control.deselect()
+            }
         }
         self.selectedIndex = selectedIndex
     }
@@ -65,19 +69,19 @@ final class ElementSelectableStack: UIStackView {
 
 extension ElementSelectableStack: ButtonSelectionDelegate {
     func didSelect(_ selected: SelectableView) {
-        self.controls.enumerated().forEach { (index, control) in
+        self.selectables.enumerated().forEach { (index, control) in
             if control === selected {
                 self.selectedIndex = index
                 self.delegate?.didSelectControl(at: index)
             } else {
-                control.isSelected = false
+                control.deselect()
             }
         }
     }
     
     func didDeselect(_ deselected: SelectableView) {
-        guard let index = self.selectedIndex else { return }
-        self.delegate?.didDeselecControl(at: index)
+        guard let index = self.selectables.firstIndex(where: { selectable in selectable === deselected }) else { return }
         self.selectedIndex = nil
+        self.delegate?.didDeselecControl(at: index)
     }
 }

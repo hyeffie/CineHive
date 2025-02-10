@@ -51,6 +51,8 @@ final class ProfileEditViewModel {
     // MARK: privates
     private let nicknameValidationResult: Observable<NicknameValidityState> = Observable(value: .empty)
     
+    private let mbtiValidationResult: Observable<MBTIValidationState> = Observable(value: .invalid)
+    
     init(mode: ProfileEditMode) {
         self.mode = Observable(value: mode)
         bind()
@@ -66,7 +68,7 @@ final class ProfileEditViewModel {
             if case .valid(let nickname) = state { self.nicknameFieldText.value = nickname }
             self.nicknameValidationResultText.value = state.message
             self.nicknameIsValid.value = state.isEnabled
-            self.profileFormIsValid.value = isValid
+            self.profileFormIsValid.value = isValid && self.mbtiValidationResult.value.isValid
         }
         
         self.nicknameTextFieldInput.lazyBind { inputText in
@@ -88,6 +90,14 @@ final class ProfileEditViewModel {
         self.setImageNumber.lazyBind { imageNumber in
             guard let imageNumber else { return }
             self.profileImageNumber.value = imageNumber
+        }
+        
+        self.mbtiDidSelect.lazyBind { mbti in
+            self.validateMBTI(mbti)
+        }
+        
+        self.mbtiValidationResult.lazyBind { state in
+            self.profileFormIsValid.value = state.isValid && self.nicknameValidationResult.value.isEnabled
         }
     }
     
@@ -137,6 +147,14 @@ final class ProfileEditViewModel {
         self.nicknameValidationResult.value = .valid(nickname: input)
     }
     
+    private func validateMBTI(_ mbti: MBTI) {
+        guard let userMBTI = mbti.toUserMBTI() else {
+            self.mbtiValidationResult.value = .invalid
+            return
+        }
+        self.mbtiValidationResult.value = .valid(userMBTI)
+    }
+    
     private func save() {
         guard let imageNumber = self.profileImageNumber.value else {
             return
@@ -147,7 +165,7 @@ final class ProfileEditViewModel {
             return
         }
         
-        guard let userMBTI = self.mbtiDidSelect.value.toUserMBTI() else {
+        guard case .valid(let userMBTI) = self.mbtiValidationResult.value else {
             return
         }
         
