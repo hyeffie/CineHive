@@ -145,11 +145,10 @@ extension ProfileEditViewController {
         }
         
         self.nicknameTextField.setActionToTextField(valueChangeHandler: self.validateNickname(_:))
+        self.nicknameTextField.delegate = self
         
         self.view.addGestureRecognizer(self.tapGestureRecognizer)
         self.tapGestureRecognizer.addTarget(self, action: #selector(self.tapGestureDidRecognize))
-        
-        self.nicknameTextField.delegate = self
     }
     
     @objc private func tapGestureDidRecognize() {

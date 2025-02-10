@@ -132,10 +132,12 @@ final class ProfileEditViewModel: BaseViewModelProtocol {
             self.nicknameValidationResult.value = .valid(nickname: userProfile.nickname)
             let mbti = userProfile.mbti
             self.output.setMBTI.value = MBTI(ei: mbti.ei, ns: mbti.ns, tf: mbti.tf, pj: mbti.pj)
+            self.mbtiValidationResult.value = .valid(mbti)
         } else {
             self.output.profileImageNumber.value = randomizeImageNumber()
             self.nicknameValidationResult.value = .empty
             self.output.setMBTI.value = MBTI()
+            self.mbtiValidationResult.value = .invalid
         }
     }
     
