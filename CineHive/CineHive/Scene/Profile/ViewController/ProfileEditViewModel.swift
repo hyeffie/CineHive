@@ -29,6 +29,8 @@ final class ProfileEditViewModel {
     
     let setImageNumber: Observable<Int?> = Observable(value: nil)
     
+    let mbtiDidSelect: Observable<MBTI> = Observable(value: MBTI())
+    
     // MARK: outputs
     let mode: Observable<ProfileEditMode>
     
@@ -145,9 +147,14 @@ final class ProfileEditViewModel {
             return
         }
         
+        guard let userMBTI = self.mbtiDidSelect.value.toUserMBTI() else {
+            return
+        }
+        
         let newUserProfileForm = ProfileInfoForm(
             imageNumber: imageNumber,
-            nickname: nickname
+            nickname: nickname,
+            mbti: userMBTI
         )
         
         self.userProfileManager.saveProfile(withForm: newUserProfileForm)

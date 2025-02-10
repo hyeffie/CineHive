@@ -12,28 +12,28 @@ struct MBTI {
         var character: String { get }
     }
     
-    enum EI: String, Element {
+    enum EI: String, Element, Codable {
         case e = "E"
         case i = "I"
         
         var character: String { self.rawValue }
     }
     
-    enum NS: String, Element {
+    enum NS: String, Element, Codable {
         case n = "N"
         case s = "S"
         
         var character: String { self.rawValue }
     }
     
-    enum TF: String, Element {
+    enum TF: String, Element, Codable {
         case t = "T"
         case f = "F"
         
         var character: String { self.rawValue }
     }
     
-    enum PJ: String, Element {
+    enum PJ: String, Element, Codable {
         case p = "P"
         case j = "J"
         
@@ -44,4 +44,9 @@ struct MBTI {
     var ns: NS?
     var tf: TF?
     var pj: PJ?
+    
+    func toUserMBTI() -> UserMBTI? {
+        guard let ei, let ns, let tf, let pj else { return nil }
+        return UserMBTI(ei, ns, tf, pj)
+    }
 }

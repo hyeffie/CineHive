@@ -15,7 +15,8 @@ struct UserProfileManager {
         guard let userProfile = self.userProfile else { return nil }
         return ProfileInfoForm(
             imageNumber: userProfile.imageNumber,
-            nickname: userProfile.nickname
+            nickname: userProfile.nickname,
+            mbti: userProfile.mbti
         )
     }
     
@@ -23,6 +24,7 @@ struct UserProfileManager {
         let newUserProfile = ProfileInfo(
             imageNumber: form.imageNumber,
             nickname: form.nickname,
+            mbti: form.mbti,
             createdAt: self.userProfile?.createdAt ?? .now,
             likedMovieIDs: self.userProfile?.likedMovieIDs ?? [],
             submittedQueries: []

@@ -176,3 +176,9 @@ extension ProfileEditViewController {
         }
     }
 }
+
+extension ProfileEditViewController: MBTIStackDelegate {
+    func didUpdateMBTI(_ mbti: MBTI) {
+        self.viewModel.mbtiDidSelect.value = mbti
+    }
+}
