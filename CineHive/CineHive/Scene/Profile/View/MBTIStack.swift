@@ -112,10 +112,5 @@ extension MBTIStack: ElementSelectableStackDelegate {
         }
         
         self.delegate?.didUpdateMBTI(self.mbti)
-        printMBTI()
-    }
-    
-    private func printMBTI() {
-        print("\(self.mbti.ei?.rawValue ?? "?") \(self.mbti.ns?.rawValue ?? "?") \(self.mbti.tf?.rawValue ?? "?") \(self.mbti.pj?.rawValue ?? "?")")
     }
 }
