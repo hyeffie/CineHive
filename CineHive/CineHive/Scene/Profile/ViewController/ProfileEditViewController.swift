@@ -17,6 +17,14 @@ final class ProfileEditViewController: BaseViewController {
     
     private let nicknameTextField = NicknameTextField()
     
+    private let mbtiSectionLabel = {
+        let label = BaseLabel(font: CHFont.mediumBold)
+        label.text = "MBTI"
+        return label
+    }()
+    
+    private lazy var mbtiStack = MBTIStack(delegate: self)
+    
     private lazy var completeButton = {
         let button = ThemePillShapeButton(title: "완료")
         let action = UIAction { [weak self] _ in self?.saveProfile() }
@@ -72,6 +80,10 @@ extension ProfileEditViewController {
             self.completeButton.isEnabled = submittionIsValid
             self.navigationItem.rightBarButtonItem?.isEnabled = submittionIsValid
         }
+        
+        self.viewModel.setMBTI.lazyBind { mbti in
+            self.mbtiStack.setMBTI(mbti)
+        }
     }
 }
 
@@ -91,6 +103,18 @@ extension ProfileEditViewController {
         self.nicknameTextField.snp.makeConstraints { make in
             make.top.equalTo(self.selectedProfileImageView.snp.bottom).offset(vOffset)
             make.horizontalEdges.equalTo(self.view.safeAreaLayoutGuide).inset(hInset)
+        }
+        
+        self.view.addSubview(self.mbtiSectionLabel)
+        self.mbtiSectionLabel.snp.makeConstraints { make in
+            make.top.equalTo(self.nicknameTextField.snp.bottom).offset(vOffset)
+            make.leading.equalTo(self.view.safeAreaLayoutGuide).offset(24)
+        }
+        
+        self.view.addSubview(self.mbtiStack)
+        self.mbtiStack.snp.makeConstraints { make in
+            make.top.equalTo(self.mbtiSectionLabel)
+            make.trailing.equalTo(self.view.safeAreaLayoutGuide).inset(24)
         }
         
         switch self.viewModel.mode.value {
@@ -154,5 +178,11 @@ extension ProfileEditViewController {
         case .update:
             self.dismiss(animated: true)
         }
+    }
+}
+
+extension ProfileEditViewController: MBTIStackDelegate {
+    func didUpdateMBTI(_ mbti: MBTI) {
+        self.viewModel.mbtiDidSelect.value = mbti
     }
 }

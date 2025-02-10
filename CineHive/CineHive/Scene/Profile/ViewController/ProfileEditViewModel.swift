@@ -29,6 +29,8 @@ final class ProfileEditViewModel {
     
     let setImageNumber: Observable<Int?> = Observable(value: nil)
     
+    let mbtiDidSelect: Observable<MBTI> = Observable(value: MBTI())
+    
     // MARK: outputs
     let mode: Observable<ProfileEditMode>
     
@@ -46,8 +48,12 @@ final class ProfileEditViewModel {
     
     let profileFormIsValid: Observable<Bool> = Observable(value: false)
     
+    let setMBTI: Observable<MBTI> = Observable(value: MBTI())
+    
     // MARK: privates
     private let nicknameValidationResult: Observable<NicknameValidityState> = Observable(value: .empty)
+    
+    private let mbtiValidationResult: Observable<MBTIValidationState> = Observable(value: .invalid)
     
     init(mode: ProfileEditMode) {
         self.mode = Observable(value: mode)
@@ -61,10 +67,12 @@ final class ProfileEditViewModel {
         
         self.nicknameValidationResult.lazyBind { state in
             let isValid = state.isEnabled
-            if case .valid(let nickname) = state { self.nicknameFieldText.value = nickname }
+            if case .valid(let nickname) = state {
+                self.nicknameFieldText.value = nickname
+            }
             self.nicknameValidationResultText.value = state.message
             self.nicknameIsValid.value = state.isEnabled
-            self.profileFormIsValid.value = isValid
+            self.profileFormIsValid.value = isValid && self.mbtiValidationResult.value.isValid
         }
         
         self.nicknameTextFieldInput.lazyBind { inputText in
@@ -87,15 +95,26 @@ final class ProfileEditViewModel {
             guard let imageNumber else { return }
             self.profileImageNumber.value = imageNumber
         }
+        
+        self.mbtiDidSelect.lazyBind { mbti in
+            self.validateMBTI(mbti)
+        }
+        
+        self.mbtiValidationResult.lazyBind { state in
+            self.profileFormIsValid.value = state.isValid && self.nicknameValidationResult.value.isEnabled
+        }
     }
     
     private func _setForm() {
         if let userProfile = self.userProfileManager.getCurrentProfile() {
             self.profileImageNumber.value = userProfile.imageNumber
             self.nicknameValidationResult.value = .valid(nickname: userProfile.nickname)
+            let mbti = userProfile.mbti
+            self.setMBTI.value = MBTI(ei: mbti.ei, ns: mbti.ns, tf: mbti.tf, pj: mbti.pj)
         } else {
             self.profileImageNumber.value = randomizeImageNumber()
             self.nicknameValidationResult.value = .empty
+            self.setMBTI.value = MBTI()
         }
     }
     
@@ -135,19 +154,27 @@ final class ProfileEditViewModel {
         self.nicknameValidationResult.value = .valid(nickname: input)
     }
     
-    private func save() {
-        guard let imageNumber = self.profileImageNumber.value else {
+    private func validateMBTI(_ mbti: MBTI) {
+        guard let userMBTI = mbti.toUserMBTI() else {
+            self.mbtiValidationResult.value = .invalid
             return
         }
-        
-        let nicknameResult = self.nicknameValidationResult.value
-        guard case .valid(let nickname) = nicknameResult else {
+        self.mbtiValidationResult.value = .valid(userMBTI)
+    }
+    
+    private func save() {
+        guard
+            let imageNumber = self.profileImageNumber.value,
+            case .valid(let nickname) = self.nicknameValidationResult.value,
+            case .valid(let userMBTI) = self.mbtiValidationResult.value
+        else {
             return
         }
         
         let newUserProfileForm = ProfileInfoForm(
             imageNumber: imageNumber,
-            nickname: nickname
+            nickname: nickname,
+            mbti: userMBTI
         )
         
         self.userProfileManager.saveProfile(withForm: newUserProfileForm)
