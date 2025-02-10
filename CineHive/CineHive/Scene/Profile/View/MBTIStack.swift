@@ -52,7 +52,12 @@ final class MBTIStack: UIStackView {
     }
     
     private func createButtons<T: MBTI.Element>(for cases: [T], stack: ElementSelectableStack) -> [CharacterButton] {
-        return cases.map { CharacterButton(character: Character($0.character), selectionDelegate: stack) }
+        return cases.map {
+            CharacterButton(
+                character: Character($0.character),
+                selectionDelegate: stack
+            )
+        }
     }
     
     func setMBTI(_ mbti: MBTI) {

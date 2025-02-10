@@ -23,13 +23,7 @@ final class ProfileEditViewController: BaseViewController {
         return label
     }()
     
-    private let mbtiStack = {
-        let stack = UIStackView()
-        stack.axis = .horizontal
-        stack.spacing = 8
-        stack.alignment = .top
-        return stack
-    }()
+    private lazy var mbtiStack = MBTIStack(delegate: self)
     
     private lazy var completeButton = {
         let button = ThemePillShapeButton(title: "완료")

@@ -8,12 +8,13 @@
 import UIKit
 
 final class CharacterButton: UIButton {
-    private weak var selectionDelegate: (any ButtonSelectionDelegate)?
+    private let selectionDelegate: ButtonSelectionDelegate
     
     init(
         character: Character,
         selectionDelegate: any ButtonSelectionDelegate
     ) {
+        self.selectionDelegate = selectionDelegate
         super.init(frame: .zero)
         configureView(title: "\(character)")
         addEventHandler()
@@ -22,9 +23,9 @@ final class CharacterButton: UIButton {
     override var isSelected: Bool {
         didSet {
             if self.isSelected {
-                self.selectionDelegate?.didSelect(self)
+                self.selectionDelegate.didSelect(self)
             } else {
-                self.selectionDelegate?.didDeselect(self)
+                self.selectionDelegate.didDeselect(self)
             }
         }
     }
