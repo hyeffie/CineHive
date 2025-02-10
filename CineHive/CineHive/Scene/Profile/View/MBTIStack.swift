@@ -13,7 +13,7 @@ protocol MBTIStackDelegate: AnyObject {
 
 final class MBTIStack: UIStackView {
     weak var delegate: MBTIStackDelegate?
-    private var mbti: MBTI
+    private(set) var mbti: MBTI
     
     private lazy var eiStack = ElementSelectableStack(delegate: self)
     private lazy var nsStack = ElementSelectableStack(delegate: self)
@@ -95,6 +95,6 @@ extension MBTIStack: ElementSelectableStackDelegate {
             pj: MBTI.PJ.allCases[pjIndex]
         )
         
-        delegate?.didUpdateMBTI(mbti)
+        self.delegate?.didUpdateMBTI(mbti)
     }
 }
