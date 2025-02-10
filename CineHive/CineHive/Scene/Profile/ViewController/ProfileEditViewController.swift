@@ -32,6 +32,8 @@ final class ProfileEditViewController: BaseViewController {
         return button
     }()
     
+    private let tapGestureRecognizer = UITapGestureRecognizer()
+    
     init(viewModel: ProfileEditViewModel) {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
@@ -76,13 +78,17 @@ extension ProfileEditViewController {
             self?.goToProfileImageSelectScene()
         }
         
-        self.viewModel.profileFormIsValid.lazyBind { submittionIsValid in
-            self.completeButton.isEnabled = submittionIsValid
-            self.navigationItem.rightBarButtonItem?.isEnabled = submittionIsValid
+        self.viewModel.profileFormIsValid.lazyBind { [weak self] submittionIsValid in
+            self?.completeButton.isEnabled = submittionIsValid
+            self?.navigationItem.rightBarButtonItem?.isEnabled = submittionIsValid
         }
         
-        self.viewModel.setMBTI.lazyBind { mbti in
-            self.mbtiStack.setMBTI(mbti)
+        self.viewModel.setMBTI.lazyBind { [weak self] mbti in
+            self?.mbtiStack.setMBTI(mbti)
+        }
+        
+        self.viewModel.resignKeyboard.lazyBind { [weak self] _ in
+            self?.resignKeyboard()
         }
     }
 }
@@ -139,6 +145,15 @@ extension ProfileEditViewController {
         }
         
         self.nicknameTextField.setActionToTextField(valueChangeHandler: self.validateNickname(_:))
+        
+        self.view.addGestureRecognizer(self.tapGestureRecognizer)
+        self.tapGestureRecognizer.addTarget(self, action: #selector(self.tapGestureDidRecognize))
+        
+        self.nicknameTextField.delegate = self
+    }
+    
+    @objc private func tapGestureDidRecognize() {
+        self.viewModel.tapGestureDidRecognize.value = ()
     }
 }
 
@@ -179,10 +194,21 @@ extension ProfileEditViewController {
             self.dismiss(animated: true)
         }
     }
+    
+    private func resignKeyboard() {
+        self.view.endEditing(true)
+    }
 }
 
 extension ProfileEditViewController: MBTIStackDelegate {
     func didUpdateMBTI(_ mbti: MBTI) {
         self.viewModel.mbtiDidSelect.value = mbti
+    }
+}
+
+extension ProfileEditViewController: UITextFieldDelegate {
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        self.viewModel.keyboardReturnKeyTapped.value = ()
+        return true
     }
 }

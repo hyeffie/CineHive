@@ -12,6 +12,15 @@ final class NicknameTextField: UIView {
         return self.field.text ?? ""
     }
     
+    weak var delegate: UITextFieldDelegate? {
+        get {
+            return self.field.delegate
+        }
+        set {
+            self.field.delegate = newValue
+        }
+    }
+    
     private let field = {
         let field = UITextField()
         field.borderStyle = .none

@@ -31,6 +31,10 @@ final class ProfileEditViewModel {
     
     let mbtiDidSelect: Observable<MBTI> = Observable(value: MBTI())
     
+    let tapGestureDidRecognize: Observable<Void> = Observable(value: ())
+    
+    let keyboardReturnKeyTapped: Observable<Void> = Observable(value: ())
+    
     // MARK: outputs
     let mode: Observable<ProfileEditMode>
     
@@ -49,6 +53,8 @@ final class ProfileEditViewModel {
     let profileFormIsValid: Observable<Bool> = Observable(value: false)
     
     let setMBTI: Observable<MBTI> = Observable(value: MBTI())
+    
+    let resignKeyboard: Observable<Void> = Observable(value: ())
     
     // MARK: privates
     private let nicknameValidationResult: Observable<NicknameValidityState> = Observable(value: .empty)
@@ -102,6 +108,14 @@ final class ProfileEditViewModel {
         
         self.mbtiValidationResult.lazyBind { state in
             self.profileFormIsValid.value = state.isValid && self.nicknameValidationResult.value.isEnabled
+        }
+        
+        self.tapGestureDidRecognize.lazyBind { _ in
+            self.resignKeyboard.value = ()
+        }
+        
+        self.keyboardReturnKeyTapped.lazyBind { _ in
+            self.resignKeyboard.value = ()
         }
     }
     
