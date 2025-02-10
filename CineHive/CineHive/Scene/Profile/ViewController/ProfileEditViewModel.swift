@@ -65,7 +65,9 @@ final class ProfileEditViewModel {
         
         self.nicknameValidationResult.lazyBind { state in
             let isValid = state.isEnabled
-            if case .valid(let nickname) = state { self.nicknameFieldText.value = nickname }
+            if case .valid(let nickname) = state {
+                self.nicknameFieldText.value = nickname
+            }
             self.nicknameValidationResultText.value = state.message
             self.nicknameIsValid.value = state.isEnabled
             self.profileFormIsValid.value = isValid && self.mbtiValidationResult.value.isValid
@@ -156,16 +158,11 @@ final class ProfileEditViewModel {
     }
     
     private func save() {
-        guard let imageNumber = self.profileImageNumber.value else {
-            return
-        }
-        
-        let nicknameResult = self.nicknameValidationResult.value
-        guard case .valid(let nickname) = nicknameResult else {
-            return
-        }
-        
-        guard case .valid(let userMBTI) = self.mbtiValidationResult.value else {
+        guard
+            let imageNumber = self.profileImageNumber.value,
+            case .valid(let nickname) = self.nicknameValidationResult.value,
+            case .valid(let userMBTI) = self.mbtiValidationResult.value
+        else {
             return
         }
         
