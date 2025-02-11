@@ -74,4 +74,15 @@ final class UserProfileManager {
     func findMovieIfLiked(movieID: Int) -> Bool? {
         return self.userProfile?.likedMovieIDs.contains(movieID)
     }
+    
+    func addSubmiitedQuery(_ query: String) {
+        guard !query.isEmpty else { return }
+        let newSubmission = SubmittedQuery(submittedDate: .now, query: query)
+        self.userProfile?.submittedQueries.update(with: newSubmission)
+        notifyNewSubmission()
+    }
+    
+    private func notifyNewSubmission() {
+        NotificationCenter.default.post(name: CHNotification.userSubmittedQueryMutated, object: nil)
+    }
 }
