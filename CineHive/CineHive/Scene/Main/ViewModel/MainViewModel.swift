@@ -23,8 +23,6 @@ final class MainViewModel: BaseViewModelProtocol {
     struct Input {
         let initialized: Observable<Void> = Observable(value: ())
         
-        let viewDidLoad: Observable<Void> = Observable(value: ())
-        
         let likeButtonTappedForMovieID: Observable<Int?> = Observable(value: nil)
         
         let didSelectCellAtIndex: Observable<Int?> = Observable(value: nil)
@@ -87,7 +85,58 @@ final class MainViewModel: BaseViewModelProtocol {
     }
     
     func transform() {
+        self.input.initialized.bind { _ in
+            self.fetchRecentQuery()
+            self.getTrendingMovies()
+        }
         
+        self.input.likeButtonTappedForMovieID.lazyBind { movieID in
+            guard let movieID else { return }
+            self.profileManager.toggleLike(movieID: movieID)
+        }
+        
+        self.input.didSelectCellAtIndex.lazyBind { cellIndex in
+            guard let cellIndex else { return }
+            let summary = self.privates.trendingMovies.value[cellIndex]
+            
+            let detail = MovieDetail(
+                id: summary.id,
+                title: summary.title,
+                releaseDate: summary.releaseDate,
+                voteAverage: summary.voteAverage,
+                genreIDS: summary.genreIDS ?? [],
+                overview: summary.overview,
+                liked: self.profileManager.findMovieIfLiked(movieID: summary.id) ?? false
+            )
+            
+            self.output.goToDetail.value = detail
+        }
+        
+        self.input.searchButtonTapped.lazyBind { _ in
+            self.output.goToSearch.value = nil
+        }
+        
+        self.input.deleteAllQueriesButtonTapped.lazyBind { _ in
+            self.profileManager.deleteAllSubmittedQueries()
+        }
+        
+        self.input.deleteQueryButtonTapped.lazyBind { query in
+            guard let query else { return }
+            self.profileManager.deleteSubmittedQuery(query)
+        }
+        
+        self.input.queryButtonTapped.lazyBind { query in
+            guard let query else { return }
+            self.output.goToSearch.value = query
+        }
+        
+        self.input.profileViewTapped.lazyBind { _ in
+            self.output.goToProfileEdit.value = ()
+        }
+        
+        self.privates.trendingMovies.lazyBind { tmdbSummaries in
+            self.updateTrendingMovie()
+        }
     }
     
     private func addNotificationObserver() {
@@ -107,7 +156,7 @@ final class MainViewModel: BaseViewModelProtocol {
     }
     
     @objc private func updateLikes() {
-        
+        updateTrendingMovie()
     }
     
     @objc private func updateRecentQuerys() {
@@ -139,5 +188,19 @@ final class MainViewModel: BaseViewModelProtocol {
         if let presentableError = error as? PresentableError {
             self.output.errorMessage.value = presentableError.message
         }
+    }
+    
+    private func updateTrendingMovie() {
+        let summaries = self.privates.trendingMovies.value.map { target in
+            let liked = self.profileManager.findMovieIfLiked(movieID: target.id) ?? false
+            return FeaturedMovieSummary(
+                id: target.id,
+                posterImageURL: TMDBImage.w500(target.posterPath ?? "").url,
+                title: target.title,
+                synopsys: target.overview ?? "",
+                liked: liked
+            )
+        }
+        self.output.trendingMovieSummaries.value = summaries
     }
 }
