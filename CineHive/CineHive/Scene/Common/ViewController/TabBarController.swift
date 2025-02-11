@@ -15,8 +15,13 @@ final class TabBarController: UITabBarController {
     }
     
     private func setViewControllers() {
+        let mainViewModel = MainViewModel(
+            profileManager: UserProfileManager(),
+            networkRequester: NetworkManager()
+        )
+        
         let mainFlow = navigationEmebed(
-            MainViewController(),
+            MainViewController(viewModel: mainViewModel),
             symbol: CHSymbol.popcorn,
             title: "CINEMA"
         )

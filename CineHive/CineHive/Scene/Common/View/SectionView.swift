@@ -79,7 +79,7 @@ final class SectionView<ContentView: UIView>: UIView {
         }
     }
     
-    func configureContentAvailability() {
+    private func configureContentAvailability() {
         self.contentUnavailableView?.removeFromSuperview()
         
         switch self.contentIsAvailable {

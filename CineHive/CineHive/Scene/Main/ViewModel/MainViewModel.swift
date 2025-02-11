@@ -160,7 +160,7 @@ final class MainViewModel: BaseViewModelProtocol {
     }
     
     @objc private func updateRecentQuerys() {
-        self.fetchRecentQuery()
+        fetchRecentQuery()
     }
     
     private func fetchRecentQuery() {
