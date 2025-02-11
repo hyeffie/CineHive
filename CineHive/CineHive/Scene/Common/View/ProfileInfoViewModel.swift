@@ -42,8 +42,14 @@ final class ProfileInfoViewModel: BaseViewModelProtocol {
         transform()
     }
     
+    deinit {
+        NotificationCenter.default.removeObserver(self)
+    }
+    
     func transform() {
-        
+        self.input.initialized.bind { _ in
+            self.configureInfo()
+        }
     }
     
     private func addNotificationObserver() {
