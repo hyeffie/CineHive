@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct UserProfileManager {
+final class UserProfileManager {
     @UserDefault(key: UserDefaultKey.userProfile)
     private var userProfile: ProfileInfo?
     
@@ -24,7 +24,7 @@ struct UserProfileManager {
         return self.userProfile
     }
     
-    mutating func saveProfile(withForm form: ProfileInfoForm) {
+    func saveProfile(withForm form: ProfileInfoForm) {
         let newUserProfile = ProfileInfo(
             imageNumber: form.imageNumber,
             nickname: form.nickname,
@@ -40,5 +40,38 @@ struct UserProfileManager {
     
     private func notifyUserProfileUpdate() {
         NotificationCenter.default.post(name: CHNotification.userProfileUpdated, object: nil)
+    }
+    
+    func toggleLike(movieID: Int) {
+        guard let userProfile = self.userProfile else { return }
+        if userProfile.likedMovieIDs.contains(movieID) {
+            self.userProfile?.likedMovieIDs.removeAll { id in id == movieID }
+        } else {
+            self.userProfile?.likedMovieIDs.append(movieID)
+        }
+        notifyLikedMovieMutated()
+    }
+    
+    private func notifyLikedMovieMutated() {
+        NotificationCenter.default.post(name: CHNotification.userLikedMovieMutated, object: nil)
+    }
+    
+    func deleteSubmittedQuery(_ query: String) {
+        let target = SubmittedQuery(submittedDate: .now, query: query)
+        self.userProfile?.submittedQueries.remove(target)
+        notifySubmittedQueriesMutated()
+    }
+    
+    func deleteAllSubmittedQueries() {
+        self.userProfile?.submittedQueries.removeAll()
+        notifySubmittedQueriesMutated()
+    }
+    
+    private func notifySubmittedQueriesMutated() {
+        NotificationCenter.default.post(name: CHNotification.userSubmittedQueryMutated, object: nil)
+    }
+    
+    func findMovieIfLiked(movieID: Int) -> Bool? {
+        return self.userProfile?.likedMovieIDs.contains(movieID)
     }
 }

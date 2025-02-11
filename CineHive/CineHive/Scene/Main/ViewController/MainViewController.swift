@@ -20,12 +20,7 @@ final class MainViewController: BaseViewController {
         }
     }
     
-    @UserDefault(key: UserDefaultKey.userProfile)
-    private var userProfile: ProfileInfo!
-    
-    private let networkRequester = NetworkManager()
-    
-    private var trendingMovies: [MovieSummary] = []
+    private let viewModel: MainViewModel
     
     private lazy var profileInfoView = {
         let viewModel = ProfileInfoViewModel(profileManager: UserProfileManager())
@@ -43,79 +38,66 @@ final class MainViewController: BaseViewController {
     
     private let trendingSection = SectionView()
     
+    init(viewModel: MainViewModel) {
+        self.viewModel = viewModel
+        super.init(nibName: nil, bundle: nil)
+        bind()
+    }
+    
+    @available(*, unavailable)
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         configureViews()
-        addNotificationObserver()
-        fetchRecentQuery()
-        getTrendingMovies()
+    }
+    
+    private func bind() {
+        self.viewModel.output.sumittedQuries.bind { [weak self] queries in
+            self?.updateRecentQueries(queries)
+        }
+        
+        self.viewModel.output.trendingMovieSummaries.lazyBind { [weak self] movies in
+            self?.updateMovies(movies)
+        }
+        
+        self.viewModel.output.goToProfileEdit.lazyBind { [weak self] _ in
+            self?.goToProfileSetting()
+        }
+        
+        self.viewModel.output.goToSearch.lazyBind { [weak self] query in
+            self?.goToSearch(query: query)
+        }
+        
+        self.viewModel.output.goToDetail.lazyBind { [weak self] detail in
+            guard let detail else { return }
+            self?.goToDetail(detail: detail)
+        }
+        
+        self.viewModel.output.errorMessage.lazyBind { [weak self] message in
+            guard let message else { return }
+            self?.presentErrorAlert(message: message)
+        }
     }
 }
 
 extension MainViewController {
     private func deleteSubmittedQuery(_ query: String) {
-        let target = SubmittedQuery(submittedDate: .now, query: query)
-        self.userProfile.submittedQueries.remove(target)
-        notifySubmittedQueriesMutated()
+        self.viewModel.input.deleteQueryButtonTapped.value = query
     }
     
     private func deleteAllSubmittedQueries() {
-        self.userProfile.submittedQueries.removeAll()
-        notifySubmittedQueriesMutated()
-    }
-    
-    private func notifySubmittedQueriesMutated() {
-        NotificationCenter.default.post(name: CHNotification.userSubmittedQueryMutated, object: nil)
-    }
-    
-    private func notifyLikedMovieMutated() {
-        NotificationCenter.default.post(name: CHNotification.userLikedMovieMutated, object: nil)
-    }
-    
-    private func addNotificationObserver() {
-        NotificationCenter.default.addObserver(
-            self,
-            selector: #selector(self.updateLikes),
-            name: CHNotification.userLikedMovieMutated,
-            object: nil
-        )
-        
-        NotificationCenter.default.addObserver(
-            self,
-            selector: #selector(self.updateRecentQuerys),
-            name: CHNotification.userSubmittedQueryMutated,
-            object: nil
-        )
-    }
-    
-    private func toggleLike(movieID: Int) {
-        if self.userProfile.likedMovieIDs.contains(movieID) {
-            self.userProfile.likedMovieIDs.removeAll { id in id == movieID }
-        } else {
-            self.userProfile.likedMovieIDs.append(movieID)
-        }
-        notifyLikedMovieMutated()
-    }
-    
-    private func findMovieIfLiked(movieID: Int) -> Bool {
-        return self.userProfile.likedMovieIDs.contains(movieID)
-    }
-    
-    @objc private func updateLikes() {
-        self.trendingCollectionView.reloadData()
-    }
-    
-    @objc private func updateRecentQuerys() {
-        self.fetchRecentQuery()
+        self.viewModel.input.deleteAllQueriesButtonTapped.value = ()
     }
 }
 
 extension MainViewController {
-    private func fetchRecentQuery() {
-        let sortedQueries = self.userProfile.submittedQueries.sorted { $0.submittedDate > $1.submittedDate }
-        let contentIsAvailable = !sortedQueries.isEmpty
+    private func updateRecentQueries(_ queries: [SubmittedQuery]) {
+        let contentIsAvailable = !queries.isEmpty
         self.querySection.contentIsAvailable = contentIsAvailable ? .available : .unavailable(ContentState.noSearchQuery)
-        let queryViews = sortedQueries.map { submittedQuery in
+        let queryViews = queries.map { submittedQuery in
             SubmittedQueryView(
                 query: submittedQuery.query,
                 tapHandler: { [weak self] query in self?.goToSearch(query: query) },
@@ -125,28 +107,10 @@ extension MainViewController {
         self.queryStack.addViews(queryViews)
     }
     
-    private func getTrendingMovies() {
-        self.networkRequester.getTrendingMovies(
-            successHandler: { [weak self] response in
-                self?.handleResponse(response: response)
-            },
-            failureHandler: { [weak self] networkError in
-                self?.handleError(networkError)
-            }
-        )
-    }
-    
-    private func handleResponse(response: TrendingMovieResponse) {
-        self.trendingMovies = response.movies
-        let contentIsAvailable = !self.trendingMovies.isEmpty
+    private func updateMovies(_ movies: [FeaturedMovieSummary]) {
+        let contentIsAvailable = !movies.isEmpty
         self.trendingSection.contentIsAvailable = contentIsAvailable ? .available : .unavailable(ContentState.noTrendingMovies)
         self.trendingCollectionView.reloadData()
-    }
-    
-    private func handleError(_ error: Error) {
-        if let presentableError = error as? PresentableError {
-            presentErrorAlert(message: presentableError.message)
-        }
     }
 }
 
@@ -234,7 +198,7 @@ extension MainViewController: UICollectionViewDataSource, UICollectionViewDelega
         _ collectionView: UICollectionView,
         numberOfItemsInSection section: Int
     ) -> Int {
-        return self.trendingMovies.count
+        return self.viewModel.output.trendingMovieSummaries.value.count
     }
     
     func collectionView(
@@ -244,17 +208,12 @@ extension MainViewController: UICollectionViewDataSource, UICollectionViewDelega
         guard let cell: FeaturedMovieCollectionViewCell = collectionView.dequeueReusableCell(for: indexPath) else {
             return UICollectionViewCell()
         }
-        let target = self.trendingMovies[indexPath.row]
-        let movieSummary = FeaturedMovieSummary(
-            id: target.id,
-            posterImageURL: TMDBImage.w500(target.posterPath ?? "").url,
-            title: target.title,
-            synopsys: target.overview ?? "",
-            liked: findMovieIfLiked(movieID: target.id)
-        )
+        let movieSummary = self.viewModel.output.trendingMovieSummaries.value[indexPath.item]
         cell.configure(
             movieSummary: movieSummary,
-            likeButtonAction: { movieID in self.toggleLike(movieID: movieID) }
+            likeButtonAction: { [weak self] movieID in
+                self?.viewModel.input.likeButtonTappedForMovieID.value = movieID
+            }
         )
         return cell
     }
@@ -264,8 +223,7 @@ extension MainViewController: UICollectionViewDataSource, UICollectionViewDelega
         didSelectItemAt indexPath: IndexPath
     ) {
         collectionView.deselectItem(at: indexPath, animated: true)
-        let targetSummary = self.trendingMovies[indexPath.item]
-        goToDetail(summary: targetSummary)
+        self.viewModel.input.didSelectCellAtIndex.value = indexPath.item
     }
 }
 
@@ -281,17 +239,7 @@ extension MainViewController {
         self.push(viewController)
     }
     
-    private func goToDetail(summary: MovieSummary) {
-        let detail = MovieDetail(
-            id: summary.id,
-            title: summary.title,
-            releaseDate: summary.releaseDate,
-            voteAverage: summary.voteAverage,
-            genreIDS: summary.genreIDS ?? [],
-            overview: summary.overview,
-            liked: findMovieIfLiked(movieID: summary.id)
-        )
-        
+    private func goToDetail(detail: MovieDetail) {
         let viewController = MovieDetailViewController(movieDetail: detail)
         self.push(viewController)
     }
