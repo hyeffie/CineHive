@@ -11,8 +11,6 @@ final class ProfileInfoView: UIView {
     @UserDefault(key: UserDefaultKey.userProfile)
     private var profileInfo: ProfileInfo!
     
-//    private let profileInfo: ProfileInfo
-    
     private let tapHandler: (() -> ())?
     
     private let profileImageView = ProfileImageView(isSelected: true)

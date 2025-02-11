@@ -20,6 +20,10 @@ struct UserProfileManager {
         )
     }
     
+    func getProfileInfo() -> ProfileInfo? {
+        return self.userProfile
+    }
+    
     mutating func saveProfile(withForm form: ProfileInfoForm) {
         let newUserProfile = ProfileInfo(
             imageNumber: form.imageNumber,
