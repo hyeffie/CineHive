@@ -91,7 +91,7 @@ extension SearchResultViewController {
         self.searchController.searchBar.placeholder = "영화를 검색해보세요."
         self.searchController.searchBar.searchTextField.clearButtonMode = .never
         self.searchController.automaticallyShowsCancelButton = false
-//        self.searchController.searchBar.text = self.latestQuery
+        self.searchController.searchBar.text = self.viewModel.output.latestQuery.value
         navigationItem.searchController = self.searchController
     }
     

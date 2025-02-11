@@ -32,6 +32,12 @@ final class SearchResultViewModel: BaseViewModelProtocol {
         let errorMessage: Observable<String?> = Observable(value: nil)
         
         let showKeyboard: Observable<Void> = Observable(value: ())
+        
+        let latestQuery: Observable<String?>
+        
+        init(latestQuery: String?) {
+            self.latestQuery = Observable(value: latestQuery)
+        }
     }
     
     private struct Privates {
@@ -60,8 +66,6 @@ final class SearchResultViewModel: BaseViewModelProtocol {
         return formatter
     }()
     
-    private var latestQuery: String?
-    
     private var currentPage: Int = 0
     
     private var isLastPage: Bool = false
@@ -72,11 +76,10 @@ final class SearchResultViewModel: BaseViewModelProtocol {
         networkRequester: NetworkManager
     ) {
         self.input = Input()
-        self.output = Output()
+        self.output = Output(latestQuery: query)
         self.privates = Privates()
         self.profileManager = profileManager
         self.networkRequester = networkRequester
-        self.latestQuery = query
         transform()
     }
     
@@ -86,7 +89,7 @@ final class SearchResultViewModel: BaseViewModelProtocol {
         }
         
         self.input.viewDidAppear.lazyBind { _ in
-            if self.latestQuery == nil {
+            if self.output.latestQuery.value == nil {
                 self.output.showKeyboard.value = ()
             }
         }
@@ -97,9 +100,9 @@ final class SearchResultViewModel: BaseViewModelProtocol {
         
         self.input.searchButtonClickedWithQuery.lazyBind { query in
             guard let query else { return }
-            guard query != self.latestQuery else { return }
+            guard query != self.output.latestQuery.value else { return }
             self.profileManager.addSubmiitedQuery(query)
-            self.latestQuery = query
+            self.output.latestQuery.value = query
             self.reset()
             self.callSearchAPI()
         }
@@ -125,7 +128,12 @@ final class SearchResultViewModel: BaseViewModelProtocol {
     }
     
     private func callSearchAPI() {
-        guard let latestQuery, !latestQuery.isEmpty else { return }
+        guard
+            let latestQuery = self.output.latestQuery.value,
+                !latestQuery.isEmpty
+        else {
+            return
+        }
         let searchParams = SearchMovieRequestParameter(
             query: latestQuery,
             page: self.currentPage + 1
