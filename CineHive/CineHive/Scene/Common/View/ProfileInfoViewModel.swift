@@ -22,9 +22,9 @@ final class ProfileInfoViewModel: BaseViewModelProtocol {
         let movieBoxLabelText: Observable<String?> = Observable(value: nil)
     }
     
-    var input: Input
+    private(set) var input: Input
     
-    var output: Output
+    private(set) var output: Output
     
     private let profileManager: UserProfileManager
     

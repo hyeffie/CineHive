@@ -27,7 +27,10 @@ final class MainViewController: BaseViewController {
     
     private var trendingMovies: [MovieSummary] = []
     
-    private lazy var profileInfoView = ProfileInfoView(tapHandler: self.goToProfileSetting)
+    private lazy var profileInfoView = {
+        let viewModel = ProfileInfoViewModel(profileManager: UserProfileManager())
+        return ProfileInfoView(viewModel: viewModel, tapHandler: self.goToProfileSetting)
+    }()
     
     private let queryStack = ScrollableHStack(spacing: 6, horizontalContentInset: 16)
     

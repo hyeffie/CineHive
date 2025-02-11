@@ -8,8 +8,7 @@
 import UIKit
 
 final class ProfileInfoView: UIView {
-    @UserDefault(key: UserDefaultKey.userProfile)
-    private var profileInfo: ProfileInfo!
+    private let viewModel: ProfileInfoViewModel
     
     private let tapHandler: (() -> ())?
     
@@ -43,12 +42,16 @@ final class ProfileInfoView: UIView {
         return label
     }()
     
-    init(tapHandler: (() -> ())?) {
+    init(
+        viewModel: ProfileInfoViewModel,
+        tapHandler: (() -> ())?
+    ) {
+        self.viewModel = viewModel
         self.tapHandler = tapHandler
         super.init(frame: .zero)
-        addNotificationObserver()
+        bind()
         configureViews()
-        configureInfo()
+        self.viewModel.input.initialized.value = ()
     }
     
     @available(*, unavailable)
@@ -59,6 +62,25 @@ final class ProfileInfoView: UIView {
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
         super.touchesEnded(touches, with: event)
         self.tapHandler?()
+    }
+    
+    private func bind() {
+        self.viewModel.output.profileImageName.lazyBind { [weak self] imageName in
+            guard let imageName else { return }
+            self?.profileImageView.configureImage(name: imageName)
+        }
+        
+        self.viewModel.output.nicknameLabelText.lazyBind { [weak self] nickname in
+            self?.nicknameLabel.text = nickname
+        }
+        
+        self.viewModel.output.createdAtLabelText.lazyBind { [weak self] createdAt in
+            self?.createdAtLabel.text = createdAt
+        }
+        
+        self.viewModel.output.movieBoxLabelText.lazyBind { [weak self] movieBoaLabelText in
+            self?.movieBoxLabel.text = movieBoaLabelText
+        }
     }
     
     private func configureViews() {
@@ -99,33 +121,5 @@ final class ProfileInfoView: UIView {
         self.backgroundColor = CHColor.darkLabelBackground.withAlphaComponent(0.5)
         self.layer.cornerRadius = 20
         self.isUserInteractionEnabled = true
-    }
-    
-    @objc private func configureInfo() {
-        let imageName = CHImageName.profileImage(number: self.profileInfo.imageNumber)
-        self.profileImageView.configureImage(name: imageName)
-        
-        self.nicknameLabel.text = self.profileInfo.nickname
-        
-        let dateEncoder = DateFormatter()
-        dateEncoder.dateFormat = "yy.MM.dd"
-        self.createdAtLabel.text = "\(dateEncoder.string(from: self.profileInfo.createdAt)) 가입"
-        self.movieBoxLabel.text = "\(self.profileInfo.likedMovieIDs.count) 개의 무비박스 보관중"
-    }
-    
-    private func addNotificationObserver() {
-        NotificationCenter.default.addObserver(
-            self,
-            selector: #selector(self.configureInfo),
-            name: CHNotification.userProfileUpdated,
-            object: nil
-        )
-        
-        NotificationCenter.default.addObserver(
-            self,
-            selector: #selector(self.configureInfo),
-            name: CHNotification.userLikedMovieMutated,
-            object: nil
-        )
     }
 }

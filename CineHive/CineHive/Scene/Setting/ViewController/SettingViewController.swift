@@ -18,7 +18,10 @@ final class SettingViewController: BaseViewController {
         "탈퇴하기",
     ]
     
-    private lazy var profileInfoView = ProfileInfoView(tapHandler: self.goToProfileSetting)
+    private lazy var profileInfoView = {
+        let viewModel = ProfileInfoViewModel(profileManager: UserProfileManager())
+        return ProfileInfoView(viewModel: viewModel, tapHandler: self.goToProfileSetting)
+    }()
     
     private lazy var menuTableView = UITableView(frame: .zero)
     
