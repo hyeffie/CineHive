@@ -7,7 +7,7 @@
 
 import UIKit
 
-final class ScrollableHStack: UIScrollView {
+class ScrollableHStack: UIScrollView {
     private let stackView = {
         let stack = UIStackView()
         stack.axis = .horizontal
@@ -57,5 +57,36 @@ final class ScrollableHStack: UIScrollView {
     
     func removeAllViews() {
         self.stackView.removeAllArrangedSubviews()
+    }
+}
+
+final class ScrollableQueryListStack: ScrollableHStack {
+    private var onTapQuery: (String) -> Void
+    
+    private var onDeleteQuery: (String) -> Void
+    
+    init(
+        onTapQuery: @escaping (String) -> Void,
+        onDeleteQuery: @escaping (String) -> Void
+    ) {
+        self.onTapQuery = onTapQuery
+        self.onDeleteQuery = onDeleteQuery
+        super.init(spacing: 6, horizontalContentInset: 16)
+    }
+    
+    func addQueries(quries: [String]) {
+        self.removeAllViews()
+        let queruButtons = quries.map { query in
+            return SubmittedQueryView(
+                query: query,
+                tapHandler: { [weak self] query in self?.onTapQuery(query) },
+                deleteHandler: { [weak self] query in self?.onDeleteQuery(query) }
+            )
+        }
+        self.addViews(queruButtons)
+    }
+    
+    func removeAllQueries() {
+        self.removeAllViews()
     }
 }

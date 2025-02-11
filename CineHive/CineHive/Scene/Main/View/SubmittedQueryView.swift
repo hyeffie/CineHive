@@ -16,7 +16,7 @@ final class SubmittedQueryView: UIView {
     private let deleteButton = {
         let button = UIButton()
         button.setTitle("", for: .normal)
-        let symbolConfig = UIImage.SymbolConfiguration(scale: .medium)
+        let symbolConfig = UIImage.SymbolConfiguration(scale: .small)
         let symbol = CHSymbol.xmark.value?.applyingSymbolConfiguration(symbolConfig)
         button.setImage(symbol, for: .normal)
         button.tintColor = CHColor.mainBackground
@@ -52,11 +52,12 @@ final class SubmittedQueryView: UIView {
     }
     
     private func configureViews() {
-        let outerInset = 8
+        let hOuterInset = 12
+        let vOuterInset = 8
         self.addSubview(self.queryLabel)
         self.queryLabel.snp.makeConstraints { make in
-            make.leading.equalToSuperview().offset(outerInset)
-            make.verticalEdges.equalToSuperview().inset(outerInset)
+            make.leading.equalToSuperview().offset(hOuterInset)
+            make.verticalEdges.equalToSuperview().inset(vOuterInset)
         }
         
         self.addSubview(self.deleteButton)
@@ -64,7 +65,7 @@ final class SubmittedQueryView: UIView {
             make.leading.equalTo(self.queryLabel.snp.trailing).offset(4)
             make.centerY.equalTo(self.queryLabel)
             make.height.equalToSuperview()
-            make.trailing.equalToSuperview().inset(outerInset)
+            make.trailing.equalToSuperview().inset(hOuterInset)
         }
         
         self.backgroundColor = CHColor.lightLabelBackground
