@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct UserProfileManager {
+final class UserProfileManager {
     @UserDefault(key: UserDefaultKey.userProfile)
     private var userProfile: ProfileInfo?
     
@@ -24,7 +24,7 @@ struct UserProfileManager {
         return self.userProfile
     }
     
-    mutating func saveProfile(withForm form: ProfileInfoForm) {
+    func saveProfile(withForm form: ProfileInfoForm) {
         let newUserProfile = ProfileInfo(
             imageNumber: form.imageNumber,
             nickname: form.nickname,
@@ -42,7 +42,7 @@ struct UserProfileManager {
         NotificationCenter.default.post(name: CHNotification.userProfileUpdated, object: nil)
     }
     
-    mutating func toggleLike(movieID: Int) {
+    func toggleLike(movieID: Int) {
         guard let userProfile = self.userProfile else { return }
         if userProfile.likedMovieIDs.contains(movieID) {
             self.userProfile?.likedMovieIDs.removeAll { id in id == movieID }
@@ -56,13 +56,13 @@ struct UserProfileManager {
         NotificationCenter.default.post(name: CHNotification.userLikedMovieMutated, object: nil)
     }
     
-    mutating func deleteSubmittedQuery(_ query: String) {
+    func deleteSubmittedQuery(_ query: String) {
         let target = SubmittedQuery(submittedDate: .now, query: query)
         self.userProfile?.submittedQueries.remove(target)
         notifySubmittedQueriesMutated()
     }
     
-    mutating func deleteAllSubmittedQueries() {
+    func deleteAllSubmittedQueries() {
         self.userProfile?.submittedQueries.removeAll()
         notifySubmittedQueriesMutated()
     }
