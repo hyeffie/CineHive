@@ -13,8 +13,6 @@ final class SearchResultViewModel: BaseViewModelProtocol {
         
         let viewDidAppear: Observable<Void> = Observable(value: ())
         
-        let backToMainButtonTapped: Observable<Void> = Observable(value: ())
-        
         let prefetchItemsAt: Observable<[Int]> = Observable(value: [])
         
         let searchButtonClickedWithQuery: Observable<String?> = Observable(value: nil)
@@ -34,8 +32,6 @@ final class SearchResultViewModel: BaseViewModelProtocol {
         let errorMessage: Observable<String?> = Observable(value: nil)
         
         let showKeyboard: Observable<Void> = Observable(value: ())
-        
-        let goBackToMain: Observable<Void> = Observable(value: ())
     }
     
     private struct Privates {
@@ -93,10 +89,6 @@ final class SearchResultViewModel: BaseViewModelProtocol {
             if self.latestQuery == nil {
                 self.output.showKeyboard.value = ()
             }
-        }
-        
-        self.input.backToMainButtonTapped.lazyBind { _ in
-            self.output.goBackToMain.value = ()
         }
         
         self.input.prefetchItemsAt.lazyBind { indices in
