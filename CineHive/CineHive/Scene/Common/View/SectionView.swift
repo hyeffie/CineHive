@@ -41,7 +41,7 @@ final class SectionView<ContentView: UIView>: UIView {
         }
     }
     
-    init(contentHeight: CGFloat) {
+    init(contentHeight: CGFloat? = nil) {
         super.init(frame: .zero)
         configreViews(contentHeight: contentHeight)
     }
@@ -51,7 +51,7 @@ final class SectionView<ContentView: UIView>: UIView {
         fatalError("init(coder:) has not been implemented")
     }
     
-    private func configreViews(contentHeight: CGFloat) {
+    private func configreViews(contentHeight: CGFloat?) {
         self.titleStack.addArrangedSubview(self.titleLabel)
         
         self.titleContainer.addSubview(self.titleStack)
@@ -62,13 +62,15 @@ final class SectionView<ContentView: UIView>: UIView {
         
         self.containerStack.addArrangedSubview(titleContainer)
         self.titleContainer.snp.makeConstraints { make in
-            make.height.equalTo(30)
+            make.height.equalTo(36)
         }
         self.titleContainer.setContentHuggingPriority(.required, for: .vertical)
         
         self.containerStack.addArrangedSubview(self.contentContainer)
-        self.contentContainer.snp.makeConstraints { make in
-            make.height.equalTo(contentHeight)
+        if let contentHeight {
+            self.contentContainer.snp.makeConstraints { make in
+                make.height.equalTo(contentHeight)
+            }
         }
         
         self.addSubview(containerStack)

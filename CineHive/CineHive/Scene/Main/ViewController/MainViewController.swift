@@ -10,10 +10,12 @@ import UIKit
 final class MainViewController: BaseViewController {
     private enum ContentState: ContenUnavailableState {
         case noSearchQuery
+        case noTrendingMovies
         
         var displayingMessage: String {
             switch self {
             case .noSearchQuery: return "최근 검색어 내역이 없습니다."
+            case .noTrendingMovies: return "추천 영화가 없습니다."
             }
         }
     }
@@ -31,13 +33,12 @@ final class MainViewController: BaseViewController {
     
     private let querySection = SectionView(contentHeight: 40)
     
-    private lazy var todayFeaturedMovieList = SectionedView(
-        title: "오늘의 영화",
-        content: UICollectionView(
-            frame: .zero,
-            collectionViewLayout: self.todayMovieCollectionViewLayout()
-        )
+    private lazy var trendingCollectionView = UICollectionView(
+        frame: .zero,
+        collectionViewLayout: self.todayMovieCollectionViewLayout()
     )
+    
+    private let trendingSection = SectionView()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -98,7 +99,7 @@ extension MainViewController {
     }
     
     @objc private func updateLikes() {
-        self.todayFeaturedMovieList.content.reloadData()
+        self.trendingCollectionView.reloadData()
     }
     
     @objc private func updateRecentQuerys() {
@@ -135,8 +136,8 @@ extension MainViewController {
     private func handleResponse(response: TrendingMovieResponse) {
         self.trendingMovies = response.movies
         let contentIsAvailable = !self.trendingMovies.isEmpty
-        self.todayFeaturedMovieList.toggleContentAvailability(isAvailable: contentIsAvailable)
-        self.todayFeaturedMovieList.content.reloadData()
+        self.trendingSection.contentIsAvailable = contentIsAvailable ? .available : .unavailable(ContentState.noTrendingMovies)
+        self.trendingCollectionView.reloadData()
     }
     
     private func handleError(_ error: Error) {
@@ -159,7 +160,7 @@ extension MainViewController {
     }
     
     private func configureViews() {
-        let spacing = 8
+        let spacing = 12
         
         self.view.addSubview(self.profileInfoView)
         self.profileInfoView.snp.makeConstraints { make in
@@ -179,46 +180,49 @@ extension MainViewController {
             make.height.equalTo(40)
         }
         
-        self.view.addSubview(self.todayFeaturedMovieList)
+        self.view.addSubview(self.trendingSection)
         // 오늘의 영화 섹션은 남은 영역을 기준으로
-        self.todayFeaturedMovieList.snp.makeConstraints { make in
+        self.trendingSection.snp.makeConstraints { make in
             make.top.equalTo(self.querySection.snp.bottom).offset(spacing)
             make.horizontalEdges.equalTo(self.view.safeAreaLayoutGuide)
             make.bottom.equalTo(self.view.safeAreaLayoutGuide)
         }
-        self.todayFeaturedMovieList.content.setContentHuggingPriority(.defaultLow, for: .vertical)
+        self.trendingCollectionView.setContentHuggingPriority(.defaultLow, for: .vertical)
         
+        configureNavigationBar()
+        configureTrendingCollectionView()
+        configureQuerySection()
+        configureTrendingSection()
+    }
+    
+    private func configureNavigationBar() {
         self.navigationItem.title = "CineHive"
-        configureTodayMovieCollectionView()
-        
         let searchButton = UIBarButtonItem(systemItem: .search)
         self.navigationItem.setRightBarButton(searchButton, animated: false)
         searchButton.primaryAction = UIAction { _ in self.goToSearch() }
-        
-        configureQuerySection()
     }
     
     private func configureQuerySection() {
         self.querySection.setTitle("최근 검색어")
-        
         let action = UIAction(handler: { [weak self] action in
             self?.deleteAllSubmittedQueries()
         })
         self.querySection.setAccessoryButton(title: "모두 삭제", action: action)
-        
         self.querySection.setContentView(self.queryStack)
     }
     
-    private func configureTodayMovieCollectionView() {
-        let collectionView = self.todayFeaturedMovieList.content
-        
-        collectionView.registerCellClass(FeaturedMovieCollectionViewCell.self)
-        collectionView.dataSource = self
-        collectionView.delegate = self
-        
-        collectionView.backgroundColor = .clear
-        collectionView.showsVerticalScrollIndicator = false
-        collectionView.showsHorizontalScrollIndicator = false
+    private func configureTrendingCollectionView() {
+        self.trendingCollectionView.registerCellClass(FeaturedMovieCollectionViewCell.self)
+        self.trendingCollectionView.dataSource = self
+        self.trendingCollectionView.delegate = self
+        self.trendingCollectionView.backgroundColor = .clear
+        self.trendingCollectionView.showsVerticalScrollIndicator = false
+        self.trendingCollectionView.showsHorizontalScrollIndicator = false
+    }
+    
+    private func configureTrendingSection() {
+        self.trendingSection.setTitle("오늘의 영화")
+        self.trendingSection.setContentView(self.trendingCollectionView)
     }
 }
 
