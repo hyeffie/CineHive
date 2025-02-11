@@ -25,7 +25,7 @@ final class MainViewController: BaseViewController {
     
     private let networkRequester = NetworkManager()
     
-    private var trendingMovies: [MovieSummary] = []
+    private var trendingMovies: [TMDBMovieSummary] = []
     
     private lazy var profileInfoView = {
         let viewModel = ProfileInfoViewModel(profileManager: UserProfileManager())
@@ -281,7 +281,7 @@ extension MainViewController {
         self.push(viewController)
     }
     
-    private func goToDetail(summary: MovieSummary) {
+    private func goToDetail(summary: TMDBMovieSummary) {
         let detail = MovieDetail(
             id: summary.id,
             title: summary.title,

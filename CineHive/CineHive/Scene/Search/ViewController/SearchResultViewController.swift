@@ -23,7 +23,7 @@ final class SearchResultViewController: BaseViewController {
     
     private let networkRequester = NetworkManager()
     
-    private var items: [MovieSummary]
+    private var items: [TMDBMovieSummary]
     
     private var latestQuery: String?
     
@@ -181,7 +181,7 @@ extension SearchResultViewController {
         }
     }
     
-    private func goToDetail(summary: MovieSummary) {
+    private func goToDetail(summary: TMDBMovieSummary) {
         let detail = MovieDetail(
             id: summary.id,
             title: summary.title,
@@ -218,7 +218,7 @@ extension SearchResultViewController: UITableViewDelegate, UITableViewDataSource
         return cell
     }
     
-    private func convertMovieSummaryToSearchSummary(_ movieSummary: MovieSummary) -> SearchMovieSummary {
+    private func convertMovieSummaryToSearchSummary(_ movieSummary: TMDBMovieSummary) -> SearchMovieSummary {
         let dateString: String
         if let releaseDate = movieSummary.releaseDate,
             let date = self.dateDecoder.date(from: releaseDate) {

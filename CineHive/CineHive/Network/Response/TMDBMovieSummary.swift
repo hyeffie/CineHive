@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct MovieSummary: Decodable {
+struct TMDBMovieSummary: Decodable {
     let id: Int
     let title: String
     let releaseDate: String?

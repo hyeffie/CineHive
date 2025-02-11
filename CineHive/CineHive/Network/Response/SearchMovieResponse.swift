@@ -9,7 +9,7 @@ import Foundation
 
 struct SearchMovieResponse: Decodable {
     let page: Int
-    let results: [MovieSummary]
+    let results: [TMDBMovieSummary]
     let totalPages, totalResults: Int
 
     enum CodingKeys: String, CodingKey {

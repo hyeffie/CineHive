@@ -8,7 +8,7 @@
 import Foundation
 
 struct TrendingMovieResponse: Decodable {
-    let movies: [MovieSummary]
+    let movies: [TMDBMovieSummary]
 
     enum CodingKeys: String, CodingKey {
         case movies = "results"
