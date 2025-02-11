@@ -8,6 +8,16 @@
 import UIKit
 
 final class MainViewController: BaseViewController {
+    private enum ContentState: ContenUnavailableState {
+        case noSearchQuery
+        
+        var displayingMessage: String {
+            switch self {
+            case .noSearchQuery: return "최근 검색어 내역이 없습니다."
+            }
+        }
+    }
+    
     @UserDefault(key: UserDefaultKey.userProfile)
     private var userProfile: ProfileInfo!
     
@@ -17,12 +27,9 @@ final class MainViewController: BaseViewController {
     
     private lazy var profileInfoView = ProfileInfoView(tapHandler: self.goToProfileSetting)
     
-    private lazy var recentQueryList = SectionedView(
-        title: "최근 검색어",
-        accessoryButtonInfo: ("전체 삭제", { [weak self] _ in self?.deleteAllSubmittedQueries() }),
-        content: ScrollableHStack(spacing: 6, horizontalContentInset: 16),
-        contentUnavailableMessage: "최근 검색어 내역이 없습니다."
-    )
+    private let queryStack = ScrollableHStack(spacing: 6, horizontalContentInset: 16)
+    
+    private let querySection = SectionView(contentHeight: 40)
     
     private lazy var todayFeaturedMovieList = SectionedView(
         title: "오늘의 영화",
@@ -103,7 +110,7 @@ extension MainViewController {
     private func fetchRecentQuery() {
         let sortedQueries = self.userProfile.submittedQueries.sorted { $0.submittedDate > $1.submittedDate }
         let contentIsAvailable = !sortedQueries.isEmpty
-        self.recentQueryList.toggleContentAvailability(isAvailable: contentIsAvailable)
+        self.querySection.contentIsAvailable = contentIsAvailable ? .available : .unavailable(ContentState.noSearchQuery)
         let queryViews = sortedQueries.map { submittedQuery in
             SubmittedQueryView(
                 query: submittedQuery.query,
@@ -111,7 +118,7 @@ extension MainViewController {
                 deleteHandler: { [weak self] query in self?.deleteSubmittedQuery(query) }
             )
         }
-        self.recentQueryList.content.addViews(queryViews)
+        self.queryStack.addViews(queryViews)
     }
     
     private func getTrendingMovies() {
@@ -161,21 +168,21 @@ extension MainViewController {
             make.height.equalTo(self.view.safeAreaLayoutGuide).multipliedBy(0.2)
         }
         
-        self.view.addSubview(self.recentQueryList)
+        self.view.addSubview(self.querySection)
         // 최근 검색어 섹션은 intrinsic size를 기준으로
-        self.recentQueryList.snp.makeConstraints { make in
+        self.querySection.snp.makeConstraints { make in
             make.top.equalTo(self.profileInfoView.snp.bottom).offset(spacing)
             make.horizontalEdges.equalTo(self.view.safeAreaLayoutGuide)
         }
         
-        self.recentQueryList.content.snp.makeConstraints { make in
+        self.querySection.contentView?.snp.makeConstraints { make in
             make.height.equalTo(40)
         }
         
         self.view.addSubview(self.todayFeaturedMovieList)
         // 오늘의 영화 섹션은 남은 영역을 기준으로
         self.todayFeaturedMovieList.snp.makeConstraints { make in
-            make.top.equalTo(self.recentQueryList.snp.bottom).offset(spacing)
+            make.top.equalTo(self.querySection.snp.bottom).offset(spacing)
             make.horizontalEdges.equalTo(self.view.safeAreaLayoutGuide)
             make.bottom.equalTo(self.view.safeAreaLayoutGuide)
         }
@@ -187,6 +194,19 @@ extension MainViewController {
         let searchButton = UIBarButtonItem(systemItem: .search)
         self.navigationItem.setRightBarButton(searchButton, animated: false)
         searchButton.primaryAction = UIAction { _ in self.goToSearch() }
+        
+        configureQuerySection()
+    }
+    
+    private func configureQuerySection() {
+        self.querySection.setTitle("최근 검색어")
+        
+        let action = UIAction(handler: { [weak self] action in
+            self?.deleteAllSubmittedQueries()
+        })
+        self.querySection.setAccessoryButton(title: "모두 삭제", action: action)
+        
+        self.querySection.setContentView(self.queryStack)
     }
     
     private func configureTodayMovieCollectionView() {

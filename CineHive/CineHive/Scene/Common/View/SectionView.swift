@@ -98,15 +98,30 @@ final class SectionView<ContentView: UIView>: UIView {
         self.titleLabel.text = title
     }
     
-    func setAccessoryButton(_ newButton: UIButton) {
+    func setAccessoryButton(title: String, action: UIAction) {
         if let existingButton = self.accessoryButton {
             existingButton.removeFromSuperview()
             self.accessoryButton = nil
         }
         
+        let newButton = makeAccessoryButton(title: title, action: action)
         self.accessoryButton = newButton
         self.titleStack.addArrangedSubview(newButton)
         newButton.setContentHuggingPriority(.defaultHigh, for: .horizontal)
+    }
+    
+    private func makeAccessoryButton(title: String, action: UIAction) -> UIButton {
+        let button = UIButton()
+        let styledTitle = NSAttributedString(
+            string: title,
+            attributes: [
+                .font: CHFont.smallBold,
+                .foregroundColor: CHColor.theme,
+            ]
+        )
+        button.setAttributedTitle(styledTitle, for: .normal)
+        button.addAction(action, for: .touchUpInside)
+        return button
     }
     
     func setContentView(_ newContentView: ContentView) {
