@@ -235,7 +235,12 @@ extension MainViewController {
     }
     
     private func goToSearch(query: String? = nil) {
-        let viewController = SearchResultViewController(query: query)
+        let viewModel = SearchResultViewModel(
+            query: query,
+            profileManager: UserProfileManager(),
+            networkRequester: NetworkManager()
+        )
+        let viewController = SearchResultViewController(viewModel: viewModel)
         self.push(viewController)
     }
     
