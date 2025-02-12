@@ -9,12 +9,27 @@ import Foundation
 
 final class MovieDetailViewModel: BaseViewModelProtocol {
     struct Input {
+        let initialized: Observable<Void> = Observable(value: ())
         
+        let viewDidLoad: Observable<Void> = Observable(value: ())
         
+        let likeButtonTapped: Observable<Void> = Observable(value: ())
+        
+        let scrollViewDidScroll: Observable<(pageWidth: CGFloat, horizontalOffset: CGFloat)?> = Observable(value: nil)
+        
+        let synopsisFoldToggleButtonTapped: Observable<Void> = Observable(value: ())
     }
     
     struct Output {
+        let movieDetail: MovieDetail
         
+        let backdropURLs: Observable<[URL]> = Observable(value: [])
+        
+        let castInfos: Observable<[CastInfo]> = Observable(value: [])
+        
+        let posterURLs: Observable<[URL]> = Observable(value: [])
+        
+        let currentPage: Observable<Int> = Observable(value: 0)
     }
     
     private struct Privates {
@@ -32,11 +47,12 @@ final class MovieDetailViewModel: BaseViewModelProtocol {
     private let networkRequester: NetworkManager
     
     init(
+        movieDetail: MovieDetail,
         profileManager: UserProfileManager,
         networkRequester: NetworkManager
     ) {
         self.input = Input()
-        self.output = Output()
+        self.output = Output(movieDetail: movieDetail)
         self.privates = Privates()
         self.profileManager = profileManager
         self.networkRequester = networkRequester

@@ -349,6 +349,7 @@ extension MovieDetailViewController: UICollectionViewDataSource, UICollectionVie
             let url = TMDBImage.original(path).url
             cell.configure(with: url)
             return cell
+            
         case self.castCollectionView:
             guard let cell: CastCollectionViewCell = collectionView.dequeueReusableCell(for: indexPath) else { return UICollectionViewCell() }
             let targetCast = self.casts[indexPath.item]
@@ -356,12 +357,14 @@ extension MovieDetailViewController: UICollectionViewDataSource, UICollectionVie
             let castInfo = CastInfo(profileURL: profileURL, name: targetCast.name, character: targetCast.character)
             cell.configure(with: castInfo)
             return cell
+            
         case self.posterCollectionView:
             guard let cell: PosterCollectionViewCell = collectionView.dequeueReusableCell(for: indexPath) else { return UICollectionViewCell() }
             let path = self.posterPaths[indexPath.item]
             let posterURL = TMDBImage.w500(path).url
             cell.configure(with: posterURL)
             return cell
+            
         default:
             return UICollectionViewCell()
         }
