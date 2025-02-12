@@ -8,18 +8,7 @@
 import UIKit
 
 final class MovieDetailViewController: BaseViewController {
-    @UserDefault(key: UserDefaultKey.userProfile)
-    private var userProfile: ProfileInfo!
-    
-    private let networkRequester = NetworkManager()
-    
-    private let movieDetail: MovieDetail
-    
-    private var backdropPaths: [String]
-    
-    private var casts: [MovieCastResponse.Cast]
-    
-    private var posterPaths: [String]
+    private let viewModel: MovieDetailViewModel
     
     private let scrollView = UIScrollView()
     
@@ -46,38 +35,29 @@ final class MovieDetailViewController: BaseViewController {
     
     private let synopsisLabel = BaseLabel(font: CHFont.medium, numberOfLines: 3)
     
-    private lazy var synopsisSection = SectionedView(
-        title: "Synopsis",
-        accessoryButtonInfo: ("More", { button in self.toggleFoldingSynopsis(button: button)  }),
-        content: UIView()
-    )
+    private let synopsisContainer = UIView()
+    
+    private let synopsisSection = SectionView()
     
     private lazy var castCollectionView = UICollectionView(
         frame: .zero,
         collectionViewLayout: self.castCollectionViewLayout()
     )
     
-    private lazy var castSection = SectionedView(
-        title: "Cast",
-        content: self.castCollectionView
-    )
+    private let castSection = SectionView(contentHeight: 130)
     
     private lazy var posterCollectionView = UICollectionView(
         frame: .zero,
         collectionViewLayout: self.posterCollectionViewLayout()
     )
     
-    private lazy var posterSection = SectionedView(
-        title: "Poster",
-        content: self.posterCollectionView
-    )
+    private let posterSection = SectionView(contentHeight: 150)
     
-    init(movieDetail: MovieDetail) {
-        self.movieDetail = movieDetail
-        self.backdropPaths = []
-        self.casts = []
-        self.posterPaths = []
+    init(viewModel: MovieDetailViewModel) {
+        self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
+        bind()
+        self.viewModel.input.initialized.value = ()
     }
     
     @available(*, unavailable)
@@ -87,26 +67,44 @@ final class MovieDetailViewController: BaseViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        configureDetail()
-        getImages()
-        getCast()
         configureViews()
     }
-}
 
-extension MovieDetailViewController {
-    private func reconfigureBackdropPageConntrol() {
-        self.backdropPageControl.numberOfPages = self.backdropPaths.count
-        self.backdropPageControl.currentPage = 0
-    }
-    
-    private func toggleFoldingSynopsis(button: UIButton) {
-        if self.synopsisLabel.numberOfLines == 0 {
-            self.synopsisLabel.numberOfLines = 3
-            button.setTitle("More", for: .normal)
-        } else {
-            self.synopsisLabel.numberOfLines = 0
-            button.setTitle("Hide", for: .normal)
+    private func bind() {
+        self.viewModel.output.detail.lazyBind { [weak self] _ in
+            self?.configureDetail()
+        }
+        
+        self.viewModel.output.backdropURLs.lazyBind { [weak self] _ in
+            self?.backdropCollectionView.reloadData()
+            self?.backdropPageControl.numberOfPages = self?.viewModel.output.backdropURLs.value.count ?? 0
+            self?.backdropPageControl.currentPage = 0
+        }
+        
+        self.viewModel.output.castInfos.lazyBind { [weak self] _ in
+            self?.castCollectionView.reloadData()
+        }
+        
+        self.viewModel.output.posterURLs.lazyBind { [weak self] _ in
+            self?.posterCollectionView.reloadData()
+        }
+        
+        self.viewModel.output.currentPage.lazyBind { [weak self] currentPage in
+            self?.backdropPageControl.currentPage = currentPage
+        }
+        
+        self.viewModel.output.errorMessage.lazyBind { [weak self] message in
+            guard let message else { return }
+            self?.presentErrorAlert(message: message)
+        }
+        
+        self.viewModel.output.synopSectionChanged.bind { [weak self] (info: (buttonTitle: String, numberOfLines: Int)) in
+            self?.synopsisSection.accessoryButton?.setTitle(info.buttonTitle, for: .normal)
+            self?.synopsisLabel.numberOfLines = info.numberOfLines
+        }
+        
+        self.viewModel.output.backdropCollectionViewScrollToItem.lazyBind { index in
+            
         }
     }
 }
@@ -197,28 +195,25 @@ extension MovieDetailViewController {
         
         self.contentStack.addArrangedSubview(tagContainer)
         
+        self.synopsisContainer.addSubview(self.synopsisLabel)
+        self.synopsisLabel.snp.makeConstraints { make in
+            make.verticalEdges.equalToSuperview()
+            make.horizontalEdges.equalToSuperview().inset(16)
+        }
+        
         self.contentStack.addArrangedSubview(self.synopsisSection)
-        self.synopsisSection.content.addSubview(self.synopsisLabel)
         self.synopsisLabel.snp.makeConstraints { make in
             make.horizontalEdges.equalToSuperview().inset(16)
             make.verticalEdges.equalToSuperview()
         }
         
         self.contentStack.addArrangedSubview(self.castSection)
-        self.castSection.content.snp.makeConstraints { make in
-            make.height.equalTo(150)
-        }
         
         self.contentStack.addArrangedSubview(self.posterSection)
-        self.posterSection.content.snp.makeConstraints { make in
-            make.height.equalTo(150)
-        }
-        
-        self.navigationItem.rightBarButtonItem = LikeBarButtonItem(
-            id: self.movieDetail.id,
-            liked: self.movieDetail.liked,
-            action: { [weak self] _ in self?.toggleLike() }
-        )
+
+        configureSynopSection()
+        configureCastSection()
+        configurePosterSection()
         
         configureBackdropCollectionView()
         configureBackdropPageConntrol()
@@ -226,14 +221,24 @@ extension MovieDetailViewController {
         configurePosterCollectionView()
     }
     
-    private func configureDetail() {
-        self.navigationItem.title = self.movieDetail.title
-        if let releaseDate = self.movieDetail.releaseDate { self.releaseDateTag.configure(with: releaseDate) }
-        if let voteAverage = self.movieDetail.voteAverage { self.voteTag.configure(with: "\(voteAverage)") }
-        let genres = self.movieDetail.genreIDS.compactMap { MovieGenre.getName(by:$0) }.prefix(2)
-        let genreString = Array(genres).joined(separator: ", ")
-        self.genreTag.configure(with: genreString)
-        self.synopsisLabel.text = self.movieDetail.overview
+    private func configureSynopSection() {
+        self.synopsisSection.setTitle("Synopsis")
+        let buttonTitle = self.viewModel.output.synopSectionChanged.value.0
+        let action = UIAction { [weak self] action in
+            self?.viewModel.input.synopsisFoldToggleButtonTapped.value = ()
+        }
+        self.synopsisSection.setAccessoryButton(title: buttonTitle, action: action)
+        self.synopsisSection.setContentView(self.synopsisContainer)
+    }
+    
+    private func configureCastSection() {
+        self.castSection.setTitle("Cast")
+        self.castSection.setContentView(self.castCollectionView)
+    }
+    
+    private func configurePosterSection() {
+        self.posterSection.setTitle("Poster")
+        self.posterSection.setContentView(self.posterCollectionView)
     }
     
     private func configureBackdropCollectionView() {
@@ -245,15 +250,13 @@ extension MovieDetailViewController {
     }
     
     private func configureBackdropPageConntrol() {
-        self.backdropPageControl.numberOfPages = self.backdropPaths.count
+        self.backdropPageControl.numberOfPages = self.viewModel.output.backdropURLs.value.count
         self.backdropPageControl.allowsContinuousInteraction = true
         self.backdropPageControl.backgroundStyle = .prominent
         
         let valueChangeAction = UIAction { [weak self] action in
-            guard let control = action.sender as? UIPageControl else {
-                return
-            }
-            self?.moveBackdropPage(to: control.currentPage)
+            guard let control = action.sender as? UIPageControl else { return }
+            self?.viewModel.input.backdropPageControlValueChanged.value = control.currentPage
         }
         self.backdropPageControl.addAction(valueChangeAction, for: .valueChanged)
     }
@@ -280,88 +283,64 @@ extension MovieDetailViewController {
 }
 
 extension MovieDetailViewController {
-    private func getCast() {
-        self.networkRequester.getMovieCast(
-            movieID: self.movieDetail.id,
-            movieCastParameter: .init(),
-            successHandler: { [weak self] response in
-                self?.handleCastResponse(response: response)
-            },
-            failureHandler: { [weak self] networkError in
-                self?.handleError(networkError)
+    private func configureDetail() {
+        guard let detail = self.viewModel.output.detail.value else { return }
+        self.navigationItem.title = detail.navigationTitle
+        self.releaseDateTag.configure(with: detail.releaseDate ?? "") // TODO: 예외 처리
+        self.voteTag.configure(with: "\(detail.voteAverage)")
+        self.genreTag.configure(with: detail.genresText)
+        self.synopsisLabel.text = detail.synopsis ?? "" // TODO: 예외 처리
+        let button = LikeBarButtonItem(
+            id: detail.movieID,
+            liked: detail.movieIsLiked,
+            action: { [weak self] _ in
+                self?.viewModel.input.likeButtonTapped.value = ()
             }
         )
-    }
-    
-    private func handleCastResponse(response: MovieCastResponse) {
-        self.casts = response.cast
-        self.castCollectionView.reloadData()
-    }
-    
-    private func handleError(_ error: Error) {
-        if let presentableError = error as? PresentableError {
-            presentErrorAlert(message: presentableError.message)
-        }
-    }
-    
-    private func getImages() {
-        self.networkRequester.getMovieImages(
-            movieID: self.movieDetail.id,
-            movieImageParameter: .init(),
-            successHandler: { [weak self] response in
-                self?.handleImageResponse(response: response)
-            },
-            failureHandler: { [weak self] networkError in
-                self?.handleError(networkError)
-            }
-        )
-    }
-    
-    private func handleImageResponse(response: MovieImageResponse) {
-        self.backdropPaths = Array(response.backdrops.compactMap(\.filePath).prefix(5))
-        self.backdropCollectionView.reloadData()
-        reconfigureBackdropPageConntrol()
-        
-        self.posterPaths = response.posters.compactMap(\.filePath)
-        self.posterCollectionView.reloadData()
+        self.navigationItem.rightBarButtonItem = button
     }
 }
 
 extension MovieDetailViewController: UICollectionViewDataSource, UICollectionViewDelegate {
-    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+    func collectionView(
+        _ collectionView: UICollectionView,
+        numberOfItemsInSection section: Int
+    ) -> Int {
         switch collectionView {
         case self.backdropCollectionView:
-            return self.backdropPaths.count
+            return self.viewModel.output.backdropURLs.value.count
         case self.castCollectionView:
-            return self.casts.count
+            return self.viewModel.output.castInfos.value.count
         case self.posterCollectionView:
-            return self.posterPaths.count
+            return self.viewModel.output.posterURLs.value.count
         default:
             return 0
         }
     }
     
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+    func collectionView(
+        _ collectionView: UICollectionView,
+        cellForItemAt indexPath: IndexPath
+    ) -> UICollectionViewCell {
         switch collectionView {
         case self.backdropCollectionView:
             guard let cell: BackdropCollectionViewCell = collectionView.dequeueReusableCell(for: indexPath) else { return UICollectionViewCell() }
-            let path = self.backdropPaths[indexPath.item]
-            let url = TMDBImage.original(path).url
+            let url = self.viewModel.output.backdropURLs.value[indexPath.item]
             cell.configure(with: url)
             return cell
+            
         case self.castCollectionView:
             guard let cell: CastCollectionViewCell = collectionView.dequeueReusableCell(for: indexPath) else { return UICollectionViewCell() }
-            let targetCast = self.casts[indexPath.item]
-            let profileURL = TMDBImage.w500(targetCast.profilePath ?? "").url
-            let castInfo = CastInfo(profileURL: profileURL, name: targetCast.name, character: targetCast.character)
+            let castInfo = self.viewModel.output.castInfos.value[indexPath.item]
             cell.configure(with: castInfo)
             return cell
+            
         case self.posterCollectionView:
             guard let cell: PosterCollectionViewCell = collectionView.dequeueReusableCell(for: indexPath) else { return UICollectionViewCell() }
-            let path = self.posterPaths[indexPath.item]
-            let posterURL = TMDBImage.w500(path).url
+            let posterURL = self.viewModel.output.posterURLs.value[indexPath.item]
             cell.configure(with: posterURL)
             return cell
+            
         default:
             return UICollectionViewCell()
         }
@@ -369,24 +348,8 @@ extension MovieDetailViewController: UICollectionViewDataSource, UICollectionVie
     
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         guard scrollView === self.backdropCollectionView else { return }
-        let pageWidth = backdropCollectionView.bounds.width
-        let currentPage = Int((scrollView.contentOffset.x + (0.5 * pageWidth)) / pageWidth)
-        backdropPageControl.currentPage = currentPage
-    }
-}
-
-extension MovieDetailViewController {
-    private func toggleLike() {
-        let movieID = self.movieDetail.id
-        if self.userProfile.likedMovieIDs.contains(movieID) {
-            self.userProfile.likedMovieIDs.removeAll { id in id == movieID }
-        } else {
-            self.userProfile.likedMovieIDs.append(movieID)
-        }
-        notifyLikedMovieMutated()
-    }
-    
-    private func notifyLikedMovieMutated() {
-        NotificationCenter.default.post(name: CHNotification.userLikedMovieMutated, object: nil)
+        let pageWidth = scrollView.bounds.width
+        let offset = scrollView.contentOffset.x
+        self.viewModel.input.scrollViewDidScroll.value = (pageWidth, offset)
     }
 }

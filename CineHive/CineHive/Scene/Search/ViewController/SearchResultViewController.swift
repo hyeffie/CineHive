@@ -108,7 +108,12 @@ extension SearchResultViewController {
     }
     
     private func goToDetail(_ detail: MovieDetail) {
-        let viewController = MovieDetailViewController(movieDetail: detail)
+        let viewModel = MovieDetailViewModel(
+            movieDetail: detail,
+            profileManager: UserProfileManager(),
+            networkRequester: NetworkManager()
+        )
+        let viewController = MovieDetailViewController(viewModel: viewModel)
         self.push(viewController)
     }
 }
