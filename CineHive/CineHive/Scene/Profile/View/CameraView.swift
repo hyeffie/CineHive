@@ -27,7 +27,6 @@ final class CameraView: UIView {
     
     private func configureView() {
         self.addSubview(self.cameraImageView)
-        let height = self.frame.height
         self.cameraImageView.snp.makeConstraints { make in
             make.center.equalToSuperview()
             make.width.equalToSuperview().multipliedBy(0.6)
