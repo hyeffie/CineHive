@@ -65,6 +65,10 @@ final class CastCollectionViewCell: UICollectionViewCell {
         self.nameLabel.text = cast.name
         self.characterLabel.text = cast.character
     }
+    
+    func layoutImageView() {
+        self.profileImage.layoutIfNeeded()
+    }
 }
 
 extension CastCollectionViewCell: ReusableCell {}

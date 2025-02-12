@@ -346,6 +346,19 @@ extension MovieDetailViewController: UICollectionViewDataSource, UICollectionVie
         }
     }
     
+    func collectionView(
+        _ collectionView: UICollectionView,
+        willDisplay cell: UICollectionViewCell,
+        forItemAt indexPath: IndexPath
+    ) {
+        guard
+            collectionView === self.castCollectionView,
+            let castCell = cell as? CastCollectionViewCell
+        else { return }
+        
+        castCell.layoutImageView()
+    }
+    
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         guard scrollView === self.backdropCollectionView else { return }
         let pageWidth = scrollView.bounds.width
