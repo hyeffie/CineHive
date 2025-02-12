@@ -15,6 +15,8 @@ final class MovieDetailViewModel: BaseViewModelProtocol {
         
         let scrollViewDidScroll: Observable<(pageWidth: CGFloat, offset: CGFloat)?> = Observable(value: nil)
         
+        let backdropPageControlValueChanged: Observable<Int> = Observable(value: 0)
+        
         let synopsisFoldToggleButtonTapped: Observable<Void> = Observable(value: ())
     }
     
@@ -44,6 +46,8 @@ final class MovieDetailViewModel: BaseViewModelProtocol {
         let synopSectionButtonTitle: Observable<String> = Observable(value: "More")
         
         let synopLabelNumberOfLines: Observable<Int> = Observable(value: 0)
+        
+        let backdropCollectionViewScrollToItem: Observable<Int?> = Observable(value: nil)
     }
     
     private struct Privates {
@@ -115,6 +119,10 @@ final class MovieDetailViewModel: BaseViewModelProtocol {
             guard let info else { return }
             let currentPage = Int((info.offset + (0.5 * info.pageWidth)) / info.pageWidth)
             self.output.currentPage.value = currentPage
+        }
+        
+        self.input.backdropPageControlValueChanged.lazyBind { futurePage in
+            self.output.backdropCollectionViewScrollToItem.value = futurePage
         }
         
         self.input.synopsisFoldToggleButtonTapped.lazyBind { _ in

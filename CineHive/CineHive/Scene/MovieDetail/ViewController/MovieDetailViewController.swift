@@ -8,6 +8,8 @@
 import UIKit
 
 final class MovieDetailViewController: BaseViewController {
+    private let viewModel: MovieDetailViewModel
+    
     @UserDefault(key: UserDefaultKey.userProfile)
     private var userProfile: ProfileInfo!
     
@@ -46,37 +48,42 @@ final class MovieDetailViewController: BaseViewController {
     
     private let synopsisLabel = BaseLabel(font: CHFont.medium, numberOfLines: 3)
     
-    private lazy var synopsisSection = SectionedView(
-        title: "Synopsis",
-        accessoryButtonInfo: ("More", { button in self.toggleFoldingSynopsis(button: button)  }),
-        content: UIView()
-    )
+    private let synopsisContainer = UIView()
+    
+    private let synopsisSection = SectionView()
+    
+//    private lazy var synopsisSection = SectionedView(
+//        title: "Synopsis",
+//        accessoryButtonInfo: ("More", { button in self.toggleFoldingSynopsis(button: button)  }),
+//        content: UIView()
+//    )
     
     private lazy var castCollectionView = UICollectionView(
         frame: .zero,
         collectionViewLayout: self.castCollectionViewLayout()
     )
     
-    private lazy var castSection = SectionedView(
-        title: "Cast",
-        content: self.castCollectionView
-    )
+    private let castSection = SectionView(contentHeight: 130)
+    
+//    private lazy var castSection = SectionedView(
+//        title: "Cast",
+//        content: self.castCollectionView
+//    )
     
     private lazy var posterCollectionView = UICollectionView(
         frame: .zero,
         collectionViewLayout: self.posterCollectionViewLayout()
     )
     
-    private lazy var posterSection = SectionedView(
-        title: "Poster",
-        content: self.posterCollectionView
-    )
+    private let posterSection = SectionView(contentHeight: 130)
     
-    init(movieDetail: MovieDetail) {
-        self.movieDetail = movieDetail
-        self.backdropPaths = []
-        self.casts = []
-        self.posterPaths = []
+//    private lazy var posterSection = SectionedView(
+//        title: "Poster",
+//        content: self.posterCollectionView
+//    )
+    
+    init(viewModel: MovieDetailViewModel) {
+        self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -197,22 +204,26 @@ extension MovieDetailViewController {
         
         self.contentStack.addArrangedSubview(tagContainer)
         
+        self.synopsisContainer.addSubview(self.synopsisLabel)
+        self.synopsisLabel.snp.makeConstraints { make in
+            make.edges.equalToSuperview()
+        }
+        
         self.contentStack.addArrangedSubview(self.synopsisSection)
-        self.synopsisSection.content.addSubview(self.synopsisLabel)
         self.synopsisLabel.snp.makeConstraints { make in
             make.horizontalEdges.equalToSuperview().inset(16)
             make.verticalEdges.equalToSuperview()
         }
         
         self.contentStack.addArrangedSubview(self.castSection)
-        self.castSection.content.snp.makeConstraints { make in
-            make.height.equalTo(150)
-        }
+//        self.castSection.content.snp.makeConstraints { make in
+//            make.height.equalTo(150)
+//        }
         
         self.contentStack.addArrangedSubview(self.posterSection)
-        self.posterSection.content.snp.makeConstraints { make in
-            make.height.equalTo(150)
-        }
+//        self.posterSection.content.snp.makeConstraints { make in
+//            make.height.equalTo(150)
+//        }
         
         self.navigationItem.rightBarButtonItem = LikeBarButtonItem(
             id: self.movieDetail.id,
@@ -220,10 +231,34 @@ extension MovieDetailViewController {
             action: { [weak self] _ in self?.toggleLike() }
         )
         
+        configureSynopSection()
+        configureCastSection()
+        configurePosterSection()
+        
         configureBackdropCollectionView()
         configureBackdropPageConntrol()
         configureCastCollectionView()
         configurePosterCollectionView()
+    }
+    
+    private func configureSynopSection() {
+        self.synopsisSection.setTitle("Synopsis")
+        let buttonTitle = self.viewModel.output.synopSectionButtonTitle.value
+        let action = UIAction { [weak self] action in
+            self?.viewModel.input.synopsisFoldToggleButtonTapped.value = ()
+        }
+        self.synopsisSection.setAccessoryButton(title: buttonTitle, action: action)
+        self.synopsisSection.setContentView(self.synopsisContainer)
+    }
+    
+    private func configureCastSection() {
+        self.castSection.setTitle("Cast")
+        self.castSection.setContentView(self.castCollectionView)
+    }
+    
+    private func configurePosterSection() {
+        self.posterSection.setTitle("Poster")
+        self.posterSection.setContentView(self.posterCollectionView)
     }
     
     private func configureDetail() {
@@ -253,7 +288,7 @@ extension MovieDetailViewController {
             guard let control = action.sender as? UIPageControl else {
                 return
             }
-            self?.moveBackdropPage(to: control.currentPage)
+            self?.viewModel.input.backdropPageControlValueChanged.value = control.currentPage
         }
         self.backdropPageControl.addAction(valueChangeAction, for: .valueChanged)
     }
