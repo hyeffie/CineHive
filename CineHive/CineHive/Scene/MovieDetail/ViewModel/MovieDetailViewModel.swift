@@ -21,17 +21,7 @@ final class MovieDetailViewModel: BaseViewModelProtocol {
     }
     
     struct Output {
-        let navigationTitle: Observable<String?> = Observable(value: nil)
-        
-        let movieIsLiked: Observable<Bool> = Observable(value: false)
-        
-        let releaseDate: Observable<String?> = Observable(value: nil)
-        
-        let voteAveraget: Observable<String?> = Observable(value: nil)
-        
-        let genresText: Observable<String?> = Observable(value: nil)
-        
-        let synopsis: Observable<String?> = Observable(value: nil)
+        let detail: Observable<MovieDetailPresentationInfo?> = Observable(value: nil)
         
         let backdropURLs: Observable<[URL?]> = Observable(value: [])
         
@@ -43,9 +33,7 @@ final class MovieDetailViewModel: BaseViewModelProtocol {
         
         let errorMessage: Observable<String?> = Observable(value: nil)
         
-        let synopSectionButtonTitle: Observable<String> = Observable(value: "More")
-        
-        let synopLabelNumberOfLines: Observable<Int> = Observable(value: 0)
+        let synopSectionChanged: Observable<(String, Int)> = Observable(value: ("More", 0))
         
         let backdropCollectionViewScrollToItem: Observable<Int?> = Observable(value: nil)
     }
@@ -149,20 +137,25 @@ final class MovieDetailViewModel: BaseViewModelProtocol {
         }
 
         self.privates.synopSectionFoldedState.bind { futureState in
-            self.output.synopSectionButtonTitle.value = futureState.buttonTitle
-            self.output.synopLabelNumberOfLines.value = futureState.numberOfLines
+            self.output.synopSectionChanged.value = (futureState.buttonTitle, futureState.numberOfLines)
         }
     }
     
     private func getDetail() {
-        self.output.navigationTitle.value = self.movieDetail.title
-        self.output.releaseDate.value = self.movieDetail.releaseDate
-        self.output.voteAveraget.value = String(describing: self.movieDetail.voteAverage)
-        let genres = self.movieDetail.genreIDS.compactMap { MovieGenre.getName(by:$0) }.prefix(2)
+        let detail = self.movieDetail
+        let genres = detail.genreIDS.compactMap { MovieGenre.getName(by:$0) }.prefix(2)
         let genreString = Array(genres).joined(separator: ", ")
-        self.output.genresText.value = genreString
-        self.output.synopsis.value = self.movieDetail.overview
-        self.output.movieIsLiked.value = self.movieDetail.liked
+        
+        let result =  MovieDetailPresentationInfo(
+            navigationTitle: detail.title,
+            movieID: detail.id,
+            movieIsLiked: detail.liked,
+            releaseDate: detail.releaseDate,
+            voteAverage: String(describing: detail.voteAverage),
+            genresText: genreString,
+            synopsis: detail.overview
+        )
+        self.output.detail.value = result
     }
     
     private func getImages() {
@@ -196,4 +189,14 @@ final class MovieDetailViewModel: BaseViewModelProtocol {
             self.output.errorMessage.value = presentableError.message
         }
     }
+}
+
+struct MovieDetailPresentationInfo {
+    let navigationTitle: String
+    let movieID: Int
+    let movieIsLiked: Bool
+    let releaseDate: String?
+    let voteAverage: String
+    let genresText: String
+    let synopsis: String?
 }
