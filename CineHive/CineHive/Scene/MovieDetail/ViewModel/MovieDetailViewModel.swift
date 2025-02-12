@@ -31,11 +31,11 @@ final class MovieDetailViewModel: BaseViewModelProtocol {
         
         let synopsis: Observable<String?> = Observable(value: nil)
         
-        let backdropURLs: Observable<[URL]> = Observable(value: [])
+        let backdropURLs: Observable<[URL?]> = Observable(value: [])
         
         let castInfos: Observable<[CastInfo]> = Observable(value: [])
         
-        let posterURLs: Observable<[URL]> = Observable(value: [])
+        let posterURLs: Observable<[URL?]> = Observable(value: [])
         
         let currentPage: Observable<Int> = Observable(value: 0)
         
@@ -119,6 +119,28 @@ final class MovieDetailViewModel: BaseViewModelProtocol {
         
         self.input.synopsisFoldToggleButtonTapped.lazyBind { _ in
             let futureState = self.privates.synopSectionFoldedState.value == .folded ? SynopSectionFoldedState.unfolded : .folded
+            self.privates.synopSectionFoldedState.value = futureState
+        }
+        
+        transformPrivates()
+    }
+    
+    private func transformPrivates() {
+        self.privates.imageResponse.lazyBind { response in
+            guard let response else { return }
+            self.output.backdropURLs.value = response.backdrops.compactMap(\.filePath).prefix(5).map { TMDBImage.original($0).url }
+            self.output.posterURLs.value = response.posters.compactMap(\.filePath).map { TMDBImage.w500($0).url }
+        }
+        
+        self.privates.castResponse.lazyBind { response in
+            guard let response else { return }
+            self.output.castInfos.value = response.cast.map { cast in
+                let profileURL = TMDBImage.w500(cast.profilePath ?? "").url
+                return CastInfo(profileURL: profileURL, name: cast.name, character: cast.character)
+            }
+        }
+
+        self.privates.synopSectionFoldedState.bind { futureState in
             self.output.synopSectionButtonTitle.value = futureState.buttonTitle
             self.output.synopLabelNumberOfLines.value = futureState.numberOfLines
         }
