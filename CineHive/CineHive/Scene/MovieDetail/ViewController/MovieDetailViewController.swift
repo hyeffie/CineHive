@@ -372,7 +372,7 @@ extension MovieDetailViewController: UICollectionViewDataSource, UICollectionVie
     
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         guard scrollView === self.backdropCollectionView else { return }
-        let pageWidth = backdropCollectionView.bounds.width
+        let pageWidth = scrollView.bounds.width
         let currentPage = Int((scrollView.contentOffset.x + (0.5 * pageWidth)) / pageWidth)
         backdropPageControl.currentPage = currentPage
     }
