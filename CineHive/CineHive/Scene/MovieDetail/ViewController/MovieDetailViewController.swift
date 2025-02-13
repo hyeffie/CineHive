@@ -103,8 +103,13 @@ final class MovieDetailViewController: BaseViewController {
             self?.synopsisLabel.numberOfLines = info.numberOfLines
         }
         
-        self.viewModel.output.backdropCollectionViewScrollToItem.lazyBind { index in
-            
+        self.viewModel.output.backdropCollectionViewScrollToItem.lazyBind { [weak self] index in
+            guard let index else { return }
+            self?.backdropCollectionView.scrollToItem(
+                at: IndexPath(row: index, section: 0),
+                at: .centeredHorizontally,
+                animated: true
+            )
         }
     }
 }
@@ -259,10 +264,6 @@ extension MovieDetailViewController {
             self?.viewModel.input.backdropPageControlValueChanged.value = control.currentPage
         }
         self.backdropPageControl.addAction(valueChangeAction, for: .valueChanged)
-    }
-    
-    @objc private func moveBackdropPage(to page: Int) {
-        self.backdropCollectionView.scrollToItem(at: IndexPath(row: page, section: 0), at: .centeredHorizontally, animated: true)
     }
     
     private func configureCastCollectionView() {
