@@ -1,0 +1,20 @@
+//
+//  CHColor.swift
+//  CineHive
+//
+//  Created by Effie on 1/24/25.
+//
+
+import UIKit
+
+struct CHColor {
+    static let darkLabelBackground = UIColor.darkLabelBackground
+    static let lightLabelBackground = UIColor.lightLabelBackground
+    static let mainBackground = UIColor.mainBackground
+    static let theme = UIColor.hiveTheme
+    static let primaryText = UIColor.primaryText
+    static let validaText = UIColor.validText
+    static let invalidText = UIColor.invalidText
+    static let validCompleteButton = UIColor.validCompleteButton
+    static let invalidCompleteButton = UIColor.invalidCompleteButton
+}
